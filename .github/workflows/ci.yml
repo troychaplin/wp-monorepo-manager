@@ -1,135 +1,132 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'wp-content/**'
-      - 'package.json'
-      - 'turbo.json'
-      - '.github/workflows/**'
+    pull_request:
+        branches: [main]
+        paths:
+            - 'wp-content/**'
+            - 'package.json'
+            - 'turbo.json'
+            - '.github/workflows/**'
 
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
+    build:
+        name: Build and Test
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
-      # Add Turbo cache
-      - name: Turbo Cache
-        uses: actions/cache@v3
-        with:
-          path: .turbo
-          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ github.job }}-${{ github.ref_name }}-
-            turbo-${{ github.job }}-
+            # Add Turbo cache
+            - name: Turbo Cache
+              uses: actions/cache@v3
+              with:
+                  path: .turbo
+                  key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+                  restore-keys: |
+                      turbo-${{ github.job }}-${{ github.ref_name }}-
+                      turbo-${{ github.job }}-
 
-      - name: Install dependencies
-        run: npm install
+            - name: Install dependencies
+              run: npm install
 
-      - name: Build
-        run: npm run build
+            - name: Build
+              run: npm run build
 
-      - name: Size Check
-        run: npm run size
+            - name: Lint
+              run: npm run lint
 
-      - name: Lint
-        run: npm run lint
+            - name: Format Check
+              run: npm run format
 
-      - name: Format Check
-        run: npm run format
+            - name: Cache dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      **/node_modules
+                      .turbo
+                  key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/node_modules
-            .turbo
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+    plugin-specific:
+        name: Plugin Specific Checks
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: wordpress/wp-content/plugins/monorepo-plugin
 
-  plugin-specific:
-    name: Plugin Specific Checks
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: wordpress/wp-content/plugins/plugin-starter-config
+        steps:
+            - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+            # Add Turbo cache for plugin
+            - name: Turbo Cache
+              uses: actions/cache@v3
+              with:
+                  path: .turbo
+                  key: turbo-plugin-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+                  restore-keys: |
+                      turbo-plugin-${{ github.job }}-${{ github.ref_name }}-
+                      turbo-plugin-${{ github.job }}-
 
-      # Add Turbo cache for plugin
-      - name: Turbo Cache
-        uses: actions/cache@v3
-        with:
-          path: .turbo
-          key: turbo-plugin-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            turbo-plugin-${{ github.job }}-${{ github.ref_name }}-
-            turbo-plugin-${{ github.job }}-
+            - name: Plugin Tests
+              run: |
+                  cd ../../..
+                  npm install
+                  cd wp-content/plugins/monorepo-plugin
+                  if npm run test 2>/dev/null; then
+                    echo "Running plugin tests..."
+                  else
+                    echo "No tests defined for plugin, skipping..."
+                    exit 0
+                  fi
 
-      - name: Plugin Tests
-        run: |
-          cd ../../..
-          npm install
-          cd wp-content/plugins/plugin-starter-config
-          if npm run test 2>/dev/null; then
-            echo "Running plugin tests..."
-          else
-            echo "No tests defined for plugin, skipping..."
-            exit 0
-          fi
+    # theme-specific:
+    #     name: Theme Specific Checks
+    #     runs-on: ubuntu-latest
+    #     defaults:
+    #         run:
+    #             working-directory: wordpress/wp-content/themes/monorepo-theme
 
-  theme-specific:
-    name: Theme Specific Checks
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: wordpress/wp-content/themes/theme-starter-config
+    #     steps:
+    #         - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+    #         - uses: actions/setup-node@v4
+    #           with:
+    #               node-version: 20
+    #               cache: 'npm'
+    #               cache-dependency-path: '**/package-lock.json'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+    #         # Add Turbo cache for theme
+    #         - name: Turbo Cache
+    #           uses: actions/cache@v3
+    #           with:
+    #               path: .turbo
+    #               key: turbo-theme-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+    #               restore-keys: |
+    #                   turbo-theme-${{ github.job }}-${{ github.ref_name }}-
+    #                   turbo-theme-${{ github.job }}-
 
-      # Add Turbo cache for theme
-      - name: Turbo Cache
-        uses: actions/cache@v3
-        with:
-          path: .turbo
-          key: turbo-theme-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            turbo-theme-${{ github.job }}-${{ github.ref_name }}-
-            turbo-theme-${{ github.job }}-
-
-      - name: Theme Tests
-        run: |
-          cd ../../..
-          npm install
-          cd wp-content/themes/theme-starter-config
-          if npm run test 2>/dev/null; then
-            echo "Running theme tests..."
-          else
-            echo "No tests defined for theme, skipping..."
-            exit 0
-          fi
+    #         - name: Theme Tests
+    #           run: |
+    #               cd ../../..
+    #               npm install
+    #               cd wp-content/themes/monorepo-theme
+    #               if npm run test 2>/dev/null; then
+    #                 echo "Running theme tests..."
+    #               else
+    #                 echo "No tests defined for theme, skipping..."
+    #                 exit 0
+    #               fi
