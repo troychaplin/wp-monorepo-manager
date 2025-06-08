@@ -1,18 +1,18 @@
 {
-  "require-dev": {
-    "squizlabs/php_codesniffer": "^3.12.0",
-    "wp-coding-standards/wpcs": "^3.1",
-    "dealerdirect/phpcodesniffer-composer-installer": "v1.0.0"
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  },
-  "scripts": {
-    "lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/starter-plugin",
-    "format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/starter-plugin || true",
-    "lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/starter-theme",
-    "format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/starter-theme || true"
-  }
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.12.0",
+		"wp-coding-standards/wpcs": "^3.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "v1.0.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wordpress/wp-content/plugins/monorepo-plugin",
+		"format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wordpress/wp-content/plugins/monorepo-plugin || true",
+		"lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wordpress/wp-content/themes/monorepo-theme",
+		"format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wordpress/wp-content/themes/monorepo-theme || true"
+	}
 }
