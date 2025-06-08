@@ -1,0 +1,16 @@
+{
+	"workspaces": ["wordpress/wp-content/themes/monorepo-theme"],
+	"scripts": {
+		"build:theme": "turbo run build --filter=monorepo-theme",
+		"start:theme": "turbo run start --filter=monorepo-theme",
+		"lint:theme": "npm run lint:theme-js && npm run lint:theme-css && npm run lint:theme-php",
+		"lint:theme-css": "stylelint \"./wordpress/wp-content/themes/monorepo-theme/**/*.scss\"",
+		"lint:theme-php": "composer lint-theme-php",
+		"lint:theme-js": "wp-scripts lint-js ./wordpress/wp-content/themes/monorepo-theme/src",
+		"format:theme": "npm run format:theme-js && npm run format:theme-css && npm run format:theme-php",
+		"format:theme-css": "stylelint \"./wordpress/wp-content/themes/monorepo-theme/**/*.scss\" --fix",
+		"format:theme-php": "composer format-theme-php",
+		"format:theme-js": "wp-scripts lint-js ./wordpress/wp-content/themes/monorepo-theme/src --fix",
+		"clean:theme": "cd wp-content/themes/monorepo-theme && rm -rf .turbo node_modules build package-lock.json"
+	}
+}
