@@ -1,0 +1,2 @@
+# npx lint-staged || exit 1
+# npm run lint || exit 1

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["build/**"],
+      "inputs": ["src/**", "*.config.js", "*.json"],
+      "cache": true
+    },
+    "build:wp-scripts": {
+      "outputs": ["build/scripts/**"],
+      "inputs": ["src/**/*.{js,jsx,ts,tsx}"],
+      "cache": true
+    },
+    "build:frontend-css": {
+      "outputs": ["build/styles/**"],
+      "inputs": ["src/**/*.css", "tailwind.config.js"],
+      "cache": true
+    },
+    "build:editor-css": {
+      "outputs": ["build/styles/**"],
+      "cache": true
+    },
+    "build:webpack": {
+      "outputs": ["build/scripts/**"],
+      "cache": true
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "format": {
+      "outputs": [],
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "cache": true
+    },
+    "size": {
+      "dependsOn": ["build"],
+      "outputs": [],
+      "cache": true
+    },
+    "lint": {
+      "outputs": [],
+      "cache": true
+    }
+  }
+} 

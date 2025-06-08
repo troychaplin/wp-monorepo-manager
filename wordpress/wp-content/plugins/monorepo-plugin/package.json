@@ -1,0 +1,28 @@
+{
+	"name": "monorepo-plugin",
+	"description": "A starter plugin for a monorepo WordPress project",
+	"version": "0.1.0",
+	"author": "Troy Chaplin",
+	"license": "GPL-2.0-or-later",
+	"packageManager": "npm@10.2.4",
+	"main": "build/index.js",
+	"scripts": {
+		"start": "concurrently \"npm run start:blocks\" \"npm run start:scripts\"",
+		"start:blocks": "wp-scripts start --experimental-modules --webpack-copy-php",
+		"start:scripts": "webpack --config webpack.scripts.js --watch",
+		"build": "rm -rf build && npm run build:blocks && npm run build:interactive && npm run build-blocks-manifest && npm run size",
+		"build:blocks": "wp-scripts build --webpack-copy-php --config webpack.scripts.js",
+		"build:interactive": "wp-scripts build --experimental-modules --webpack-copy-php",
+		"build-blocks-manifest": "wp-scripts build-blocks-manifest --output=src/blocks-manifest.php"
+	},
+	"size-limit": [
+		{
+			"path": "build/**/*.js",
+			"limit": "100 KB"
+		},
+		{
+			"path": "build/**/*.css",
+			"limit": "50 KB"
+		}
+	]
+}

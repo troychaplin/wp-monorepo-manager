@@ -1,0 +1,34 @@
+.DS_Store
+
+index.php
+
+# Ignore entire wordpress directory
+wordpress/*
+
+# But allow access to wp-content
+!wordpress/wp-content/
+
+# Ignore everything in wp-content
+wordpress/wp-content/*
+
+# But allow themes and plugins directories
+!wordpress/wp-content/themes/
+!wordpress/wp-content/plugins/
+
+# Ignore all themes and plugins
+wordpress/wp-content/themes/*
+wordpress/wp-content/plugins/*
+
+# Allow specific theme and plugin
+!wordpress/wp-content/themes/monorepo-theme/
+!wordpress/wp-content/themes/monorepo-theme/index.php
+!wordpress/wp-content/plugins/monorepo-plugin/
+
+# Turbo
+.turbo
+
+build
+node_modules
+
+# MAMP
+.well-known
