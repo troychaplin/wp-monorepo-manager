@@ -8,6 +8,8 @@ export default function Edit({ attributes, setAttributes }) {
 	console.log('Edit', attributes, setAttributes);
 
 	return (
-		<p {...blockProps}>{__('Example Interactive – hello from the editor!', 'monorepo-plugin')}</p>
+		<p {...blockProps}>
+			{__('Example Interactive – hello from the editor!', 'monorepo-plugin')}
+		</p>
 	);
 }
