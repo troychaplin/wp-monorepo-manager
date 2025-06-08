@@ -1,6 +1,6 @@
-# WordPress Monorepo
+# WordPress Monorepo Manager
 
-This monorepo contains the WordPress theme and custom blocks plugin for International Documents Canada, using Turbo for build orchestration and npm workspaces for package management.
+A modern WordPress development setup using a monorepo architecture with Turbo for build orchestration and npm workspaces for package management. This project provides a structured approach to developing custom WordPress themes and plugins with modern tooling and best practices.
 
 ## Prerequisites
 
@@ -19,25 +19,45 @@ This project follows WordPress Coding Standards using:
 
 ## Project Structure
 
-    wordpress/
+    wordpress/                      # WordPress installation (ignored except for custom code)
     ├── wp-content/
     │   ├── plugins/
-    │   │   └── starter-plugin/     # Custom plugin
+    │   │   └── monorepo-plugin/    # Custom blocks plugin
     │   └── themes/
-    │       └── starter-theme/      # Custom theme
-    ├── .github/                    # CI/CD workflows
-    ├── .husky/                     # Git hooks
+    │       └── monorepo-theme/     # Custom theme
+    ├── .gitignore                  # Git ignore rules
     ├── .eslintrc.json              # ESLint configuration
     ├── .prettierrc.json            # Prettier configuration
     ├── .stylelintrc.json           # Stylelint configuration
-    ├── .size-limit.json            # Bundle size limits
     ├── package.json                # Root package configuration
+    ├── phpcs.xml.dist              # PHP CodeSniffer configuration
     ├── turbo.json                  # Turbo pipeline configuration
     └── README.md                   # This file
 
 ## Getting Started
 
-Add info
+1. **Clone the repository**
+
+    ```bash
+    git clone <your-repo-url>
+    cd wp-monorepo-manager
+    ```
+
+2. **Install dependencies**
+
+    ```bash
+    npm install
+    ```
+
+3. **Set up WordPress**
+
+    - Place your WordPress installation in the `wordpress/` directory
+    - The theme and plugin directories are already configured and tracked in Git
+
+4. **Development**
+    ```bash
+    npm run start    # Start development mode with file watching
+    ```
 
 ## Common Commands
 
@@ -96,6 +116,15 @@ npm install
 For theme template issues:
 
 ```
-cd wp-content/themes/starter-theme
+cd wordpress/wp-content/themes/monorepo-theme
 composer install
 ```
+
+## Key Features
+
+- **Monorepo Architecture** - Manage theme and plugin in a single repository
+- **Modern Build Tools** - Uses Turbo for fast, cached builds
+- **WordPress Standards** - Follows WordPress coding standards with automated linting
+- **Hot Reloading** - Development mode with automatic rebuilds
+- **Size Monitoring** - Bundle size limits to keep assets optimized
+- **Git Integration** - Smart `.gitignore` that tracks only your custom code
