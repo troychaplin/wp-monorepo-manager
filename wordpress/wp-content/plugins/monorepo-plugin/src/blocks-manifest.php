@@ -4,7 +4,7 @@ return array(
 	'dynamic-block-example' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
-		'name' => 'multi-block-starter/dynamic-block-example',
+		'name' => 'monorepo-plugin/dynamic-block-example',
 		'version' => '0.1.0',
 		'title' => 'Dynamic Block Example',
 		'category' => 'text',
@@ -16,7 +16,7 @@ return array(
 		'supports' => array(
 			'html' => false
 		),
-		'textdomain' => 'multi-block-starter',
+		'textdomain' => 'monorepo-plugin',
 		'editorScript' => 'file:./index.js',
 		'editorStyle' => 'file:./index.css',
 		'style' => 'file:./style-index.css',
@@ -25,7 +25,7 @@ return array(
 	'interactive-block-example' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
-		'name' => 'multi-block-starter/interactive-block-example',
+		'name' => 'monorepo-plugin/interactive-block-example',
 		'version' => '0.1.0',
 		'title' => 'Interactive Block Example',
 		'category' => 'text',
@@ -37,7 +37,7 @@ return array(
 		'supports' => array(
 			'html' => false
 		),
-		'textdomain' => 'multi-block-starter',
+		'textdomain' => 'monorepo-plugin',
 		'editorScript' => 'file:./index.js',
 		'editorStyle' => 'file:./index.css',
 		'style' => 'file:./style-index.css',
@@ -47,7 +47,7 @@ return array(
 	'static-block-example' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
-		'name' => 'multi-block-starter/static-block-example',
+		'name' => 'monorepo-plugin/static-block-example',
 		'version' => '0.1.0',
 		'title' => 'Static Block Example',
 		'category' => 'text',
@@ -59,7 +59,7 @@ return array(
 		'supports' => array(
 			'html' => false
 		),
-		'textdomain' => 'multi-block-starter',
+		'textdomain' => 'monorepo-plugin',
 		'editorScript' => 'file:./index.js',
 		'editorStyle' => 'file:./index.css',
 		'style' => 'file:./style-index.css',
