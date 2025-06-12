@@ -1,5 +1,6 @@
 .DS_Store
 
+.htaccess
 index.php
 
 # Ignore entire wordpress directory
