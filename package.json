@@ -4,7 +4,8 @@
 	"packageManager": "npm@10.2.4",
 	"private": false,
 	"workspaces": [
-		"wordpress/wp-content/plugins/monorepo-plugin"
+		"wordpress/wp-content/plugins/monorepo-plugin",
+		"wordpress/wp-content/themes/monorepo-theme"
 	],
 	"scripts": {
 		"build": "turbo run build",

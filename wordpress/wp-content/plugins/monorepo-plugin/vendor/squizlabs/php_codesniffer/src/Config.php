@@ -85,7 +85,7 @@ class Config
      *
      * @var string
      */
-    const VERSION = '3.13.0';
+    const VERSION = '3.13.1';
 
     /**
      * Package stability; either stable, beta or alpha.
@@ -1704,11 +1704,6 @@ class Config
             $configFile = dirname($path).DIRECTORY_SEPARATOR.'CodeSniffer.conf';
         } else {
             $configFile = dirname(__DIR__).DIRECTORY_SEPARATOR.'CodeSniffer.conf';
-            if (is_file($configFile) === false
-                && strpos('@data_dir@', '@data_dir') === false
-            ) {
-                $configFile = '@data_dir@/PHP_CodeSniffer/CodeSniffer.conf';
-            }
         }
 
         if (is_file($configFile) === false) {

@@ -20,9 +20,15 @@ wordpress/wp-content/*
 wordpress/wp-content/themes/*
 wordpress/wp-content/plugins/*
 
-# Allow specific theme and plugin
+# Theme specific files
+wordpress/wp-content/themes/monorepo-theme/build
+
 !wordpress/wp-content/themes/monorepo-theme/
 !wordpress/wp-content/themes/monorepo-theme/index.php
+
+# Plugin specific files
+!wordpress/wp-content/plugins/monorepo-plugin/build
+
 !wordpress/wp-content/plugins/monorepo-plugin/
 
 # Turbo

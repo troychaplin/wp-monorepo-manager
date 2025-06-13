@@ -1,0 +1,6 @@
+/* Dark orange button hover style */
+.wp-block-button.is-style-primary-button .wp-block-button__link:hover {
+	background-color: var(--wp--preset--color--secondary);
+	color: var(--wp--preset--color--black);
+	border-color: var(--wp--preset--color--secondary);
+}
