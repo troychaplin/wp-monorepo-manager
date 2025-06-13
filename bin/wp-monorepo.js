@@ -3,6 +3,7 @@
 const { Command } = require('commander');
 const packageJson = require('../package.json');
 const ProjectInitializer = require('../src/init');
+const ProjectCreator = require('../src/create');
 
 const program = new Command();
 
@@ -29,14 +30,16 @@ program
 
 // Add a new theme to the project
 program
-	.command('add theme <name>')
+	.command('add-theme <name>')
 	.description('Add a new theme to the project')
 	.option('-d, --directory <path>', 'Theme directory', 'wp-content/themes')
 	.action(async (name, options) => {
 		try {
-			// TODO: Implement theme creation logic
-			console.log(`Adding new theme: ${name}`);
-			console.log(`Theme directory: ${options.directory}`);
+			const creator = new ProjectCreator({
+				directory: process.cwd(),
+				name,
+			});
+			await creator.createTheme();
 		} catch (error) {
 			console.error('Error adding theme:', error.message);
 			process.exit(1);
@@ -45,14 +48,16 @@ program
 
 // Add a new plugin to the project
 program
-	.command('add plugin <name>')
+	.command('add-plugin <name>')
 	.description('Add a new plugin to the project')
 	.option('-d, --directory <path>', 'Plugin directory', 'wp-content/plugins')
 	.action(async (name, options) => {
 		try {
-			// TODO: Implement plugin creation logic
-			console.log(`Adding new plugin: ${name}`);
-			console.log(`Plugin directory: ${options.directory}`);
+			const creator = new ProjectCreator({
+				directory: process.cwd(),
+				name,
+			});
+			await creator.createPlugin();
 		} catch (error) {
 			console.error('Error adding plugin:', error.message);
 			process.exit(1);
