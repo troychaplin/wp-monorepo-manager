@@ -21,12 +21,6 @@ class ProjectCreator {
 
 			// Create theme files
 			await this.createThemeFiles(themeDir);
-
-			console.log(`\n✨ Theme "${this.name}" created successfully!`);
-			console.log('\nNext steps:');
-			console.log(`1. cd wp-content/themes/${this.name}`);
-			console.log('2. npm install');
-			console.log('3. Start developing your theme');
 		} catch (error) {
 			throw new Error(`Failed to create theme: ${error.message}`);
 		}
@@ -45,12 +39,6 @@ class ProjectCreator {
 
 			// Create plugin files
 			await this.createPluginFiles(pluginDir);
-
-			console.log(`\n✨ Plugin "${this.name}" created successfully!`);
-			console.log('\nNext steps:');
-			console.log(`1. cd wp-content/plugins/${this.name}`);
-			console.log('2. npm install');
-			console.log('3. Start developing your plugin');
 		} catch (error) {
 			throw new Error(`Failed to create plugin: ${error.message}`);
 		}
