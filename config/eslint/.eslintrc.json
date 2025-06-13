@@ -1,0 +1,19 @@
+{
+	"root": true,
+	"extends": ["eslint:recommended", "plugin:@wordpress/eslint-plugin/recommended"],
+	"env": {
+		"browser": true,
+		"es6": true,
+		"jquery": true
+	},
+	"parserOptions": {
+		"requireConfigFile": false,
+		"ecmaVersion": 2021,
+		"sourceType": "module"
+	},
+	"rules": {
+		"@wordpress/no-global-active-element": "off",
+		"@wordpress/no-global-get-selection": "off",
+		"@wordpress/no-unsafe-wp-apis": "off"
+	}
+}
