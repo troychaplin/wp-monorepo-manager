@@ -22,9 +22,10 @@
 		"format:plugin-css": "stylelint \"./wordpress/wp-content/plugins/monorepo-plugin/**/*.scss\" --fix",
 		"format:plugin-php": "composer format-plugin-php",
 		"format:plugin-js": "wp-scripts lint-js ./wordpress/wp-content/plugins/monorepo-plugin/src --fix",
-		"clean": "npm run clean:root && npm run clean:plugin && npm install && npm run build",
+		"clean": "npm run clean:root ; turbo run clean",
 		"clean:root": "rm -rf .turbo ; rm -rf node_modules ; rm package-lock.json",
-		"clean:plugin": "cd wp-content/plugins/monorepo-plugin && rm -rf .turbo node_modules build package-lock.json"
+		"clean:plugin": "turbo run clean --filter=monorepo-plugin",
+		"clean:theme": "turbo run clean --filter=monorepo-theme"
 	},
 	"dependencies": {
 		"@wordpress/eslint-plugin": "22.11.0",

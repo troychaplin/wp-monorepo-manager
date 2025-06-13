@@ -11,14 +11,18 @@
 		"start": "concurrently 'npm run start:webpack'",
 		"start:webpack": "webpack --mode=development --watch",
 		"format": "prettier --write .",
-		"clean": "rm -rf node_modules ; rm package-lock.json ; npm install",
+		"clean": "rm -rf .turbo node_modules build package-lock.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.26.0",
 		"@supersoniks/prettier-plugin-twig-melody": "^1.0.4",
+		"css-loader": "^7.1.2",
 		"dotenv": "^16.4.7",
-		"postcss": "^8.4.49"
+		"mini-css-extract-plugin": "^2.9.2",
+		"postcss": "^8.4.49",
+		"sass-loader": "^16.0.5",
+		"webpack-remove-empty-scripts": "^1.1.1"
 	}
 }
