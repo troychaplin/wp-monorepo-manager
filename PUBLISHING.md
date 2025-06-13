@@ -9,7 +9,7 @@ This document outlines the plan for transforming the WordPress Monorepo Manager 
 The project currently consists of:
 
 - Build tools and configuration for WordPress themes and plugins
-- Example theme and plugin (to be removed from final package)
+- Example theme and plugin (to be kept in repo but excluded from published package)
 - Turborepo configuration for managing builds
 - Various linting and formatting configurations
 - Webpack configuration for asset building
@@ -30,7 +30,14 @@ wp-monorepo-manager/
 │   ├── theme/            # Theme template structure
 │   └── plugin/           # Plugin template structure
 ├── src/                  # Core package source code
-└── package.json          # Package configuration
+├── package.json          # Package configuration
+├── .npmignore           # Excludes example files from published package
+└── wordpress/           # Example files (excluded from published package)
+    └── wp-content/
+        ├── plugins/
+        │   └── monorepo-plugin/
+        └── themes/
+            └── monorepo-theme/
 ```
 
 ### 2. Required Changes
@@ -38,11 +45,16 @@ wp-monorepo-manager/
 #### A. Package Configuration
 
 - Update `package.json`:
-    - Remove example theme and plugin from workspaces
+    - Keep example theme and plugin in workspaces (for development)
+    - Add `files` field to specify published package contents
     - Add `bin` field for CLI commands
     - Add necessary dependencies
-    - Configure files to be included in the published package
     - Add peer dependencies for WordPress-related packages
+- Create `.npmignore` to exclude:
+    - `wordpress/` directory (example files)
+    - Development-specific files
+    - Test files
+    - Documentation files
 
 #### B. CLI Implementation
 
