@@ -3,7 +3,7 @@
         'name' => 'troychaplin/monorepo-plugin',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'ddb036547f4089e60889de4096f8e6010e0b82f8',
+        'reference' => '856bfcc3b7fdb00dca5213d1f41a428f4b3db92c',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -49,7 +49,7 @@
         'troychaplin/monorepo-plugin' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'ddb036547f4089e60889de4096f8e6010e0b82f8',
+            'reference' => '856bfcc3b7fdb00dca5213d1f41a428f4b3db92c',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

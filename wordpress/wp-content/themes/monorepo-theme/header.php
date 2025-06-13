@@ -10,6 +10,6 @@
 </head>
 
 <body <?php body_class(); ?>>
-	<header class="sticky top-0 z-50 w-full p-8 text-black transition-opacity duration-500 opacity-100 bg-slate-300">
+	<header>
 		<p>This is the header.php file</p>
 	</header>
