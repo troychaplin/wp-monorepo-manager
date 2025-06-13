@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
+const rootPackageJson = require('../package.json');
 
 class ProjectInitializer {
 	constructor(options) {
@@ -59,7 +60,7 @@ class ProjectInitializer {
 				clean: 'wp-monorepo clean',
 			},
 			dependencies: {
-				'wp-monorepo-manager': 'latest',
+				'wp-monorepo-manager': `^${rootPackageJson.version}`,
 			},
 		};
 

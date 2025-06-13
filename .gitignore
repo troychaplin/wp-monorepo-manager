@@ -3,6 +3,8 @@
 .htaccess
 index.php
 
+test-project/
+
 # Ignore entire wordpress directory
 wordpress/*
 
