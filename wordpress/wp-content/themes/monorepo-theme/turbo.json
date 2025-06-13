@@ -1,0 +1,12 @@
+{
+	"extends": ["//"],
+	"tasks": {
+		"build": {
+			"inputs": ["src/**", "webpack.config.js", "Functions/**/*.php", "twig/**/*.twig"],
+			"outputs": ["build/**"]
+		},
+		"start": {
+			"env": ["NODE_ENV"]
+		}
+	}
+}

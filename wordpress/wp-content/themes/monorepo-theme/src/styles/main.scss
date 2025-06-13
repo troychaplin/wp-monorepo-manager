@@ -30,11 +30,14 @@ header {
 	top: 0;
 	z-index: 50;
 	width: 100%;
-	padding: 2rem;
 	color: #000000;
 	transition: opacity 500ms;
 	opacity: 1;
 	background-color: #cbd5e1;
+
+	& > * {
+		padding: 2rem;
+	}
 }
 
 footer {
