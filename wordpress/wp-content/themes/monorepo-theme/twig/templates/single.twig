@@ -1,0 +1,11 @@
+{% extends 'base.twig' %}
+
+		{% block content %}
+
+			{% if password_protected %}
+				{% include 'components/content-password.twig' %}
+			{% else %}
+				{% include 'components/content.twig' %}
+			{% endif %}
+
+		{% endblock %}

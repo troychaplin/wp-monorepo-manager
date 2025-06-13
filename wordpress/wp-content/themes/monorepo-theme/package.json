@@ -1,0 +1,40 @@
+{
+	"name": "wp-hybrid-starter-theme",
+	"version": "0.0.1",
+	"description": "A starter theme for a monorepo WordPress project",
+	"main": "index.js",
+	"author": "Troy Chaplin",
+	"license": "ISC",
+	"scripts": {
+		"build": "rm -rf build && npm run build:frontend-css && npm run build:editor-css && npm run build:webpack",
+		"build:webpack": "webpack --mode production",
+		"build:frontend-css": "tailwindcss -i ./src/styles.css -o ./build/styles.css --minify",
+		"build:editor-css": "tailwindcss -i ./src/editor-styles.css -o ./build/editor-styles.css --minify",
+		"start": "concurrently 'npm run start:webpack' 'npm run start:frontend-css' 'npm run start:editor-css'",
+		"start:webpack": "webpack --mode=development --watch",
+		"start:frontend-css": "tailwindcss -i ./src/styles.css -o ./build/styles.css --minify --watch",
+		"start:editor-css": "tailwindcss -i ./src/editor-styles.css -o ./build/editor-styles.css --minify --watch",
+		"format": "prettier --write .",
+		"clean": "rm -rf node_modules ; rm package-lock.json ; npm install",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"@babel/preset-env": "^7.26.0",
+		"@commitlint/cli": "^19.6.1",
+		"@commitlint/config-conventional": "^19.6.0",
+		"@supersoniks/prettier-plugin-twig-melody": "^1.0.4",
+		"autoprefixer": "^10.4.20",
+		"babel-loader": "^9.2.1",
+		"concurrently": "^9.1.1",
+		"dotenv": "^16.4.7",
+		"eslint": "^9.17.0",
+		"husky": "^9.1.7",
+		"postcss": "^8.4.49",
+		"postcss-import": "^16.1.0",
+		"prettier": "^3.4.2",
+		"tailwindcss": "^3.4.17",
+		"webpack": "^5.97.1",
+		"webpack-cli": "^6.0.1"
+	}
+}
