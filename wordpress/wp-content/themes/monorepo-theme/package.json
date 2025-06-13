@@ -1,0 +1,24 @@
+{
+	"name": "wp-hybrid-starter-theme",
+	"version": "0.0.1",
+	"description": "A starter theme for a monorepo WordPress project",
+	"main": "index.js",
+	"author": "Troy Chaplin",
+	"license": "ISC",
+	"scripts": {
+		"build": "rm -rf build && npm run build:webpack",
+		"build:webpack": "webpack --mode production",
+		"start": "concurrently 'npm run start:webpack'",
+		"start:webpack": "webpack --mode=development --watch",
+		"format": "prettier --write .",
+		"clean": "rm -rf node_modules ; rm package-lock.json ; npm install",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"@babel/preset-env": "^7.26.0",
+		"@supersoniks/prettier-plugin-twig-melody": "^1.0.4",
+		"dotenv": "^16.4.7",
+		"postcss": "^8.4.49"
+	}
+}

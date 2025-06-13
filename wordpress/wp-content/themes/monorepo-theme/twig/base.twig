@@ -1,0 +1,25 @@
+<!doctype html>
+<html class="no-js" {{ site.language_attributes }}>
+
+    {% include 'template-parts/head.twig' %}
+
+    <body class="{{ body_class }}">
+        <a href="#main-content" class="sr-only focus:not-sr-only" aria-label="Skip navigation and go to content">
+            Skip to Content
+        </a>
+
+        {% include 'template-parts/header.twig' %}
+
+        <main>
+            <section>
+                {% block content %}
+                    Empty!
+                {% endblock %}
+            </section>
+        </main>
+
+        {% include 'template-parts/footer.twig' %}
+
+        {{ fn('wp_footer') }}
+    </body>
+</html>

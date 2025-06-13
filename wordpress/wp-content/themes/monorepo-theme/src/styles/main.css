@@ -1,0 +1,44 @@
+#main-content {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+#main-content::focus {
+	position: static;
+	width: auto;
+	height: auto;
+	padding: 0;
+	margin: 0;
+	overflow: visible;
+	clip: auto;
+	white-space: normal;
+}
+
+main {
+	padding: 2rem;
+}
+
+header {
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	width: 100%;
+	padding: 2rem;
+	color: #000000;
+	transition: opacity 500ms;
+	opacity: 1;
+	background-color: #cbd5e1;
+}
+
+footer {
+	padding: 2rem;
+	color: #ffffff;
+	background-color: #1e293b;
+}
