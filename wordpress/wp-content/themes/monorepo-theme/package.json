@@ -1,5 +1,5 @@
 {
-	"name": "wp-hybrid-starter-theme",
+	"name": "monorepo-theme",
 	"version": "0.0.1",
 	"description": "A starter theme for a monorepo WordPress project",
 	"main": "index.js",

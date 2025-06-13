@@ -17,14 +17,14 @@ class EnqueueScripts {
 	 */
 	public function enqueue_theme_assets() {
 		wp_enqueue_style(
-			'wp-hybrid-starter-theme-css',
+			'monorepo-theme-css',
 			get_template_directory_uri() . '/build/styles.css',
 			array(),
 			'1.0.0'
 		);
 
 		wp_enqueue_script(
-			'wp-hybrid-starter-theme-js',
+			'monorepo-theme-js',
 			get_template_directory_uri() . '/build/scripts.js',
 			array(),
 			'1.0.0',

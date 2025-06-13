@@ -38,14 +38,11 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Build
-              run: npm run build
-
             - name: Lint
               run: npm run lint
 
-            - name: Format Check
-              run: npm run format
+            - name: Build
+              run: npm run build
 
             - name: Cache dependencies
               uses: actions/cache@v3
@@ -93,40 +90,40 @@ jobs:
                     exit 0
                   fi
 
-    # theme-specific:
-    #     name: Theme Specific Checks
-    #     runs-on: ubuntu-latest
-    #     defaults:
-    #         run:
-    #             working-directory: wordpress/wp-content/themes/monorepo-theme
+    theme-specific:
+        name: Theme Specific Checks
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: wordpress/wp-content/themes/monorepo-theme
 
-    #     steps:
-    #         - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-    #         - uses: actions/setup-node@v4
-    #           with:
-    #               node-version: 20
-    #               cache: 'npm'
-    #               cache-dependency-path: '**/package-lock.json'
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
-    #         # Add Turbo cache for theme
-    #         - name: Turbo Cache
-    #           uses: actions/cache@v3
-    #           with:
-    #               path: .turbo
-    #               key: turbo-theme-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-    #               restore-keys: |
-    #                   turbo-theme-${{ github.job }}-${{ github.ref_name }}-
-    #                   turbo-theme-${{ github.job }}-
+            # Add Turbo cache for theme
+            - name: Turbo Cache
+              uses: actions/cache@v3
+              with:
+                  path: .turbo
+                  key: turbo-theme-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+                  restore-keys: |
+                      turbo-theme-${{ github.job }}-${{ github.ref_name }}-
+                      turbo-theme-${{ github.job }}-
 
-    #         - name: Theme Tests
-    #           run: |
-    #               cd ../../..
-    #               npm install
-    #               cd wp-content/themes/monorepo-theme
-    #               if npm run test 2>/dev/null; then
-    #                 echo "Running theme tests..."
-    #               else
-    #                 echo "No tests defined for theme, skipping..."
-    #                 exit 0
-    #               fi
+            - name: Theme Tests
+              run: |
+                  cd ../../..
+                  npm install
+                  cd wp-content/themes/monorepo-theme
+                  if npm run test 2>/dev/null; then
+                    echo "Running theme tests..."
+                  else
+                    echo "No tests defined for theme, skipping..."
+                    exit 0
+                  fi

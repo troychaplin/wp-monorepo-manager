@@ -1,54 +1,118 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"],
-      "inputs": ["src/**", "*.config.js", "*.json"],
-      "cache": true
-    },
-    "build:wp-scripts": {
-      "outputs": ["build/scripts/**"],
-      "inputs": ["src/**/*.{js,jsx,ts,tsx}"],
-      "cache": true
-    },
-    "build:frontend-css": {
-      "outputs": ["build/styles/**"],
-      "inputs": ["src/**/*.css", "tailwind.config.js"],
-      "cache": true
-    },
-    "build:editor-css": {
-      "outputs": ["build/styles/**"],
-      "cache": true
-    },
-    "build:webpack": {
-      "outputs": ["build/scripts/**"],
-      "cache": true
-    },
-    "start": {
-      "cache": false,
-      "persistent": true
-    },
-    "clean": {
-      "cache": false
-    },
-    "format": {
-      "outputs": [],
-      "cache": false
-    },
-    "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**"],
-      "cache": true
-    },
-    "size": {
-      "dependsOn": ["build"],
-      "outputs": [],
-      "cache": true
-    },
-    "lint": {
-      "outputs": [],
-      "cache": true
-    }
-  }
-} 
+	"$schema": "https://turbo.build/schema.json",
+	"ui": "tui",
+	"globalDependencies": [".env*", "composer.json", "composer.lock", "phpcs.xml.dist"],
+	"globalEnv": ["NODE_ENV", "WP_DEBUG", "WP_DEBUG_LOG"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["build/**", "dist/**"],
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				"src/**",
+				"*.config.js",
+				"*.json",
+				"webpack.config.js",
+				"webpack.scripts.js"
+			],
+			"cache": true
+		},
+		"build:blocks": {
+			"outputs": ["build/**"],
+			"inputs": ["src/blocks/**", "src/**/*.{js,jsx,ts,tsx}", "webpack.scripts.js"],
+			"cache": true
+		},
+		"build:interactive": {
+			"outputs": ["build/**"],
+			"inputs": ["src/blocks/**", "src/**/*.{js,jsx,ts,tsx}"],
+			"cache": true
+		},
+		"build:webpack": {
+			"outputs": ["build/**"],
+			"inputs": ["src/**", "webpack.config.js"],
+			"cache": true
+		},
+		"build-blocks-manifest": {
+			"outputs": ["src/blocks-manifest.php"],
+			"inputs": ["src/blocks/**"],
+			"cache": true
+		},
+		"start": {
+			"cache": false,
+			"persistent": true,
+			"dependsOn": ["^build"]
+		},
+		"start:blocks": {
+			"cache": false,
+			"persistent": true
+		},
+		"start:scripts": {
+			"cache": false,
+			"persistent": true
+		},
+		"start:webpack": {
+			"cache": false,
+			"persistent": true
+		},
+		"clean": {
+			"cache": false
+		},
+		"format": {
+			"inputs": [
+				"src/**",
+				"Functions/**",
+				"**/*.{js,jsx,ts,tsx,scss,css,php,twig}",
+				"!build/**",
+				"!vendor/**",
+				"!node_modules/**"
+			],
+			"cache": true
+		},
+		"test": {
+			"dependsOn": ["build"],
+			"outputs": ["coverage/**"],
+			"cache": true
+		},
+		"lint": {
+			"inputs": [
+				"src/**",
+				"Functions/**",
+				"**/*.{js,jsx,ts,tsx,scss,css,php}",
+				"!build/**",
+				"!vendor/**",
+				"!node_modules/**"
+			],
+			"cache": true
+		},
+		"lint:plugin": {
+			"dependsOn": ["lint:plugin-js", "lint:plugin-css", "lint:plugin-php"]
+		},
+		"lint:plugin-js": {
+			"inputs": ["src/**/*.{js,jsx,ts,tsx}", ".eslintrc*"],
+			"cache": true
+		},
+		"lint:plugin-css": {
+			"inputs": ["**/*.scss", ".stylelintrc*"],
+			"cache": true
+		},
+		"lint:plugin-php": {
+			"inputs": ["**/*.php", "phpcs.xml.dist", "composer.json"],
+			"cache": true
+		},
+		"format:plugin": {
+			"dependsOn": ["format:plugin-js", "format:plugin-css", "format:plugin-php"]
+		},
+		"format:plugin-js": {
+			"inputs": ["src/**/*.{js,jsx,ts,tsx}", ".eslintrc*"],
+			"cache": true
+		},
+		"format:plugin-css": {
+			"inputs": ["**/*.scss", ".stylelintrc*"],
+			"cache": true
+		},
+		"format:plugin-php": {
+			"inputs": ["**/*.php", "phpcs.xml.dist", "composer.json"],
+			"cache": true
+		}
+	}
+}
