@@ -11,9 +11,10 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
 
 ## Testing Environment Setup
 
-1. Create a test directory:
+1. Create a test directory at the same level as the wp-monorepo-manager repository:
 
     ```bash
+    # Assuming you're in the parent directory of wp-monorepo-manager
     mkdir wp-monorepo-test
     cd wp-monorepo-test
     ```
@@ -35,31 +36,38 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
     npm install --save-dev turbo
     ```
 
-## Test Project Structure
+## Test Project Directory Structure
 
-Create the following structure:
+Your directory structure should look like this:
 
 ```
-wp-monorepo-test/
-├── package.json
-├── turbo.json
-└── wp-content/
-    ├── plugins/
-    │   └── test-plugin/
-    │       ├── package.json
-    │       └── src/
-    │           ├── scripts/
-    │           │   └── index.js
-    │           ├── styles.scss
-    │           └── editor-styles.scss
-    └── themes/
-        └── test-theme/
-            ├── package.json
-            └── src/
-                ├── scripts/
-                │   └── index.js
-                ├── styles.scss
-                └── editor-styles.scss
+parent-directory/
+│
+├── wp-monorepo-manager/     # The package repository
+│   ├── package.json
+│   ├── config/
+│   └── ...
+│
+└── wp-monorepo-test/        # Your test directory
+    ├── package.json
+    ├── turbo.json
+    └── wp-content/
+        ├── plugins/
+        │   └── test-plugin/
+        │       ├── package.json
+        │       └── src/
+        │           ├── scripts/
+        │           │   └── index.js
+        │           ├── styles.scss
+        │           └── editor-styles.scss
+        └── themes/
+            └── test-theme/
+                ├── package.json
+                └── src/
+                    ├── scripts/
+                    │   └── index.js
+                    ├── styles.scss
+                    └── editor-styles.scss
 ```
 
 ## Test Cases
