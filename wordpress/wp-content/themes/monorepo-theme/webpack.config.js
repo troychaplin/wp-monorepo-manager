@@ -10,6 +10,7 @@ module.exports = {
 	entry: {
 		scripts: [path.resolve(__dirname, 'src/scripts.js')],
 		styles: [path.resolve(__dirname, 'src/styles.scss')],
+		'editor-styles': [path.resolve(__dirname, 'src/editor-styles.scss')],
 	},
 	output: {
 		path: path.resolve(__dirname, 'build'),
