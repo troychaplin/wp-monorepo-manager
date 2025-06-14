@@ -1,55 +1,93 @@
 {
 	"name": "wp-monorepo-manager",
-	"version": "0.0.1",
-	"packageManager": "npm@10.2.4",
-	"private": false,
-	"workspaces": [
-		"wordpress/wp-content/plugins/monorepo-plugin",
-		"wordpress/wp-content/themes/monorepo-theme"
+	"version": "0.1.0",
+	"description": "A build tool for managing WordPress themes and plugins in a monorepo structure",
+	"main": "index.js",
+	"files": [
+		"config",
+		"index.js"
 	],
 	"scripts": {
-		"build": "turbo run build",
-		"build:plugin": "turbo run build --filter=monorepo-plugin",
-		"build:theme": "turbo run build --filter=monorepo-theme",
-		"start": "turbo run start --parallel",
-		"start:plugin": "turbo run start --filter=monorepo-plugin",
-		"start:theme": "turbo run start --filter=monorepo-theme",
-		"dev": "turbo run start --parallel",
-		"lint": "turbo run lint",
-		"lint:plugin": "turbo run lint:plugin-js lint:plugin-css lint:plugin-php --filter=monorepo-plugin",
-		"lint:theme": "turbo run lint --filter=monorepo-theme",
-		"format": "turbo run format",
-		"format:plugin": "turbo run format:plugin-js format:plugin-css format:plugin-php --filter=monorepo-plugin",
-		"format:theme": "turbo run format --filter=monorepo-theme",
-		"clean": "npm run clean:workspaces && npm run clean:root",
-		"clean:workspaces": "turbo run clean",
-		"clean:root": "rm -rf .turbo && rm -rf node_modules && rm -f package-lock.json",
-		"clean:plugin": "turbo run clean --filter=monorepo-plugin",
-		"clean:theme": "turbo run clean --filter=monorepo-theme"
+		"lint:js": "eslint .",
+		"lint:css": "stylelint \"**/*.css\"",
+		"lint:php": "phpcs",
+		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
+		"format:js": "eslint . --fix",
+		"format:css": "stylelint \"**/*.css\" --fix",
+		"format:php": "phpcbf",
+		"format": "npm run format:js && npm run format:css && npm run format:php",
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"dependencies": {
-		"@wordpress/eslint-plugin": "22.11.0",
-		"@wordpress/scripts": "30.18.0",
-		"eslint-config-wordpress": "2.0.0",
-		"postcss-import": "^16.1.0",
-		"prettier": "3.5.3",
-		"stylelint": "16.20.0",
-		"stylelint-scss": "^6.11.1",
-		"turbo": "2.5.4"
+	"keywords": [
+		"wordpress",
+		"monorepo",
+		"build-tools",
+		"eslint",
+		"stylelint",
+		"phpcs",
+		"webpack"
+	],
+	"author": "",
+	"license": "MIT",
+	"peerDependencies": {
+		"@wordpress/eslint-plugin": "^17.0.0",
+		"@wordpress/scripts": "^26.0.0",
+		"eslint": "^8.0.0",
+		"eslint-plugin-import": "^2.0.0",
+		"eslint-plugin-jsx-a11y": "^6.0.0",
+		"eslint-plugin-react": "^7.0.0",
+		"eslint-plugin-react-hooks": "^4.0.0",
+		"stylelint": "^15.0.0",
+		"stylelint-config-standard": "^34.0.0",
+		"stylelint-config-wordpress": "^21.0.0",
+		"webpack": "^5.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@wordpress/eslint-plugin": {
+			"optional": true
+		},
+		"@wordpress/scripts": {
+			"optional": true
+		},
+		"eslint": {
+			"optional": true
+		},
+		"eslint-plugin-import": {
+			"optional": true
+		},
+		"eslint-plugin-jsx-a11y": {
+			"optional": true
+		},
+		"eslint-plugin-react": {
+			"optional": true
+		},
+		"eslint-plugin-react-hooks": {
+			"optional": true
+		},
+		"stylelint": {
+			"optional": true
+		},
+		"stylelint-config-standard": {
+			"optional": true
+		},
+		"stylelint-config-wordpress": {
+			"optional": true
+		},
+		"webpack": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
-		"@commitlint/cli": "19.8.1",
-		"@commitlint/config-conventional": "19.8.1",
-		"@wordpress/blocks": "^14.10.0",
-		"@wordpress/data": "^10.21.0",
-		"@wordpress/dom-ready": "^4.21.0",
-		"@wordpress/element": "^6.21.0",
-		"@wordpress/i18n": "^5.21.0",
-		"@wordpress/icons": "^10.21.0",
-		"@wordpress/interactivity": "^6.21.0",
-		"concurrently": "^9.1.2",
-		"husky": "9.1.7",
-		"webpack": "^5.98.0",
-		"webpack-cli": "^6.0.1"
+		"@wordpress/eslint-plugin": "^17.0.0",
+		"@wordpress/scripts": "^26.0.0",
+		"eslint": "^8.0.0",
+		"eslint-plugin-import": "^2.0.0",
+		"eslint-plugin-jsx-a11y": "^6.0.0",
+		"eslint-plugin-react": "^7.0.0",
+		"eslint-plugin-react-hooks": "^4.0.0",
+		"stylelint": "^15.0.0",
+		"stylelint-config-standard": "^34.0.0",
+		"stylelint-config-wordpress": "^21.0.0",
+		"webpack": "^5.0.0"
 	}
 }

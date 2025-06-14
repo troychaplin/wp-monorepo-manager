@@ -1,0 +1,36 @@
+{
+	"root": true,
+	"extends": [
+		"eslint:recommended",
+		"plugin:@wordpress/eslint-plugin/recommended",
+		"plugin:import/recommended",
+		"plugin:import/typescript",
+		"plugin:jsx-a11y/recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended"
+	],
+	"plugins": ["@wordpress", "import", "jsx-a11y", "react"],
+	"settings": {
+		"react": {
+			"version": "detect"
+		},
+		"import/resolver": {
+			"node": {
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	},
+	"rules": {
+		"react/react-in-jsx-scope": "off",
+		"react/prop-types": "off",
+		"@wordpress/no-unsafe-wp-apis": "warn"
+	},
+	"overrides": [
+		{
+			"files": ["**/*.ts", "**/*.tsx"],
+			"extends": ["plugin:@typescript-eslint/recommended"],
+			"parser": "@typescript-eslint/parser",
+			"plugins": ["@typescript-eslint"]
+		}
+	]
+}
