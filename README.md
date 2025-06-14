@@ -1,110 +1,79 @@
 # WordPress Monorepo Manager
 
-A reusable package that provides standardized build tools and coding standards for WordPress themes and plugins in a monorepo structure. This package includes pre-configured ESLint, StyleLint, PHPCS, and Webpack configurations that follow WordPress best practices.
+A build tool for managing WordPress themes and plugins in a monorepo structure. This package provides standardized configurations and build tools for efficient WordPress development.
 
 ## Features
 
-- **Standardized Configurations**
-
-    - ESLint configuration for JavaScript
-    - StyleLint configuration for CSS/SCSS
-    - PHPCS configuration for PHP
-    - Webpack configuration for asset building
-
-- **WordPress Best Practices**
-
-    - Follows WordPress coding standards
-    - Optimized for block editor development
-    - Supports modern JavaScript features
-
-- **Easy Integration**
-    - Simple installation process
-    - Extensible configurations
-    - Utility functions for configuration management
-
-## Installation
-
-```bash
-npm install wp-monorepo-manager --save-dev
-```
+- **Monorepo Management**: Use Turborepo to manage multiple WordPress themes and plugins
+- **Standardized Configurations**: Pre-configured settings for ESLint, StyleLint, PHPCS, and Webpack
+- **Build Tools**: Unified build process for all themes and plugins
+- **Development Workflow**: Consistent development experience across projects
+- **Code Quality**: Enforced coding standards across all projects
 
 ## Quick Start
 
-1. **Install the package**
+1. Install the package:
 
     ```bash
-    npm install wp-monorepo-manager --save-dev
+    npm install --save-dev wp-monorepo-manager
     ```
 
-2. **Extend the configurations in your project**
+2. Set up your monorepo structure:
 
-    ESLint (.eslintrc.json):
+    ```
+    my-wordpress-project/
+    ├── package.json
+    ├── turbo.json
+    ├── wp-content/
+    │   ├── plugins/
+    │   │   └── my-plugin/
+    │   └── themes/
+    │       └── my-theme/
+    ```
+
+3. Configure your root package.json:
 
     ```json
     {
-    	"extends": ["wp-monorepo-manager/config/eslint/.eslintrc.json"]
+    	"name": "my-wordpress-project",
+    	"private": true,
+    	"workspaces": ["wp-content/plugins/*", "wp-content/themes/*"],
+    	"scripts": {
+    		"build": "turbo run build",
+    		"start": "turbo run start",
+    		"lint": "turbo run lint",
+    		"format": "turbo run format"
+    	},
+    	"devDependencies": {
+    		"wp-monorepo-manager": "^0.1.0",
+    		"turbo": "^2.0.0"
+    	}
     }
     ```
 
-    StyleLint (.stylelintrc.json):
-
-    ```json
-    {
-    	"extends": ["wp-monorepo-manager/config/stylelint/.stylelintrc.json"]
-    }
+4. Run your first build:
+    ```bash
+    npm run build
     ```
 
-    PHPCS (phpcs.xml.dist):
+## Available Commands
 
-    ```xml
-    <?xml version="1.0"?>
-    <ruleset name="WordPress Coding Standards">
-      <rule ref="wp-monorepo-manager/config/phpcs/phpcs.xml.dist"/>
-    </ruleset>
-    ```
+- `npm run build` - Build all themes and plugins
+- `npm run build:dev` - Build in development mode
+- `npm run build:prod` - Build in production mode
+- `npm run start` - Start development mode
+- `npm run lint` - Lint all projects
+- `npm run format` - Format all projects
+- `npm run clean` - Clean build artifacts
 
-    Webpack (webpack.config.js):
+## Documentation
 
-    ```javascript
-    const { merge } = require('webpack-merge');
-    const defaultConfig = require('wp-monorepo-manager/config/webpack/webpack.config.js');
-
-    module.exports = merge(defaultConfig, {
-    	// Your custom configuration
-    });
-    ```
-
-## Usage
-
-### Accessing Configuration Paths
-
-```javascript
-const { utils } = require('wp-monorepo-manager');
-
-// Get path to ESLint config
-const eslintConfigPath = utils.getConfigPath('eslint');
-
-// Get all config paths
-const allConfigPaths = utils.getAllConfigPaths();
-```
-
-### Available Configurations
-
-- `eslint`: JavaScript linting
-- `stylelint`: CSS/SCSS linting
-- `phpcs`: PHP coding standards
-- `webpack`: Asset building
-
-## Requirements
-
-- Node.js >= 20
-- npm >= 10.0.0
-- WordPress >= 6.4
+For detailed documentation, see [DOCS.md](./DOCS.md).
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.

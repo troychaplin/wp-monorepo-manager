@@ -15,235 +15,283 @@
 
 ## Overview
 
-The WordPress Monorepo Manager is a package that provides standardized build tools and coding standards for WordPress development. It includes pre-configured settings for ESLint, StyleLint, PHPCS, and Webpack, following WordPress best practices.
+This package provides standardized configurations and build tools for managing WordPress themes and plugins in a monorepo structure. It uses Turborepo for efficient workspace management and provides consistent configurations for ESLint, StyleLint, PHPCS, and Webpack.
 
 ## Installation
 
-### Basic Installation
-
 ```bash
-npm install wp-monorepo-manager --save-dev
+npm install --save-dev wp-monorepo-manager
 ```
 
-### Required Peer Dependencies
+## Monorepo Setup
 
-The package requires several peer dependencies. Install them based on your needs:
+### 1. Project Structure
+
+```
+my-wordpress-project/
+├── package.json
+├── turbo.json
+├── wp-content/
+│   ├── plugins/
+│   │   ├── my-plugin/
+│   │   │   ├── package.json
+│   │   │   └── src/
+│   │   └── another-plugin/
+│   └── themes/
+│       ├── my-theme/
+│       │   ├── package.json
+│       │   └── src/
+│       └── another-theme/
+```
+
+### 2. Root package.json
+
+```json
+{
+	"name": "my-wordpress-project",
+	"private": true,
+	"workspaces": ["wp-content/plugins/*", "wp-content/themes/*"],
+	"scripts": {
+		"build": "turbo run build",
+		"build:dev": "turbo run build:dev",
+		"build:prod": "turbo run build:prod",
+		"start": "turbo run start",
+		"lint": "turbo run lint",
+		"lint:js": "turbo run lint:js",
+		"lint:css": "turbo run lint:css",
+		"lint:php": "turbo run lint:php",
+		"format": "turbo run format",
+		"format:js": "turbo run format:js",
+		"format:css": "turbo run format:css",
+		"format:php": "turbo run format:php",
+		"clean": "turbo run clean"
+	},
+	"devDependencies": {
+		"wp-monorepo-manager": "^0.1.0",
+		"turbo": "^2.0.0"
+	}
+}
+```
+
+### 3. Theme/Plugin package.json
+
+Each theme or plugin should have its own package.json:
+
+```json
+{
+	"name": "my-theme",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "wp-monorepo-manager build",
+		"build:dev": "wp-monorepo-manager build:dev",
+		"build:prod": "wp-monorepo-manager build:prod",
+		"start": "wp-monorepo-manager start",
+		"lint": "wp-monorepo-manager lint",
+		"lint:js": "wp-monorepo-manager lint:js",
+		"lint:css": "wp-monorepo-manager lint:css",
+		"lint:php": "wp-monorepo-manager lint:php",
+		"format": "wp-monorepo-manager format",
+		"format:js": "wp-monorepo-manager format:js",
+		"format:css": "wp-monorepo-manager format:css",
+		"format:php": "wp-monorepo-manager format:php",
+		"clean": "wp-monorepo-manager clean"
+	}
+}
+```
+
+## Usage
+
+### Building Projects
+
+Build all themes and plugins:
 
 ```bash
-# For JavaScript development
-npm install --save-dev @wordpress/eslint-plugin @wordpress/scripts eslint eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-react-hooks
+npm run build
+```
 
-# For CSS/SCSS development
-npm install --save-dev stylelint stylelint-config-standard stylelint-config-wordpress
+Build in development mode:
 
-# For PHP development
-composer require --dev wp-coding-standards/wpcs
+```bash
+npm run build:dev
+```
+
+Build in production mode:
+
+```bash
+npm run build:prod
+```
+
+### Development
+
+Start development mode for all projects:
+
+```bash
+npm run start
+```
+
+### Linting and Formatting
+
+Lint all projects:
+
+```bash
+npm run lint
+```
+
+Format all projects:
+
+```bash
+npm run format
+```
+
+### Individual Project Commands
+
+You can also run commands for individual themes or plugins:
+
+```bash
+# Build a specific theme
+npm run build --workspace=wp-content/themes/my-theme
+
+# Start development for a specific plugin
+npm run start --workspace=wp-content/plugins/my-plugin
+
+# Lint a specific theme
+npm run lint --workspace=wp-content/themes/my-theme
 ```
 
 ## Configuration
 
-### ESLint
+### ESLint Configuration
 
-The ESLint configuration includes:
+Extend the base configuration in your theme or plugin:
 
-- WordPress coding standards
-- React support
-- Import/export rules
-- Accessibility rules
-
-#### Basic Usage
-
-Create `.eslintrc.json` in your project root:
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/eslint/.eslintrc.json"]
-}
+```javascript
+// .eslintrc.js
+module.exports = {
+	extends: ['wp-monorepo-manager/config/eslint'],
+	root: true,
+	parserOptions: {
+		project: './tsconfig.json',
+	},
+};
 ```
 
-#### Customizing Rules
+### StyleLint Configuration
 
-```json
-{
-	"extends": ["wp-monorepo-manager/config/eslint/.eslintrc.json"],
-	"rules": {
-		"your-custom-rule": "error"
-	}
-}
+Extend the base configuration:
+
+```javascript
+// .stylelintrc.js
+module.exports = {
+	extends: ['wp-monorepo-manager/config/stylelint'],
+};
 ```
 
-### StyleLint
+### PHPCS Configuration
 
-The StyleLint configuration includes:
-
-- WordPress coding standards
-- Modern CSS features
-- SCSS support
-- Tailwind CSS support
-
-#### Basic Usage
-
-Create `.stylelintrc.json` in your project root:
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/stylelint/.stylelintrc.json"]
-}
-```
-
-#### Customizing Rules
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/stylelint/.stylelintrc.json"],
-	"rules": {
-		"your-custom-rule": "error"
-	}
-}
-```
-
-### PHPCS
-
-The PHPCS configuration includes:
-
-- WordPress coding standards
-- WordPress VIP coding standards
-- Custom exclusions for modern development
-
-#### Basic Usage
-
-Create `phpcs.xml.dist` in your project root:
+Extend the base configuration:
 
 ```xml
+<!-- phpcs.xml -->
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards">
-  <rule ref="wp-monorepo-manager/config/phpcs/phpcs.xml.dist"/>
+<ruleset name="WordPress Theme Coding Standards">
+    <rule ref="wp-monorepo-manager/config/phpcs.xml">
+        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent"/>
+    </rule>
 </ruleset>
 ```
 
-#### Customizing Rules
+### Webpack Configuration
 
-```xml
-<?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards">
-  <rule ref="wp-monorepo-manager/config/phpcs/phpcs.xml.dist"/>
-  <rule ref="WordPress.Files.FileName">
-    <exclude-pattern>/your-custom-pattern/</exclude-pattern>
-  </rule>
-</ruleset>
-```
-
-### Webpack
-
-The Webpack configuration includes:
-
-- WordPress scripts integration
-- Asset optimization
-- Development and production modes
-- Hot module replacement
-
-#### Basic Usage
-
-Create `webpack.config.js` in your project root:
+Extend the base configuration:
 
 ```javascript
-const { merge } = require('webpack-merge');
-const defaultConfig = require('wp-monorepo-manager/config/webpack/webpack.config.js');
+// webpack.config.js
+const baseConfig = require('wp-monorepo-manager/config/webpack');
 
-module.exports = merge(defaultConfig, {
-	// Your custom configuration
-});
-```
-
-#### Customizing Configuration
-
-```javascript
-const { merge } = require('webpack-merge');
-const defaultConfig = require('wp-monorepo-manager/config/webpack/webpack.config.js');
-
-module.exports = merge(defaultConfig, {
+module.exports = {
+	...baseConfig,
 	entry: {
-		'custom-entry': './src/custom-entry.js',
+		'my-script': './src/index.js',
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].js',
 	},
-});
-```
-
-## Usage Examples
-
-### Accessing Configuration Paths
-
-```javascript
-const { utils } = require('wp-monorepo-manager');
-
-// Get specific config path
-const eslintConfigPath = utils.getConfigPath('eslint');
-
-// Get all config paths
-const allConfigPaths = utils.getAllConfigPaths();
-```
-
-### Adding to package.json Scripts
-
-```json
-{
-	"scripts": {
-		"lint:js": "eslint .",
-		"lint:css": "stylelint \"**/*.css\"",
-		"lint:php": "phpcs",
-		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-		"format:js": "eslint . --fix",
-		"format:css": "stylelint \"**/*.css\" --fix",
-		"format:php": "phpcbf",
-		"format": "npm run format:js && npm run format:css && npm run format:php"
-	}
-}
+};
 ```
 
 ## Advanced Configuration
 
-### React Support
+### Custom Build Scripts
 
-The ESLint configuration includes React support. To use it:
+You can customize build scripts in your theme or plugin's package.json:
 
-1. Install React dependencies:
-
-```bash
-npm install --save-dev react react-dom
+```json
+{
+	"scripts": {
+		"build": "wp-monorepo-manager build && custom-build-step",
+		"start": "wp-monorepo-manager start --port 3000"
+	}
+}
 ```
 
-2. Configure your project to use React (the configuration is already included in the ESLint config).
+### Environment Variables
+
+Create a `.env` file in your project root:
+
+```env
+NODE_ENV=development
+WP_DEBUG=true
+WP_DEBUG_LOG=true
+```
+
+### Turbo Configuration
+
+Customize the Turbo configuration in your root turbo.json:
+
+```json
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalDependencies": ["**/.env.*local"],
+	"pipeline": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
+		},
+		"start": {
+			"cache": false,
+			"persistent": true
+		}
+	}
+}
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **ESLint Configuration Not Found**
+1. **Build Failures**
 
-    - Ensure the package is installed correctly
-    - Check the path in your `.eslintrc.json`
+    - Check if all dependencies are installed
+    - Verify webpack configuration
+    - Check for syntax errors in source files
 
-2. **StyleLint Configuration Not Found**
+2. **Linting Errors**
 
-    - Verify the package installation
-    - Check the path in your `.stylelintrc.json`
+    - Run `npm run lint:js` to see JavaScript errors
+    - Run `npm run lint:css` to see CSS errors
+    - Run `npm run lint:php` to see PHP errors
 
-3. **PHPCS Configuration Not Found**
-
-    - Ensure Composer dependencies are installed
-    - Check the path in your `phpcs.xml.dist`
-
-4. **Webpack Configuration Issues**
-    - Verify all required dependencies are installed
-    - Check for conflicts in your custom configuration
+3. **Development Server Issues**
+    - Check if port is already in use
+    - Verify WordPress installation
+    - Check browser console for errors
 
 ### Getting Help
 
 If you encounter issues:
 
-1. Check the [GitHub Issues](https://github.com/your-repo/issues)
-2. Review the [WordPress Coding Standards documentation](https://developer.wordpress.org/coding-standards/)
-3. Open a new issue with detailed information about your problem
+1. Check the error messages
+2. Review the configuration files
+3. Check the WordPress debug log
+4. Open an issue on GitHub

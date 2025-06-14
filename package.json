@@ -5,17 +5,23 @@
 	"main": "index.js",
 	"files": [
 		"config",
-		"index.js"
+		"index.js",
+		"turbo.json"
 	],
 	"scripts": {
-		"lint:js": "eslint .",
-		"lint:css": "stylelint \"**/*.css\"",
-		"lint:php": "phpcs",
-		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-		"format:js": "eslint . --fix",
-		"format:css": "stylelint \"**/*.css\" --fix",
-		"format:php": "phpcbf",
-		"format": "npm run format:js && npm run format:css && npm run format:php",
+		"build": "turbo run build",
+		"build:dev": "turbo run build:dev",
+		"build:prod": "turbo run build:prod",
+		"start": "turbo run start",
+		"lint": "turbo run lint",
+		"lint:js": "turbo run lint:js",
+		"lint:css": "turbo run lint:css",
+		"lint:php": "turbo run lint:php",
+		"format": "turbo run format",
+		"format:js": "turbo run format:js",
+		"format:css": "turbo run format:css",
+		"format:php": "turbo run format:php",
+		"clean": "turbo run clean",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [
@@ -25,7 +31,8 @@
 		"eslint",
 		"stylelint",
 		"phpcs",
-		"webpack"
+		"webpack",
+		"turbo"
 	],
 	"author": "",
 	"license": "MIT",
@@ -40,7 +47,8 @@
 		"stylelint": "^15.0.0",
 		"stylelint-config-standard": "^34.0.0",
 		"stylelint-config-wordpress": "^21.0.0",
-		"webpack": "^5.0.0"
+		"webpack": "^5.0.0",
+		"turbo": "^2.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@wordpress/eslint-plugin": {
@@ -75,6 +83,9 @@
 		},
 		"webpack": {
 			"optional": true
+		},
+		"turbo": {
+			"optional": true
 		}
 	},
 	"devDependencies": {
@@ -88,6 +99,7 @@
 		"stylelint": "^15.0.0",
 		"stylelint-config-standard": "^34.0.0",
 		"stylelint-config-wordpress": "^21.0.0",
-		"webpack": "^5.0.0"
+		"webpack": "^5.0.0",
+		"turbo": "^2.0.0"
 	}
 }
