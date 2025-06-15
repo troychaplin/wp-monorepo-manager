@@ -42,14 +42,36 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"@wordpress/eslint-plugin": "22.11.0",
-		"@wordpress/scripts": "30.18.0",
-		"eslint-config-wordpress": "2.0.0",
 		"postcss-import": "^16.1.0",
-		"prettier": "3.5.3",
-		"stylelint": "16.20.0",
-		"stylelint-scss": "^6.11.1",
-		"turbo": "2.5.4"
+		"prettier": "3.5.3"
+	},
+	"peerDependencies": {
+		"@wordpress/scripts": ">=30.18.0",
+		"eslint-config-wordpress": ">=2.0.0",
+		"stylelint": ">=16.20.0",
+		"stylelint-scss": ">=6.11.1",
+		"turbo": ">=2.5.4",
+		"webpack": ">=5.98.0"
+	},
+	"peerDependenciesMeta": {
+		"@wordpress/scripts": {
+			"optional": false
+		},
+		"eslint-config-wordpress": {
+			"optional": true
+		},
+		"stylelint": {
+			"optional": true
+		},
+		"stylelint-scss": {
+			"optional": true
+		},
+		"turbo": {
+			"optional": false
+		},
+		"webpack": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@commitlint/cli": "19.8.1",
@@ -63,7 +85,6 @@
 		"@wordpress/interactivity": "^6.21.0",
 		"concurrently": "^9.1.2",
 		"husky": "9.1.7",
-		"webpack": "^5.98.0",
 		"webpack-cli": "^6.0.1"
 	}
 }
