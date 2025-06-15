@@ -3,7 +3,11 @@
 	"version": "0.1.0",
 	"description": "A build tool for managing WordPress themes and plugins in a monorepo structure",
 	"main": "index.js",
+	"bin": {
+		"wp-monorepo-manager": "./bin/wp-monorepo.js"
+	},
 	"files": [
+		"bin",
 		"config",
 		"index.js",
 		"turbo.json"
@@ -22,7 +26,8 @@
 		"format:css": "turbo run format:css",
 		"format:php": "turbo run format:php",
 		"clean": "turbo run clean",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"setup-test": "node scripts/setup-test.js"
 	},
 	"keywords": [
 		"wordpress",
@@ -36,70 +41,29 @@
 	],
 	"author": "",
 	"license": "MIT",
-	"peerDependencies": {
-		"@wordpress/eslint-plugin": "^17.0.0",
-		"@wordpress/scripts": "^26.0.0",
-		"eslint": "^8.0.0",
-		"eslint-plugin-import": "^2.0.0",
-		"eslint-plugin-jsx-a11y": "^6.0.0",
-		"eslint-plugin-react": "^7.0.0",
-		"eslint-plugin-react-hooks": "^4.0.0",
-		"stylelint": "^15.0.0",
-		"stylelint-config-standard": "^34.0.0",
-		"stylelint-config-wordpress": "^21.0.0",
-		"webpack": "^5.0.0",
-		"turbo": "^2.0.0"
-	},
-	"peerDependenciesMeta": {
-		"@wordpress/eslint-plugin": {
-			"optional": true
-		},
-		"@wordpress/scripts": {
-			"optional": true
-		},
-		"eslint": {
-			"optional": true
-		},
-		"eslint-plugin-import": {
-			"optional": true
-		},
-		"eslint-plugin-jsx-a11y": {
-			"optional": true
-		},
-		"eslint-plugin-react": {
-			"optional": true
-		},
-		"eslint-plugin-react-hooks": {
-			"optional": true
-		},
-		"stylelint": {
-			"optional": true
-		},
-		"stylelint-config-standard": {
-			"optional": true
-		},
-		"stylelint-config-wordpress": {
-			"optional": true
-		},
-		"webpack": {
-			"optional": true
-		},
-		"turbo": {
-			"optional": true
-		}
+	"dependencies": {
+		"@wordpress/eslint-plugin": "22.11.0",
+		"@wordpress/scripts": "30.18.0",
+		"eslint-config-wordpress": "2.0.0",
+		"postcss-import": "^16.1.0",
+		"prettier": "3.5.3",
+		"stylelint": "16.20.0",
+		"stylelint-scss": "^6.11.1",
+		"turbo": "2.5.4"
 	},
 	"devDependencies": {
-		"@wordpress/eslint-plugin": "^17.0.0",
-		"@wordpress/scripts": "^26.0.0",
-		"eslint": "^8.0.0",
-		"eslint-plugin-import": "^2.0.0",
-		"eslint-plugin-jsx-a11y": "^6.0.0",
-		"eslint-plugin-react": "^7.0.0",
-		"eslint-plugin-react-hooks": "^4.0.0",
-		"stylelint": "^15.0.0",
-		"stylelint-config-standard": "^34.0.0",
-		"stylelint-config-wordpress": "^21.0.0",
-		"webpack": "^5.0.0",
-		"turbo": "^2.0.0"
+		"@commitlint/cli": "19.8.1",
+		"@commitlint/config-conventional": "19.8.1",
+		"@wordpress/blocks": "^14.10.0",
+		"@wordpress/data": "^10.21.0",
+		"@wordpress/dom-ready": "^4.21.0",
+		"@wordpress/element": "^6.21.0",
+		"@wordpress/i18n": "^5.21.0",
+		"@wordpress/icons": "^10.21.0",
+		"@wordpress/interactivity": "^6.21.0",
+		"concurrently": "^9.1.2",
+		"husky": "9.1.7",
+		"webpack": "^5.98.0",
+		"webpack-cli": "^6.0.1"
 	}
 }
