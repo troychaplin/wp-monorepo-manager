@@ -11,10 +11,37 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
 
 ## Testing Environment Setup
 
+You have two options for setting up the test environment:
+
+### Option 1: Using the Setup Script (Recommended)
+
+Run the setup script from the wp-monorepo-manager directory:
+
+```bash
+# Default setup (creates wp-monorepo-test directory)
+npm run setup-test
+
+# Custom directory setup
+npm run setup-test -- /path/to/your/directory
+```
+
+This will:
+
+- Create the test directory (default: wp-monorepo-test, or your specified path)
+- Check for existing WordPress installation
+- Set up the project structure
+- Create test theme and plugin
+- Install dependencies
+- Link the package locally
+
+Note: If the target directory already exists or contains a WordPress installation, you'll be prompted to confirm before proceeding.
+
+### Option 2: Manual Setup
+
 1. Create a test directory at the same level as the wp-monorepo-manager repository:
 
     ```bash
-    # Assuming you're in the parent directory of wp-monorepo-manager
+    # Assuming you are in the parent directory of wp-monorepo-manager
     mkdir wp-monorepo-test
     cd wp-monorepo-test
     ```
@@ -48,7 +75,7 @@ parent-directory/
 │   ├── config/
 │   └── ...
 │
-└── wp-monorepo-test/        # Your test directory
+└── your-test-directory/     # Your test directory (default: wp-monorepo-test)
     ├── package.json
     ├── turbo.json
     └── wp-content/

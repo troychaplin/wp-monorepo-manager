@@ -1,10 +1,17 @@
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
+const readline = require('readline');
 
 // Configuration
-const TEST_DIR = path.resolve(__dirname, '../../wp-monorepo-test');
 const PACKAGE_DIR = path.resolve(__dirname, '..');
+const TARGET_DIR = path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
+
+// Create readline interface for user input
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout,
+});
 
 // Helper functions
 function createDirectory(dir) {
@@ -19,11 +26,41 @@ function writeFile(filePath, content) {
 	console.log(`Created file: ${filePath}`);
 }
 
-function setup() {
+function isWordPressInstallation(dir) {
+	// Check for common WordPress files/directories
+	const wpFiles = ['wp-config.php', 'wp-content', 'wp-includes', 'wp-admin'];
+
+	return wpFiles.some(file => fs.existsSync(path.join(dir, file)));
+}
+
+function promptUser(question) {
+	return new Promise(resolve => {
+		rl.question(question, answer => {
+			resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+		});
+	});
+}
+
+async function setup() {
 	try {
+		// Check if directory exists
+		if (fs.existsSync(TARGET_DIR)) {
+			const isWordPress = isWordPressInstallation(TARGET_DIR);
+			const message = isWordPress
+				? `A WordPress installation was detected in ${TARGET_DIR}. Do you want to proceed with adding the monorepo structure? (y/n): `
+				: `The test directory already exists. Do you want to proceed with setup? (y/n): `;
+
+			const shouldProceed = await promptUser(message);
+			if (!shouldProceed) {
+				console.log('Setup cancelled by user.');
+				rl.close();
+				return;
+			}
+		}
+
 		// Create test directory
 		console.log('Setting up test environment...');
-		createDirectory(TEST_DIR);
+		createDirectory(TARGET_DIR);
 
 		// Create root package.json
 		const rootPackageJson = {
@@ -111,7 +148,7 @@ function setup() {
 		};
 
 		// Create theme files
-		const themeDir = path.join(TEST_DIR, 'wp-content/themes/test-theme');
+		const themeDir = path.join(TARGET_DIR, 'wp-content/themes/test-theme');
 		createDirectory(themeDir);
 		createDirectory(path.join(themeDir, 'src/scripts'));
 		writeFile(path.join(themeDir, 'package.json'), JSON.stringify(themePackageJson, null, 2));
@@ -123,7 +160,7 @@ function setup() {
 		writeFile(path.join(themeDir, 'src/editor-styles.scss'), 'body { color: #333; }');
 
 		// Create plugin files
-		const pluginDir = path.join(TEST_DIR, 'wp-content/plugins/test-plugin');
+		const pluginDir = path.join(TARGET_DIR, 'wp-content/plugins/test-plugin');
 		createDirectory(pluginDir);
 		createDirectory(path.join(pluginDir, 'src/scripts'));
 		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
@@ -135,8 +172,8 @@ function setup() {
 		writeFile(path.join(pluginDir, 'src/editor-styles.scss'), 'body { color: #333; }');
 
 		// Write root files
-		writeFile(path.join(TEST_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
-		writeFile(path.join(TEST_DIR, 'turbo.json'), JSON.stringify(turboJson, null, 2));
+		writeFile(path.join(TARGET_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
+		writeFile(path.join(TARGET_DIR, 'turbo.json'), JSON.stringify(turboJson, null, 2));
 
 		// First, link the package globally from the package directory
 		console.log('\nLinking wp-monorepo-manager globally...');
@@ -144,22 +181,25 @@ function setup() {
 
 		// Install dependencies
 		console.log('\nInstalling dependencies...');
-		execSync('npm install', { cwd: TEST_DIR, stdio: 'inherit' });
+		execSync('npm install', { cwd: TARGET_DIR, stdio: 'inherit' });
 
 		// Link the package in the test directory
 		console.log('\nLinking wp-monorepo-manager in test directory...');
-		execSync('npm link wp-monorepo-manager', { cwd: TEST_DIR, stdio: 'inherit' });
+		execSync('npm link wp-monorepo-manager', { cwd: TARGET_DIR, stdio: 'inherit' });
 
 		// Run initial build
 		console.log('\nRunning initial build...');
-		execSync('npm run build', { cwd: TEST_DIR, stdio: 'inherit' });
+		execSync('npm run build', { cwd: TARGET_DIR, stdio: 'inherit' });
 
 		console.log('\nSetup completed successfully!');
 		console.log('\nNext steps:');
-		console.log('1. cd wp-monorepo-test');
+		console.log('1. cd ../wp-monorepo-test');
 		console.log('2. npm run start');
+
+		rl.close();
 	} catch (error) {
 		console.error('\nError during setup:', error.message);
+		rl.close();
 		process.exit(1);
 	}
 }
