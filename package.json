@@ -6,6 +6,7 @@
 	"bin": {
 		"wp-monorepo-manager": "./bin/wp-monorepo.js"
 	},
+	"packageManager": "npm@10.2.4",
 	"files": [
 		"bin",
 		"config",
