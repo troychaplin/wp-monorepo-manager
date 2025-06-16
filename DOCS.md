@@ -9,6 +9,8 @@
     - [StyleLint](#stylelint)
     - [PHPCS](#phpcs)
     - [Webpack](#webpack)
+    - [Prettier](#prettier)
+    - [EditorConfig](#editorconfig)
 4. [Usage Examples](#usage-examples)
 5. [Advanced Configuration](#advanced-configuration)
 6. [Troubleshooting](#troubleshooting)
@@ -160,7 +162,11 @@ npm run lint --workspace=wp-content/themes/my-theme
 
 ## Configuration
 
+The package provides standardized configurations for various development tools. Each configuration can be extended or customized to fit your project's needs.
+
 ### ESLint Configuration
+
+ESLint is used for JavaScript/TypeScript linting. The configuration includes WordPress-specific rules and best practices.
 
 Extend the base configuration in your theme or plugin:
 
@@ -169,13 +175,26 @@ Extend the base configuration in your theme or plugin:
 module.exports = {
 	extends: ['wp-monorepo-manager/config/eslint'],
 	root: true,
+	// Only include parserOptions if using TypeScript
 	parserOptions: {
-		project: './tsconfig.json',
+		project: './tsconfig.json', // Path to your TypeScript configuration
 	},
 };
 ```
 
+Create a `.eslintignore` file in your project root:
+
+```text
+# Copy from wp-monorepo-manager/config/eslint/.eslintignore
+node_modules
+dist
+build
+coverage
+```
+
 ### StyleLint Configuration
+
+StyleLint is used for CSS/SCSS linting. The configuration includes WordPress-specific style guidelines and best practices.
 
 Extend the base configuration:
 
@@ -186,7 +205,19 @@ module.exports = {
 };
 ```
 
+Create a `.stylelintignore` file in your project root:
+
+```text
+# Copy from wp-monorepo-manager/config/stylelint/.stylelintignore
+node_modules
+dist
+build
+coverage
+```
+
 ### PHPCS Configuration
+
+PHPCS (PHP Code Sniffer) is used for PHP linting. The configuration includes WordPress coding standards.
 
 Extend the base configuration:
 
@@ -201,6 +232,8 @@ Extend the base configuration:
 ```
 
 ### Webpack Configuration
+
+Webpack is used for bundling JavaScript and CSS assets. The configuration includes WordPress-specific optimizations and development tools.
 
 Extend the base configuration:
 
@@ -219,6 +252,48 @@ module.exports = {
 	},
 };
 ```
+
+### Prettier Configuration
+
+Prettier is used for code formatting. The configuration ensures consistent code style across your project.
+
+Extend the base configuration:
+
+```javascript
+// .prettierrc.js
+module.exports = {
+	...require('wp-monorepo-manager/config/prettier'),
+	// Add your custom Prettier rules here
+};
+```
+
+Create a `.prettierignore` file in your project root:
+
+```text
+# Copy from wp-monorepo-manager/config/prettier/.prettierignore
+node_modules
+dist
+build
+coverage
+```
+
+### EditorConfig Configuration
+
+EditorConfig helps maintain consistent coding styles across different editors and IDEs. It's particularly useful in team environments.
+
+Copy the EditorConfig file to your project root:
+
+```bash
+cp node_modules/wp-monorepo-manager/config/editor/.editorconfig .
+```
+
+This configuration ensures consistent:
+
+- Indentation (tabs vs spaces)
+- Line endings
+- Character encoding
+- File trimming
+- And other editor-specific settings
 
 ## Advanced Configuration
 
