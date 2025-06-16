@@ -16,10 +16,10 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v3
               with:
                   node-version: 20
                   cache: 'npm'
@@ -60,9 +60,9 @@ jobs:
                 working-directory: wordpress/wp-content/plugins/monorepo-plugin
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v3
 
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v3
               with:
                   node-version: 20
                   cache: 'npm'
@@ -98,9 +98,9 @@ jobs:
                 working-directory: wordpress/wp-content/themes/monorepo-theme
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v3
 
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v3
               with:
                   node-version: 20
                   cache: 'npm'
