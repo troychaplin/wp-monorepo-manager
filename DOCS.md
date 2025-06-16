@@ -2,327 +2,88 @@
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Configuration](#configuration)
-    - [ESLint](#eslint)
-    - [StyleLint](#stylelint)
-    - [PHPCS](#phpcs)
-    - [Webpack](#webpack)
-    - [Prettier](#prettier)
-    - [EditorConfig](#editorconfig)
-4. [Usage Examples](#usage-examples)
-5. [Advanced Configuration](#advanced-configuration)
-6. [Troubleshooting](#troubleshooting)
-
-## Overview
-
-This package provides standardized configurations and build tools for managing WordPress themes and plugins in a monorepo structure. It uses Turborepo for efficient workspace management and provides consistent configurations for ESLint, StyleLint, PHPCS, and Webpack.
-
-## Installation
-
-```bash
-npm install --save-dev wp-monorepo-manager
-```
-
-## Monorepo Setup
-
-### 1. Project Structure
-
-```
-my-wordpress-project/
-├── package.json
-├── turbo.json
-├── wp-content/
-│   ├── plugins/
-│   │   ├── my-plugin/
-│   │   │   ├── package.json
-│   │   │   └── src/
-│   │   └── another-plugin/
-│   └── themes/
-│       ├── my-theme/
-│       │   ├── package.json
-│       │   └── src/
-│       └── another-theme/
-```
-
-### 2. Root package.json
-
-```json
-{
-	"name": "my-wordpress-project",
-	"private": true,
-	"workspaces": ["wp-content/plugins/*", "wp-content/themes/*"],
-	"scripts": {
-		"build": "turbo run build",
-		"build:dev": "turbo run build:dev",
-		"build:prod": "turbo run build:prod",
-		"start": "turbo run start",
-		"lint": "turbo run lint",
-		"lint:js": "turbo run lint:js",
-		"lint:css": "turbo run lint:css",
-		"lint:php": "turbo run lint:php",
-		"format": "turbo run format",
-		"format:js": "turbo run format:js",
-		"format:css": "turbo run format:css",
-		"format:php": "turbo run format:php",
-		"clean": "turbo run clean"
-	},
-	"devDependencies": {
-		"wp-monorepo-manager": "^0.1.0",
-		"turbo": "^2.0.0"
-	}
-}
-```
-
-### 3. Theme/Plugin package.json
-
-Each theme or plugin should have its own package.json:
-
-```json
-{
-	"name": "my-theme",
-	"version": "1.0.0",
-	"scripts": {
-		"build": "wp-monorepo-manager build",
-		"build:dev": "wp-monorepo-manager build:dev",
-		"build:prod": "wp-monorepo-manager build:prod",
-		"start": "wp-monorepo-manager start",
-		"lint": "wp-monorepo-manager lint",
-		"lint:js": "wp-monorepo-manager lint:js",
-		"lint:css": "wp-monorepo-manager lint:css",
-		"lint:php": "wp-monorepo-manager lint:php",
-		"format": "wp-monorepo-manager format",
-		"format:js": "wp-monorepo-manager format:js",
-		"format:css": "wp-monorepo-manager format:css",
-		"format:php": "wp-monorepo-manager format:php",
-		"clean": "wp-monorepo-manager clean"
-	}
-}
-```
-
-## Usage
-
-### Building Projects
-
-Build all themes and plugins:
-
-```bash
-npm run build
-```
-
-Build in development mode:
-
-```bash
-npm run build:dev
-```
-
-Build in production mode:
-
-```bash
-npm run build:prod
-```
-
-### Development
-
-Start development mode for all projects:
-
-```bash
-npm run start
-```
-
-### Linting and Formatting
-
-Lint all projects:
-
-```bash
-npm run lint
-```
-
-Format all projects:
-
-```bash
-npm run format
-```
-
-### Individual Project Commands
-
-You can also run commands for individual themes or plugins:
-
-```bash
-# Build a specific theme
-npm run build --workspace=wp-content/themes/my-theme
-
-# Start development for a specific plugin
-npm run start --workspace=wp-content/plugins/my-plugin
-
-# Lint a specific theme
-npm run lint --workspace=wp-content/themes/my-theme
-```
-
-## Configuration
-
-The package provides standardized configurations for various development tools. Each configuration can be extended or customized to fit your project's needs.
-
-### ESLint Configuration
-
-ESLint is used for JavaScript/TypeScript linting. The configuration includes WordPress-specific rules and best practices.
-
-Extend the base configuration in your theme or plugin:
-
-```javascript
-// .eslintrc.js
-module.exports = {
-	extends: ['wp-monorepo-manager/config/eslint'],
-	root: true,
-	// Only include parserOptions if using TypeScript
-	parserOptions: {
-		project: './tsconfig.json', // Path to your TypeScript configuration
-	},
-};
-```
-
-Create a `.eslintignore` file in your project root:
-
-```text
-# Copy from wp-monorepo-manager/config/eslint/.eslintignore
-node_modules
-dist
-build
-coverage
-```
-
-### StyleLint Configuration
-
-StyleLint is used for CSS/SCSS linting. The configuration includes WordPress-specific style guidelines and best practices.
-
-Extend the base configuration:
-
-```javascript
-// .stylelintrc.js
-module.exports = {
-	extends: ['wp-monorepo-manager/config/stylelint'],
-};
-```
-
-Create a `.stylelintignore` file in your project root:
-
-```text
-# Copy from wp-monorepo-manager/config/stylelint/.stylelintignore
-node_modules
-dist
-build
-coverage
-```
-
-### PHPCS Configuration
-
-PHPCS (PHP Code Sniffer) is used for PHP linting. The configuration includes WordPress coding standards.
-
-Extend the base configuration:
-
-```xml
-<!-- phpcs.xml -->
-<?xml version="1.0"?>
-<ruleset name="WordPress Theme Coding Standards">
-    <rule ref="wp-monorepo-manager/config/phpcs.xml">
-        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent"/>
-    </rule>
-</ruleset>
-```
-
-### Webpack Configuration
-
-Webpack is used for bundling JavaScript and CSS assets. The configuration includes WordPress-specific optimizations and development tools.
-
-Extend the base configuration:
-
-```javascript
-// webpack.config.js
-const baseConfig = require('wp-monorepo-manager/config/webpack');
-
-module.exports = {
-	...baseConfig,
-	entry: {
-		'my-script': './src/index.js',
-	},
-	output: {
-		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].js',
-	},
-};
-```
-
-### Prettier Configuration
-
-Prettier is used for code formatting. The configuration ensures consistent code style across your project.
-
-Extend the base configuration:
-
-```javascript
-// .prettierrc.js
-module.exports = {
-	...require('wp-monorepo-manager/config/prettier'),
-	// Add your custom Prettier rules here
-};
-```
-
-Create a `.prettierignore` file in your project root:
-
-```text
-# Copy from wp-monorepo-manager/config/prettier/.prettierignore
-node_modules
-dist
-build
-coverage
-```
-
-### EditorConfig Configuration
-
-EditorConfig helps maintain consistent coding styles across different editors and IDEs. It's particularly useful in team environments.
-
-Copy the EditorConfig file to your project root:
-
-```bash
-cp node_modules/wp-monorepo-manager/config/editor/.editorconfig .
-```
-
-This configuration ensures consistent:
-
-- Indentation (tabs vs spaces)
-- Line endings
-- Character encoding
-- File trimming
-- And other editor-specific settings
+1. [Advanced Configuration](#advanced-configuration)
+    - [Custom Build Scripts](#custom-build-scripts)
+    - [Environment Variables](#environment-variables)
+    - [Turbo Configuration](#turbo-configuration)
+    - [Webpack Customization](#webpack-customization)
+    - [Linting and Formatting Customization](#linting-and-formatting-customization)
+2. [Development Workflows](#development-workflows)
+    - [Multi-Environment Setup](#multi-environment-setup)
+    - [Continuous Integration](#continuous-integration)
+    - [Performance Optimization](#performance-optimization)
+3. [Troubleshooting](#troubleshooting)
+4. [API Reference](#api-reference)
 
 ## Advanced Configuration
 
 ### Custom Build Scripts
 
-You can customize build scripts in your theme or plugin's package.json:
+The build system is designed to be extensible, allowing you to add custom build steps or modify existing ones. This is particularly useful for:
+
+- Adding pre-build validation
+- Running custom asset processing
+- Integrating with deployment systems
+- Adding environment-specific build steps
+
+Example with multiple custom steps:
 
 ```json
 {
 	"scripts": {
+		"prebuild": "npm run validate",
 		"build": "wp-monorepo-manager build && custom-build-step",
-		"start": "wp-monorepo-manager start --port 3000"
+		"postbuild": "npm run generate-docs",
+		"validate": "node scripts/validate.js",
+		"generate-docs": "node scripts/generate-docs.js",
+		"start": "wp-monorepo-manager start --port 3000",
+		"deploy": "wp-monorepo-manager build:prod && deploy-script"
 	}
 }
 ```
 
 ### Environment Variables
 
-Create a `.env` file in your project root:
+Environment variables are crucial for managing different deployment environments and build configurations. The system supports multiple environment files:
 
 ```env
+# .env.development
 NODE_ENV=development
 WP_DEBUG=true
 WP_DEBUG_LOG=true
+BROWSERSYNC_PORT=3000
+WP_ENVIRONMENT_TYPE=development
+
+# .env.staging
+NODE_ENV=staging
+WP_DEBUG=true
+WP_DEBUG_LOG=true
+BROWSERSYNC_PORT=3001
+WP_ENVIRONMENT_TYPE=staging
+
+# .env.production
+NODE_ENV=production
+WP_DEBUG=false
+WP_DEBUG_LOG=false
+WP_ENVIRONMENT_TYPE=production
+```
+
+Usage in your code:
+
+```javascript
+// Access environment variables
+const isDevelopment = process.env.NODE_ENV === 'development';
+const debugEnabled = process.env.WP_DEBUG === 'true';
 ```
 
 ### Turbo Configuration
 
-Customize the Turbo configuration in your root turbo.json:
+Turbo is used for efficient build orchestration and caching. The configuration below shows how to:
+
+- Define task dependencies
+- Configure caching behavior
+- Set up environment variable handling
+- Optimize build pipelines
 
 ```json
 {
@@ -331,12 +92,336 @@ Customize the Turbo configuration in your root turbo.json:
 	"pipeline": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**"]
+			"outputs": ["dist/**"],
+			"env": ["NODE_ENV", "WP_DEBUG"],
+			"cache": true
+		},
+		"build:dev": {
+			"dependsOn": ["^build:dev"],
+			"outputs": ["dist/**"],
+			"env": ["NODE_ENV", "WP_DEBUG"],
+			"cache": false
+		},
+		"build:prod": {
+			"dependsOn": ["^build:prod"],
+			"outputs": ["dist/**"],
+			"env": ["NODE_ENV", "WP_DEBUG"],
+			"cache": true
 		},
 		"start": {
 			"cache": false,
-			"persistent": true
+			"persistent": true,
+			"env": ["BROWSERSYNC_PORT"]
+		},
+		"lint": {
+			"outputs": [],
+			"env": ["CI"],
+			"cache": true
+		},
+		"format": {
+			"outputs": [],
+			"cache": true
+		},
+		"clean": {
+			"cache": false
 		}
+	}
+}
+```
+
+### Webpack Customization
+
+Webpack configuration can be extended for advanced use cases. This example shows:
+
+- Multiple entry points for different scripts
+- Code splitting and chunk optimization
+- Asset handling
+- Development and production optimizations
+
+```javascript
+// webpack.config.js
+const path = require('path');
+const baseConfig = require('wp-monorepo-manager/config/webpack');
+
+module.exports = {
+	...baseConfig,
+	entry: {
+		'my-script': './src/index.js',
+		'admin-script': './src/admin.js',
+		'editor-script': './src/editor.js',
+	},
+	output: {
+		path: path.resolve(__dirname, 'dist'),
+		filename: '[name].js',
+		chunkFilename: '[name].[chunkhash].js',
+		publicPath: '/wp-content/themes/your-theme/dist/',
+	},
+	optimization: {
+		splitChunks: {
+			chunks: 'all',
+			cacheGroups: {
+				vendor: {
+					test: /[\\/]node_modules[\\/]/,
+					name: 'vendors',
+					chunks: 'all',
+					priority: 10,
+				},
+				wordpress: {
+					test: /[\\/]@wordpress[\\/]/,
+					name: 'wordpress',
+					chunks: 'all',
+					priority: 20,
+				},
+			},
+		},
+		minimize: process.env.NODE_ENV === 'production',
+	},
+	module: {
+		rules: [
+			...baseConfig.module.rules,
+			{
+				test: /\.(png|svg|jpg|jpeg|gif)$/i,
+				type: 'asset/resource',
+				generator: {
+					filename: 'images/[name][ext]',
+				},
+			},
+			{
+				test: /\.(woff|woff2|eot|ttf|otf)$/i,
+				type: 'asset/resource',
+				generator: {
+					filename: 'fonts/[name][ext]',
+				},
+			},
+		],
+	},
+	devServer: {
+		hot: true,
+		port: process.env.BROWSERSYNC_PORT || 3000,
+		proxy: {
+			'/': 'http://localhost:8000',
+		},
+	},
+};
+```
+
+### Linting and Formatting Customization
+
+#### ESLint Advanced Configuration
+
+ESLint configuration can be customized for:
+
+- TypeScript support
+- WordPress coding standards
+- Custom rule sets
+- Import/export handling
+
+```javascript
+// .eslintrc.js
+module.exports = {
+	extends: [
+		'wp-monorepo-manager/config/eslint',
+		'plugin:@typescript-eslint/recommended',
+		'plugin:import/recommended',
+		'plugin:import/typescript',
+	],
+	root: true,
+	parser: '@typescript-eslint/parser',
+	parserOptions: {
+		project: './tsconfig.json',
+		tsconfigRootDir: __dirname,
+		sourceType: 'module',
+		ecmaVersion: 2021,
+	},
+	settings: {
+		'import/resolver': {
+			typescript: {
+				project: './tsconfig.json',
+			},
+			node: {
+				extensions: ['.js', '.jsx', '.ts', '.tsx'],
+			},
+		},
+	},
+	rules: {
+		'no-console': ['warn', { allow: ['warn', 'error'] }],
+		'@wordpress/no-global-active-element': 'error',
+		'@typescript-eslint/explicit-function-return-type': 'warn',
+		'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+		'import/order': [
+			'error',
+			{
+				groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+				'newlines-between': 'always',
+				alphabetize: { order: 'asc' },
+			},
+		],
+	},
+	overrides: [
+		{
+			files: ['*.test.ts', '*.test.tsx'],
+			rules: {
+				'@typescript-eslint/no-explicit-any': 'off',
+			},
+		},
+	],
+};
+```
+
+#### StyleLint Advanced Configuration
+
+StyleLint configuration can be customized for:
+
+- SCSS support
+- WordPress style guidelines
+- Custom property patterns
+- Media query handling
+
+```javascript
+// .stylelintrc.js
+module.exports = {
+	extends: ['wp-monorepo-manager/config/stylelint', 'stylelint-config-recommended-scss'],
+	rules: {
+		'selector-class-pattern': null,
+		'no-descending-specificity': null,
+		'scss/at-mixin-pattern': '^[a-z][a-zA-Z0-9]+$',
+		'no-descending-specificity': null,
+		'font-family-no-missing-generic-family-keyword': null,
+		'scss/at-import-partial-extension': 'always',
+		'scss/at-mixin-argumentless-call-parentheses': 'always',
+		'scss/dollar-variable-pattern': '^[a-z][a-zA-Z0-9]+$',
+		'media-feature-name-no-vendor-prefix': true,
+		'at-rule-no-vendor-prefix': true,
+		'property-no-vendor-prefix': true,
+		'value-no-vendor-prefix': true,
+	},
+	overrides: [
+		{
+			files: ['**/*.scss'],
+			rules: {
+				'scss/at-import-partial-extension': 'always',
+			},
+		},
+	],
+};
+```
+
+## Development Workflows
+
+### Multi-Environment Setup
+
+Configure different environments for development, staging, and production. This setup allows for:
+
+- Environment-specific debugging
+- Different port configurations
+- Custom build optimizations
+- Environment-specific features
+
+```javascript
+// config/environments.js
+module.exports = {
+	development: {
+		WP_DEBUG: true,
+		WP_DEBUG_LOG: true,
+		BROWSERSYNC_PORT: 3000,
+		ENABLE_SOURCE_MAPS: true,
+		ENABLE_HOT_RELOAD: true,
+	},
+	staging: {
+		WP_DEBUG: true,
+		WP_DEBUG_LOG: true,
+		BROWSERSYNC_PORT: 3001,
+		ENABLE_SOURCE_MAPS: true,
+		ENABLE_HOT_RELOAD: false,
+	},
+	production: {
+		WP_DEBUG: false,
+		WP_DEBUG_LOG: false,
+		ENABLE_SOURCE_MAPS: false,
+		ENABLE_HOT_RELOAD: false,
+	},
+};
+```
+
+### Continuous Integration
+
+Example GitHub Actions workflow with:
+
+- Multiple Node.js versions
+- Caching
+- Parallel jobs
+- Deployment stages
+
+```yaml
+name: CI
+
+on:
+	push:
+		branches: [main]
+	pull_request:
+		branches: [main]
+
+jobs:
+	test:
+		runs-on: ubuntu-latest
+		strategy:
+			matrix:
+				node-version: [16.x, 18.x]
+		steps:
+			- uses: actions/checkout@v3
+			- uses: actions/setup-node@v3
+				with:
+					node-version: ${{ matrix.node-version }}
+					cache: 'npm'
+			- run: npm ci
+			- run: npm run lint
+			- run: npm run test
+
+	build:
+		needs: test
+		runs-on: ubuntu-latest
+		steps:
+			- uses: actions/checkout@v3
+			- uses: actions/setup-node@v3
+				with:
+					node-version: '18'
+					cache: 'npm'
+			- run: npm ci
+			- run: npm run build:prod
+			- uses: actions/upload-artifact@v3
+				with:
+					name: dist
+					path: dist/
+
+	deploy:
+		needs: build
+		if: github.ref == 'refs/heads/main'
+		runs-on: ubuntu-latest
+		steps:
+			- uses: actions/checkout@v3
+			- uses: actions/download-artifact@v3
+				with:
+					name: dist
+			- name: Deploy to production
+				run: |
+					# Add your deployment steps here
+```
+
+### Performance Optimization
+
+Optimize build performance with:
+
+- Turbo caching
+- Webpack optimizations
+- Memory management
+- Parallel processing
+
+```json
+{
+	"scripts": {
+		"build": "turbo run build --cache-dir=.turbo/cache",
+		"build:prod": "turbo run build:prod --cache-dir=.turbo/cache",
+		"build:parallel": "turbo run build --parallel --cache-dir=.turbo/cache"
 	}
 }
 ```
@@ -345,28 +430,74 @@ Customize the Turbo configuration in your root turbo.json:
 
 ### Common Issues
 
-1. **Build Failures**
+1. **Build Performance Issues**
 
-    - Check if all dependencies are installed
-    - Verify webpack configuration
-    - Check for syntax errors in source files
+    - Enable Turbo caching
+    - Optimize webpack configuration
+    - Use production mode for builds
+    - Implement code splitting
+    - Use parallel processing
 
-2. **Linting Errors**
+2. **Memory Issues**
 
-    - Run `npm run lint:js` to see JavaScript errors
-    - Run `npm run lint:css` to see CSS errors
-    - Run `npm run lint:php` to see PHP errors
+    - Increase Node.js memory limit: `NODE_OPTIONS="--max-old-space-size=4096"`
+    - Optimize webpack chunking
+    - Use production mode for builds
+    - Implement lazy loading
+    - Clean up unused dependencies
 
 3. **Development Server Issues**
-    - Check if port is already in use
+    - Check port conflicts
     - Verify WordPress installation
     - Check browser console for errors
+    - Verify environment variables
+    - Check network connectivity
 
-### Getting Help
+### Debugging
 
-If you encounter issues:
+Enable verbose logging for detailed debugging:
 
-1. Check the error messages
-2. Review the configuration files
-3. Check the WordPress debug log
-4. Open an issue on GitHub
+```bash
+# Enable all debug logs
+DEBUG=wp-monorepo-manager:* npm run start
+
+# Enable specific debug logs
+DEBUG=wp-monorepo-manager:webpack npm run start
+DEBUG=wp-monorepo-manager:eslint npm run lint
+```
+
+## API Reference
+
+### CLI Commands
+
+```bash
+# Build commands
+wp-monorepo-manager build [options]
+wp-monorepo-manager build:dev [options]
+wp-monorepo-manager build:prod [options]
+
+# Development commands
+wp-monorepo-manager start [options]
+wp-monorepo-manager start:dev [options]
+
+# Linting and formatting
+wp-monorepo-manager lint [options]
+wp-monorepo-manager format [options]
+
+# Utility commands
+wp-monorepo-manager clean [options]
+wp-monorepo-manager validate [options]
+```
+
+### Options
+
+- `--mode`: Set build mode (development/production)
+- `--port`: Set development server port
+- `--watch`: Enable watch mode
+- `--cache`: Enable caching
+- `--verbose`: Enable verbose logging
+- `--parallel`: Run tasks in parallel
+- `--filter`: Filter tasks by package name
+- `--force`: Force rebuild without cache
+- `--no-cache`: Disable caching
+- `--debug`: Enable debug mode

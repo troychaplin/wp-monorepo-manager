@@ -36,18 +36,27 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     ```json
     {
     	"name": "my-wordpress-project",
+    	"version": "1.0.0",
     	"private": true,
-    	"workspaces": ["wp-content/plugins/*", "wp-content/themes/*"],
+    	"workspaces": ["wp-content/themes/*", "wp-content/plugins/*"],
     	"scripts": {
     		"build": "turbo run build",
+    		"build:dev": "turbo run build:dev",
+    		"build:prod": "turbo run build:prod",
     		"start": "turbo run start",
     		"lint": "turbo run lint",
-    		"format": "turbo run format"
+    		"format": "turbo run format",
+    		"clean": "turbo run clean"
     	},
     	"devDependencies": {
+    		"turbo": "^2.0.0",
     		"wp-monorepo-manager": "^0.1.0",
-    		"turbo": "^2.0.0"
-    	}
+    		"@wordpress/browserslist-config": "^6.25.0",
+    		"css-loader": "^7.1.2",
+    		"sass-loader": "^16.0.5",
+    		"sass": "^1.71.0"
+    	},
+    	"packageManager": "npm@10.2.4"
     }
     ```
 
@@ -55,6 +64,96 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     ```bash
     npm run build
     ```
+
+## Configuration
+
+The package includes pre-configured settings for various development tools. These configurations are located in the `config/` directory:
+
+### ESLint Configuration
+
+ESLint is configured to enforce JavaScript/TypeScript coding standards. Create a `.eslintrc.json` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/eslint"]
+}
+```
+
+### StyleLint Configuration
+
+StyleLint ensures consistent CSS/SCSS coding standards. Create a `.stylelintrc.json` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/stylelint"]
+}
+```
+
+You may also want to create a `.stylelintignore` file to exclude certain files:
+
+```
+node_modules
+dist
+build
+```
+
+### Prettier Configuration
+
+Prettier provides code formatting rules. Create a `.prettierrc` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/prettier"]
+}
+```
+
+Optionally create a `.prettierignore` file to exclude files from formatting:
+
+```
+node_modules
+dist
+build
+```
+
+### PHPCS Configuration
+
+PHP_CodeSniffer enforces PHP coding standards. Create a `phpcs.xml` file in your project root:
+
+```xml
+<?xml version="1.0"?>
+<ruleset name="WordPress Monorepo Standards">
+    <rule ref="wp-monorepo-manager/config/phpcs"/>
+</ruleset>
+```
+
+### Webpack Configuration
+
+Webpack is configured for asset bundling. Create a `webpack.config.js` file in your project root:
+
+```javascript
+const { webpackConfig } = require('wp-monorepo-manager/config/webpack');
+
+module.exports = webpackConfig;
+```
+
+### Editor Configuration
+
+The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. Create an `.editorconfig` file in your project root:
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
+indent_size = 2
+```
 
 ## Available Commands
 
