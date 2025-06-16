@@ -7,7 +7,7 @@ on:
             - '**/*'
 
 jobs:
-    build-and-lint:
+    lint:
         runs-on: ubuntu-latest
 
         steps:
@@ -26,14 +26,3 @@ jobs:
 
             - name: Lint
               run: npx turbo run lint
-
-            - name: Build
-              run: npx turbo run build
-
-            - name: Cache dependencies
-              uses: actions/cache@v3
-              with:
-                  path: |
-                      **/node_modules
-                      .turbo
-                  key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}

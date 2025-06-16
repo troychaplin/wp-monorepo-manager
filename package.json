@@ -14,19 +14,6 @@
 		"turbo.json"
 	],
 	"scripts": {
-		"build": "turbo run build",
-		"build:dev": "turbo run build:dev",
-		"build:prod": "turbo run build:prod",
-		"start": "turbo run start",
-		"lint:js": "turbo run lint:js",
-		"lint:css": "turbo run lint:css",
-		"lint:php": "turbo run lint:php",
-		"format": "turbo run format",
-		"format:js": "turbo run format:js",
-		"format:css": "turbo run format:css",
-		"format:php": "turbo run format:php",
-		"clean": "turbo run clean",
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"setup-test": "node scripts/setup-test.js"
 	},
 	"keywords": [
