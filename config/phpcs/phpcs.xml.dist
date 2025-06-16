@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+    <description>A custom set of code standard rules for WordPress development.</description>
+
+    <!-- What to scan -->
+    <file>.</file>
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/node_modules/*</exclude-pattern>
+    <exclude-pattern>/build/*</exclude-pattern>
+    <exclude-pattern>/dist/*</exclude-pattern>
+
+    <!-- How to scan -->
+    <arg name="extensions" value="php"/>
+    <arg value="sp"/>
+
+    <!-- Rules: WordPress Coding Standards -->
+    <rule ref="WordPress">
+        <!-- Exclude rules -->
+        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="WordPress.WP.I18n"/>
+        <exclude name="WordPress.Security.EscapeOutput"/>
+        <exclude name="WordPress.Security.NonceVerification"/>
+    </rule>
+
+    <!-- Rules: WordPress VIP Coding Standards -->
+    <rule ref="WordPressVIPMinimum">
+        <exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions"/>
+    </rule>
+
+    <!-- Rules: WordPress Coding Standards Extra -->
+    <rule ref="WordPress-Extra">
+        <exclude name="WordPress.Files.FileName"/>
+    </rule>
+
+    <!-- Set minimum PHP version -->
+    <config name="testVersion" value="7.4-"/>
+</ruleset> 
