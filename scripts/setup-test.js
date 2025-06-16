@@ -17,13 +17,13 @@ const rl = readline.createInterface({
 function createDirectory(dir) {
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, { recursive: true });
-		console.log(`Created directory: ${dir}`);
+		// console.log(`Created directory: ${dir}`);
 	}
 }
 
 function writeFile(filePath, content) {
 	fs.writeFileSync(filePath, content);
-	console.log(`Created file: ${filePath}`);
+	// console.log(`Created file: ${filePath}`);
 }
 
 function isWordPressInstallation(dir) {
@@ -52,14 +52,14 @@ async function setup() {
 
 			const shouldProceed = await promptUser(message);
 			if (!shouldProceed) {
-				console.log('Setup cancelled by user.');
+				// console.log('Setup cancelled by user.');
 				rl.close();
 				return;
 			}
 		}
 
 		// Create test directory
-		console.log('Setting up test environment...');
+		// console.log('Setting up test environment...');
 		createDirectory(TARGET_DIR);
 
 		// Create root package.json
@@ -121,6 +121,7 @@ async function setup() {
 		const themePackageJson = {
 			name: 'test-theme',
 			version: '1.0.0',
+			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
 				build: 'wp-monorepo-manager build',
 				'build:dev': 'wp-monorepo-manager build:dev',
@@ -136,6 +137,7 @@ async function setup() {
 		const pluginPackageJson = {
 			name: 'test-plugin',
 			version: '1.0.0',
+			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
 				build: 'wp-monorepo-manager build',
 				'build:dev': 'wp-monorepo-manager build:dev',
@@ -176,29 +178,41 @@ async function setup() {
 		writeFile(path.join(TARGET_DIR, 'turbo.json'), JSON.stringify(turboJson, null, 2));
 
 		// First, link the package globally from the package directory
-		console.log('\nLinking wp-monorepo-manager globally...');
+		// console.log('\nLinking wp-monorepo-manager globally...');
 		execSync('npm link', { cwd: PACKAGE_DIR, stdio: 'inherit' });
 
 		// Install dependencies
-		console.log('\nInstalling dependencies...');
+		// console.log('\nInstalling dependencies...');
 		execSync('npm install', { cwd: TARGET_DIR, stdio: 'inherit' });
 
+		// Install browserslist-config in the test environment
+		execSync('npm install --save-dev @wordpress/browserslist-config', {
+			cwd: TARGET_DIR,
+			stdio: 'inherit',
+		});
+
+		// Install css-loader and sass-loader in the test environment
+		execSync('npm install --save-dev css-loader sass-loader sass', {
+			cwd: TARGET_DIR,
+			stdio: 'inherit',
+		});
+
 		// Link the package in the test directory
-		console.log('\nLinking wp-monorepo-manager in test directory...');
+		// console.log('\nLinking wp-monorepo-manager in test directory...');
 		execSync('npm link wp-monorepo-manager', { cwd: TARGET_DIR, stdio: 'inherit' });
 
 		// Run initial build
-		console.log('\nRunning initial build...');
+		// console.log('\nRunning initial build...');
 		execSync('npm run build', { cwd: TARGET_DIR, stdio: 'inherit' });
 
-		console.log('\nSetup completed successfully!');
-		console.log('\nNext steps:');
-		console.log('1. cd ../wp-monorepo-test');
-		console.log('2. npm run start');
+		// console.log('\nSetup completed successfully!');
+		// console.log('\nNext steps:');
+		// console.log('1. cd ../wp-monorepo-test');
+		// console.log('2. npm run start');
 
 		rl.close();
 	} catch (error) {
-		console.error('\nError during setup:', error.message);
+		// console.error('\nError during setup:', error.message);
 		rl.close();
 		process.exit(1);
 	}
