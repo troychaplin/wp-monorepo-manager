@@ -14,7 +14,9 @@
 		"turbo.json"
 	],
 	"scripts": {
-		"setup-test": "node scripts/setup-test.js"
+		"setup": "node scripts/setup-monorepo.js",
+		"setup:theme": "node scripts/setup-theme.js",
+		"setup:plugin": "node scripts/setup-plugin.js"
 	},
 	"keywords": [
 		"wordpress",
@@ -29,33 +31,23 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
+		"@wordpress/browserslist-config": "^6.25.0",
+		"@wordpress/eslint-plugin": "22.11.0",
+		"@wordpress/scripts": "30.18.0",
+		"css-loader": "^7.1.2",
+		"eslint-config-wordpress": "2.0.0",
 		"postcss-import": "^16.1.0",
-		"prettier": "3.5.3"
+		"prettier": "3.5.3",
+		"sass": "^1.71.0",
+		"sass-loader": "^16.0.5",
+		"stylelint": "16.20.0",
+		"stylelint-scss": "^6.11.1",
+		"turbo": "2.5.4"
 	},
 	"peerDependencies": {
-		"@wordpress/scripts": ">=30.18.0",
-		"eslint-config-wordpress": ">=2.0.0",
-		"stylelint": ">=16.20.0",
-		"stylelint-scss": ">=6.11.1",
-		"turbo": ">=2.5.4",
 		"webpack": ">=5.98.0"
 	},
 	"peerDependenciesMeta": {
-		"@wordpress/scripts": {
-			"optional": false
-		},
-		"eslint-config-wordpress": {
-			"optional": true
-		},
-		"stylelint": {
-			"optional": true
-		},
-		"stylelint-scss": {
-			"optional": true
-		},
-		"turbo": {
-			"optional": false
-		},
 		"webpack": {
 			"optional": true
 		}
@@ -64,19 +56,15 @@
 		"@commitlint/cli": "19.8.1",
 		"@commitlint/config-conventional": "19.8.1",
 		"@wordpress/blocks": "^14.10.0",
-		"@wordpress/browserslist-config": "^6.25.0",
 		"@wordpress/data": "^10.21.0",
 		"@wordpress/dom-ready": "^4.21.0",
 		"@wordpress/element": "^6.21.0",
 		"@wordpress/i18n": "^5.21.0",
 		"@wordpress/icons": "^10.21.0",
 		"@wordpress/interactivity": "^6.21.0",
-		"@wordpress/scripts": "^30.18.0",
 		"concurrently": "^9.1.2",
-		"css-loader": "^7.1.2",
 		"husky": "9.1.7",
 		"mini-css-extract-plugin": "^2.9.2",
-		"sass-loader": "^16.0.5",
 		"webpack-cli": "^6.0.1",
 		"webpack-remove-empty-scripts": "^1.1.1"
 	}

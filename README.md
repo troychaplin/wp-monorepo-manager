@@ -15,10 +15,23 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 1. Install the package:
 
     ```bash
-    npm install --save-dev wp-monorepo-manager
+    npm install wp-monorepo-manager
     ```
 
 2. Set up your monorepo structure:
+
+    ```bash
+    # Create the basic monorepo structure
+    npm run setup-test
+
+    # Create a theme (optional)
+    npm run setup-theme
+
+    # Create a plugin (optional)
+    npm run setup-plugin
+    ```
+
+3. Your project structure will look like this:
 
     ```
     my-wordpress-project/
@@ -31,7 +44,7 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     │       └── my-theme/
     ```
 
-3. Configure your root package.json:
+4. Configure your root package.json:
 
     ```json
     {
@@ -48,19 +61,25 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     		"format": "turbo run format",
     		"clean": "turbo run clean"
     	},
-    	"devDependencies": {
-    		"turbo": "^2.0.0",
-    		"wp-monorepo-manager": "^0.1.0",
+    	"dependencies": {
     		"@wordpress/browserslist-config": "^6.25.0",
+    		"@wordpress/eslint-plugin": "22.11.0",
+    		"@wordpress/scripts": "30.18.0",
     		"css-loader": "^7.1.2",
+    		"eslint-config-wordpress": "2.0.0",
+    		"postcss-import": "^16.1.0",
+    		"prettier": "3.5.3",
+    		"sass": "^1.71.0",
     		"sass-loader": "^16.0.5",
-    		"sass": "^1.71.0"
+    		"stylelint": "16.20.0",
+    		"stylelint-scss": "^6.11.1",
+    		"turbo": "2.5.4"
     	},
     	"packageManager": "npm@10.2.4"
     }
     ```
 
-4. Run your first build:
+5. Run your first build:
     ```bash
     npm run build
     ```

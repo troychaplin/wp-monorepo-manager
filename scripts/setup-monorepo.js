@@ -77,9 +77,20 @@ async function setup() {
 				format: 'turbo run format',
 				clean: 'turbo run clean',
 			},
-			devDependencies: {
-				turbo: '^2.0.0',
+			dependencies: {
 				'wp-monorepo-manager': 'file:../wp-monorepo-manager',
+				'@wordpress/browserslist-config': '^6.25.0',
+				'@wordpress/eslint-plugin': '22.11.0',
+				'@wordpress/scripts': '30.18.0',
+				'css-loader': '^7.1.2',
+				'eslint-config-wordpress': '2.0.0',
+				'postcss-import': '^16.1.0',
+				prettier: '3.5.3',
+				sass: '^1.71.0',
+				'sass-loader': '^16.0.5',
+				stylelint: '16.20.0',
+				'stylelint-scss': '^6.11.1',
+				turbo: '2.5.4',
 			},
 			packageManager: 'npm@10.2.4',
 		};
@@ -117,61 +128,9 @@ async function setup() {
 			},
 		};
 
-		// Create theme package.json
-		const themePackageJson = {
-			name: 'test-theme',
-			version: '1.0.0',
-			browserslist: ['extends @wordpress/browserslist-config'],
-			scripts: {
-				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
-				start: 'wp-monorepo-manager start',
-				lint: 'wp-monorepo-manager lint',
-				format: 'wp-monorepo-manager format',
-				clean: 'wp-monorepo-manager clean',
-			},
-		};
-
-		// Create plugin package.json
-		const pluginPackageJson = {
-			name: 'test-plugin',
-			version: '1.0.0',
-			browserslist: ['extends @wordpress/browserslist-config'],
-			scripts: {
-				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
-				start: 'wp-monorepo-manager start',
-				lint: 'wp-monorepo-manager lint',
-				format: 'wp-monorepo-manager format',
-				clean: 'wp-monorepo-manager clean',
-			},
-		};
-
-		// Create theme files
-		const themeDir = path.join(TARGET_DIR, 'wp-content/themes/test-theme');
-		createDirectory(themeDir);
-		createDirectory(path.join(themeDir, 'src/scripts'));
-		writeFile(path.join(themeDir, 'package.json'), JSON.stringify(themePackageJson, null, 2));
-		writeFile(
-			path.join(themeDir, 'src/scripts/index.js'),
-			'console.log("Theme script loaded");'
-		);
-		writeFile(path.join(themeDir, 'src/styles.scss'), 'body { color: #333; }');
-		writeFile(path.join(themeDir, 'src/editor-styles.scss'), 'body { color: #333; }');
-
-		// Create plugin files
-		const pluginDir = path.join(TARGET_DIR, 'wp-content/plugins/test-plugin');
-		createDirectory(pluginDir);
-		createDirectory(path.join(pluginDir, 'src/scripts'));
-		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
-		writeFile(
-			path.join(pluginDir, 'src/scripts/index.js'),
-			'console.log("Plugin script loaded");'
-		);
-		writeFile(path.join(pluginDir, 'src/styles.scss'), 'body { color: #333; }');
-		writeFile(path.join(pluginDir, 'src/editor-styles.scss'), 'body { color: #333; }');
+		// Create wp-content directory structure
+		createDirectory(path.join(TARGET_DIR, 'wp-content/themes'));
+		createDirectory(path.join(TARGET_DIR, 'wp-content/plugins'));
 
 		// Write root files
 		writeFile(path.join(TARGET_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
@@ -185,30 +144,14 @@ async function setup() {
 		// console.log('\nInstalling dependencies...');
 		execSync('npm install', { cwd: TARGET_DIR, stdio: 'inherit' });
 
-		// Install browserslist-config in the test environment
-		execSync('npm install --save-dev @wordpress/browserslist-config', {
-			cwd: TARGET_DIR,
-			stdio: 'inherit',
-		});
-
-		// Install css-loader and sass-loader in the test environment
-		execSync('npm install --save-dev css-loader sass-loader sass', {
-			cwd: TARGET_DIR,
-			stdio: 'inherit',
-		});
-
 		// Link the package in the test directory
 		// console.log('\nLinking wp-monorepo-manager in test directory...');
 		execSync('npm link wp-monorepo-manager', { cwd: TARGET_DIR, stdio: 'inherit' });
 
-		// Run initial build
-		// console.log('\nRunning initial build...');
-		execSync('npm run build', { cwd: TARGET_DIR, stdio: 'inherit' });
-
 		// console.log('\nSetup completed successfully!');
 		// console.log('\nNext steps:');
 		// console.log('1. cd ../wp-monorepo-test');
-		// console.log('2. npm run start');
+		// console.log('2. Use setup-theme or setup-plugin commands to create themes/plugins');
 
 		rl.close();
 	} catch (error) {
