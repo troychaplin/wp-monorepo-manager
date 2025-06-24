@@ -3,12 +3,35 @@
 const path = require('path');
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack/webpack.config');
+const { execSync } = require('child_process');
 
 // Get the command from arguments
 const command = process.argv[2];
+const subCommand = process.argv[3];
 
 // Get the current working directory
 const cwd = process.cwd();
+
+// Handle setup commands
+if (command === 'setup') {
+	const setupScript =
+		subCommand === 'theme'
+			? 'setup-theme'
+			: subCommand === 'plugin'
+				? 'setup-plugin'
+				: 'setup-monorepo';
+
+	try {
+		execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}`, {
+			stdio: 'inherit',
+			cwd: path.dirname(__dirname),
+		});
+	} catch (error) {
+		console.error('Setup failed:', error.message);
+		process.exit(1);
+	}
+	return;
+}
 
 // Update webpack config for the current directory
 const config = {
@@ -92,11 +115,23 @@ switch (command) {
 		break;
 
 	case 'clean':
-		// TODO: Implement clean
-		console.log('Clean not implemented yet');
+		// TODO: Implement cleaning
+		console.log('Cleaning not implemented yet');
 		break;
 
 	default:
-		console.error('Unknown command:', command);
-		process.exit(1);
+		console.log('Usage: wp-monorepo <command> [subcommand]');
+		console.log('');
+		console.log('Commands:');
+		console.log('  setup              Create monorepo structure');
+		console.log('  setup:theme        Create a new theme');
+		console.log('  setup:plugin       Create a new plugin');
+		console.log('  build              Build for production');
+		console.log('  build:dev          Build for development');
+		console.log('  build:prod         Build for production');
+		console.log('  start              Start development server');
+		console.log('  lint               Run linting');
+		console.log('  format             Format code');
+		console.log('  clean              Clean build artifacts');
+		break;
 }

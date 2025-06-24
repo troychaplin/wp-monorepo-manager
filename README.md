@@ -12,77 +12,144 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 ## Quick Start
 
-1. Install the package:
+### Option 1: Global Installation (Recommended for CLI usage)
+
+1. Install the package globally:
 
     ```bash
-    npm install wp-monorepo-manager
+    npm install -g wp-monorepo-manager
     ```
 
 2. Set up your monorepo structure:
 
     ```bash
     # Create the basic monorepo structure
-    npm run setup
+    wp-monorepo setup
 
     # Create a theme (optional)
-    npm run setup-theme
+    wp-monorepo setup:theme
 
     # Create a plugin (optional)
-    npm run setup-plugin
+    wp-monorepo setup:plugin
     ```
 
-3. Your project structure will look like this:
+### Option 2: Local Project Installation
 
-    ```
-    my-wordpress-project/
-    ├── package.json
-    ├── turbo.json
-    ├── wp-content/
-    │   ├── plugins/
-    │   │   └── my-plugin/
-    │   └── themes/
-    │       └── my-theme/
-    ```
+1. Create a new directory for your project and navigate to it:
 
-4. Configure your root package.json:
-
-    ```json
-    {
-    	"name": "my-wordpress-project",
-    	"version": "1.0.0",
-    	"private": true,
-    	"workspaces": ["wp-content/themes/*", "wp-content/plugins/*"],
-    	"scripts": {
-    		"build": "turbo run build",
-    		"build:dev": "turbo run build:dev",
-    		"build:prod": "turbo run build:prod",
-    		"start": "turbo run start",
-    		"lint": "turbo run lint",
-    		"format": "turbo run format",
-    		"clean": "turbo run clean"
-    	},
-    	"dependencies": {
-    		"@wordpress/browserslist-config": "^6.25.0",
-    		"@wordpress/eslint-plugin": "22.11.0",
-    		"@wordpress/scripts": "30.18.0",
-    		"css-loader": "^7.1.2",
-    		"eslint-config-wordpress": "2.0.0",
-    		"postcss-import": "^16.1.0",
-    		"prettier": "3.5.3",
-    		"sass": "^1.71.0",
-    		"sass-loader": "^16.0.5",
-    		"stylelint": "16.20.0",
-    		"stylelint-scss": "^6.11.1",
-    		"turbo": "2.5.4"
-    	},
-    	"packageManager": "npm@10.2.4"
-    }
-    ```
-
-5. Run your first build:
     ```bash
-    npm run build
+    mkdir my-wordpress-project
+    cd my-wordpress-project
     ```
+
+2. Install the package locally:
+
+    ```bash
+    npm install wp-monorepo-manager
+    ```
+
+3. Set up your monorepo structure using npm scripts:
+
+    ```bash
+    # Create the basic monorepo structure
+    npx wp-monorepo setup
+
+    # Create a theme (optional)
+    npx wp-monorepo setup:theme
+
+    # Create a plugin (optional)
+    npx wp-monorepo setup:plugin
+    ```
+
+### Project Structure
+
+Your project structure will look like this:
+
+```
+my-wordpress-project/
+├── package.json
+├── turbo.json
+├── wp-content/
+│   ├── plugins/
+│   │   └── my-plugin/
+│   └── themes/
+│       └── my-theme/
+```
+
+### Configuration
+
+Your root package.json will be automatically configured with:
+
+```json
+{
+	"name": "my-wordpress-project",
+	"version": "1.0.0",
+	"private": true,
+	"workspaces": ["wp-content/themes/*", "wp-content/plugins/*"],
+	"scripts": {
+		"build": "turbo run build",
+		"build:dev": "turbo run build:dev",
+		"build:prod": "turbo run build:prod",
+		"start": "turbo run start",
+		"lint": "turbo run lint",
+		"format": "turbo run format",
+		"clean": "turbo run clean"
+	},
+	"dependencies": {
+		"@wordpress/browserslist-config": "^6.25.0",
+		"@wordpress/eslint-plugin": "22.11.0",
+		"@wordpress/scripts": "30.18.0",
+		"css-loader": "^7.1.2",
+		"eslint-config-wordpress": "2.0.0",
+		"postcss-import": "^16.1.0",
+		"prettier": "3.5.3",
+		"sass": "^1.71.0",
+		"sass-loader": "^16.0.5",
+		"stylelint": "16.20.0",
+		"stylelint-scss": "^6.11.1",
+		"turbo": "2.5.4"
+	},
+	"packageManager": "npm@10.2.4"
+}
+```
+
+### Run Your First Build
+
+```bash
+npm run build
+```
+
+## Installation Options
+
+### Global Installation Benefits
+
+- **Convenience**: Run `wp-monorepo` commands from anywhere
+- **Consistency**: Same version across all projects
+- **Quick setup**: No need to install in each project
+- **CLI experience**: Familiar command-line interface
+
+### Local Installation Benefits
+
+- **Project isolation**: Each project can use different versions
+- **Team consistency**: Version is locked in package.json
+- **CI/CD friendly**: Dependencies are explicitly declared
+- **No global pollution**: Doesn't affect system-wide npm packages
+
+### When to Use Each
+
+**Use Global Installation when:**
+
+- You frequently create new WordPress projects
+- You want a consistent development experience
+- You prefer CLI tools over npm scripts
+- You're working on personal projects
+
+**Use Local Installation when:**
+
+- You're working on team projects
+- You need version control per project
+- You're setting up CI/CD pipelines
+- You want to ensure reproducible builds
 
 ## Configuration
 

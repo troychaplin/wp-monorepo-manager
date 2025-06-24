@@ -4,6 +4,7 @@
 	"description": "A build tool for managing WordPress themes and plugins in a monorepo structure",
 	"main": "index.js",
 	"bin": {
+		"wp-monorepo": "./bin/wp-monorepo.js",
 		"wp-monorepo-manager": "./bin/wp-monorepo.js"
 	},
 	"packageManager": "npm@10.2.4",
@@ -14,9 +15,9 @@
 		"turbo.json"
 	],
 	"scripts": {
-		"setup": "node scripts/setup-monorepo.js",
-		"setup:theme": "node scripts/setup-theme.js",
-		"setup:plugin": "node scripts/setup-plugin.js"
+		"setup-monorepo": "node scripts/setup-monorepo.js",
+		"setup-theme": "node scripts/setup-theme.js",
+		"setup-plugin": "node scripts/setup-plugin.js"
 	},
 	"keywords": [
 		"wordpress",

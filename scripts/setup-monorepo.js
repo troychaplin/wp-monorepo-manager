@@ -5,7 +5,7 @@ const readline = require('readline');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
+const TARGET_DIR = process.argv[2] || path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
 
 // Create readline interface for user input
 const rl = readline.createInterface({
@@ -78,7 +78,9 @@ async function setup() {
 				clean: 'turbo run clean',
 			},
 			dependencies: {
-				'wp-monorepo-manager': 'file:../wp-monorepo-manager',
+				'wp-monorepo-manager': TARGET_DIR.includes('wp-monorepo-test')
+					? 'file:../wp-monorepo-manager'
+					: 'wp-monorepo-manager',
 				'@wordpress/browserslist-config': '^6.25.0',
 				'@wordpress/eslint-plugin': '22.11.0',
 				'@wordpress/scripts': '30.18.0',
