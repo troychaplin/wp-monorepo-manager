@@ -36,7 +36,7 @@ async function setupTheme() {
 	try {
 		// Check if target directory exists
 		if (!fs.existsSync(TARGET_DIR)) {
-			console.log('Error: Target directory does not exist. Please run setup-test first.');
+			console.log('Error: Target directory does not exist. Please run setup first.');
 			rl.close();
 			return;
 		}

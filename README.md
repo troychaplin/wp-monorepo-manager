@@ -22,7 +22,7 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
     ```bash
     # Create the basic monorepo structure
-    npm run setup-test
+    npm run setup
 
     # Create a theme (optional)
     npm run setup-theme

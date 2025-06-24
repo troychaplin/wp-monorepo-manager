@@ -19,10 +19,10 @@ Run the setup script from the wp-monorepo-manager directory:
 
 ```bash
 # Default setup (creates wp-monorepo-test directory)
-npm run setup-test
+npm run setup
 
 # Custom directory setup
-npm run setup-test -- /path/to/your/directory
+npm run setup -- /path/to/your/directory
 ```
 
 This will:
