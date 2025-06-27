@@ -80,7 +80,7 @@ async function setupPlugin() {
 
 		// Create plugin package.json
 		const pluginPackageJson = {
-			name: pluginName,
+			name: folderName,
 			version: '1.0.0',
 			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
@@ -157,6 +157,15 @@ add_action('wp_enqueue_scripts', '${pluginName.replace(/[^a-zA-Z0-9]/g, '_')}_en
 }`
 		);
 		writeFile(
+			path.join(pluginDir, 'src/editor-styles.scss'),
+			`/* ${pluginName} Editor Styles */
+
+/* Styles for the WordPress editor */
+.wp-block {
+	/* Editor-specific styles here */
+}`
+		);
+		writeFile(
 			path.join(pluginDir, 'README.md'),
 			`# ${pluginName}
 
@@ -172,6 +181,47 @@ npm run lint      # Run linting
 npm run format    # Format code
 npm run clean     # Clean build artifacts
 \`\`\`
+`
+		);
+		writeFile(
+			path.join(pluginDir, '.gitignore'),
+			`# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary folders
+tmp/
+temp/
 `
 		);
 

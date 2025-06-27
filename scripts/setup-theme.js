@@ -80,7 +80,7 @@ async function setupTheme() {
 
 		// Create theme package.json
 		const themePackageJson = {
-			name: themeName,
+			name: folderName,
 			version: '1.0.0',
 			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
@@ -152,6 +152,56 @@ Author: Your Name
 	color: #333; 
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }`
+		);
+		writeFile(
+			path.join(themeDir, 'src/editor-styles.scss'),
+			`/* ${themeName} Editor Styles */
+
+/* Styles for the WordPress editor */
+.wp-block {
+	/* Editor-specific styles here */
+}`
+		);
+		writeFile(
+			path.join(themeDir, '.gitignore'),
+			`# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+`
 		);
 
 		console.log(`\nTheme "${themeName}" created successfully in "${folderName}" folder!`);
