@@ -1,53 +1,26 @@
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
-const readline = require('readline');
+const {
+	createDirectory,
+	writeFile,
+	promptUser,
+	promptYesNo,
+	toFolderName,
+	closeReadline,
+	GITIGNORE_CONTENT,
+} = require('./utils');
 
 // Configuration
-const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = process.cwd(); // Use current working directory instead of hardcoded path
-
-// Create readline interface for user input
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout,
-});
-
-// Helper functions
-function createDirectory(dir) {
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true });
-	}
-}
-
-function writeFile(filePath, content) {
-	fs.writeFileSync(filePath, content);
-}
-
-function promptUser(question) {
-	return new Promise(resolve => {
-		rl.question(question, answer => {
-			resolve(answer);
-		});
-	});
-}
-
-// Convert theme name to lowercase hyphenated folder name
-function toFolderName(name) {
-	return name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
-}
+const TARGET_DIR = process.cwd();
 
 async function setupTheme() {
 	try {
 		// Get theme name from user
 		const themeName = await promptUser('Enter theme name: ');
 		if (!themeName.trim()) {
-			console.log('Theme name is required.');
-			rl.close();
-			return;
+			console.log('❌ Theme name is required.');
+			closeReadline();
+			process.exit(0);
 		}
 
 		// Generate default folder name from theme name
@@ -68,13 +41,13 @@ async function setupTheme() {
 
 		// Check if theme already exists
 		if (fs.existsSync(themeDir)) {
-			const shouldOverwrite = await promptUser(
+			const shouldOverwrite = await promptYesNo(
 				`Theme "${folderName}" already exists. Overwrite? (y/n): `
 			);
-			if (shouldOverwrite.toLowerCase() !== 'y' && shouldOverwrite.toLowerCase() !== 'yes') {
+			if (!shouldOverwrite) {
 				console.log('Setup cancelled.');
-				rl.close();
-				return;
+				closeReadline();
+				process.exit(0);
 			}
 		}
 
@@ -163,58 +136,32 @@ Author: Your Name
 }`
 		);
 		writeFile(
-			path.join(themeDir, '.gitignore'),
-			`# Dependencies
-node_modules/
+			path.join(themeDir, 'README.md'),
+			`# ${themeName}
 
-# Build artifacts
-dist/
+A custom WordPress theme.
 
-# Environment files
-.env
-.env.local
-.env.*.local
+## Development
 
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Temporary folders
-tmp/
-temp/
+\`\`\`bash
+npm run build    # Build for production
+npm run build:dev # Build for development
+npm run start     # Start development mode
+npm run lint      # Run linting
+npm run format    # Format code
+npm run clean     # Clean build artifacts
+\`\`\`
 `
 		);
+		writeFile(path.join(themeDir, '.gitignore'), GITIGNORE_CONTENT);
 
-		console.log(`\nTheme "${themeName}" created successfully in "${folderName}" folder!`);
-		console.log(`\nTheme location: ${themeDir}`);
-		console.log(`\nNext steps:`);
-		console.log(`1. Add the theme to your root package.json workspaces if needed`);
-		console.log(`2. Run npm install from the project root to install dependencies`);
-		console.log(`3. Use npm run build from the project root to build all themes`);
+		console.log(`\n✅ Theme "${themeName}" created successfully in ${themeDir}`);
 
-		rl.close();
+		closeReadline();
+		process.exit(0);
 	} catch (error) {
-		console.error('\nError during theme setup:', error.message);
-		rl.close();
+		console.error('\n❌ Error during theme setup:', error.message);
+		closeReadline();
 		process.exit(1);
 	}
 }

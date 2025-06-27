@@ -3,6 +3,12 @@
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
+const {
+	isWordPressInstallation,
+	SHARED_SCRIPTS,
+	SHARED_DEPENDENCIES,
+	TURBO_CONFIG,
+} = require('../scripts/utils');
 
 // Get the command from arguments and parse colon syntax
 const fullCommand = process.argv[2];
@@ -17,12 +23,6 @@ if (fullCommand && fullCommand.includes(':')) {
 
 // Get the current working directory
 const cwd = process.cwd();
-
-// Helper function to check if current directory is a WordPress installation
-function isWordPressInstallation(dir) {
-	const wpFiles = ['wp-config.php', 'wp-content', 'wp-includes', 'wp-admin'];
-	return wpFiles.some(file => fs.existsSync(path.join(dir, file)));
-}
 
 // Handle help command first (before any other processing)
 if (
@@ -73,7 +73,7 @@ if (command === 'setup') {
 				stdio: 'inherit',
 				cwd: cwd,
 			});
-			return;
+			process.exit(0);
 		}
 
 		// Check if we're in a WordPress installation
@@ -89,30 +89,11 @@ if (command === 'setup') {
 					version: '1.0.0',
 					private: true,
 					workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
-					scripts: {
-						build: 'turbo run build',
-						'build:dev': 'turbo run build:dev',
-						'build:prod': 'turbo run build:prod',
-						start: 'turbo run start',
-						lint: 'turbo run lint',
-						format: 'turbo run format',
-						clean: 'turbo run clean',
-					},
+					scripts: SHARED_SCRIPTS,
 					dependencies: {
 						'wp-monorepo-manager':
 							'file:' + path.relative(cwd, path.dirname(__dirname)),
-						'@wordpress/browserslist-config': '^6.25.0',
-						'@wordpress/eslint-plugin': '22.11.0',
-						'@wordpress/scripts': '30.18.0',
-						'css-loader': '^7.1.2',
-						'eslint-config-wordpress': '2.0.0',
-						'postcss-import': '^16.1.0',
-						prettier: '3.5.3',
-						sass: '^1.71.0',
-						'sass-loader': '^16.0.5',
-						stylelint: '16.20.0',
-						'stylelint-scss': '^6.11.1',
-						turbo: '2.5.4',
+						...SHARED_DEPENDENCIES,
 					},
 					packageManager: 'npm@10.2.4',
 				};
@@ -124,39 +105,7 @@ if (command === 'setup') {
 			// Create turbo.json if it doesn't exist
 			const turboJsonPath = path.join(cwd, 'turbo.json');
 			if (!fs.existsSync(turboJsonPath)) {
-				const turboJson = {
-					$schema: 'https://turbo.build/schema.json',
-					globalDependencies: ['**/.env.*local'],
-					tasks: {
-						build: {
-							dependsOn: ['^build'],
-							outputs: ['dist/**'],
-						},
-						'build:dev': {
-							dependsOn: ['^build:dev'],
-							outputs: ['dist/**'],
-						},
-						'build:prod': {
-							dependsOn: ['^build:prod'],
-							outputs: ['dist/**'],
-						},
-						start: {
-							cache: false,
-							persistent: true,
-						},
-						lint: {
-							outputs: [],
-						},
-						format: {
-							outputs: [],
-						},
-						clean: {
-							cache: false,
-						},
-					},
-				};
-
-				fs.writeFileSync(turboJsonPath, JSON.stringify(turboJson, null, 2));
+				fs.writeFileSync(turboJsonPath, JSON.stringify(TURBO_CONFIG, null, 2));
 				console.log('Created turbo.json');
 			}
 
@@ -167,12 +116,14 @@ if (command === 'setup') {
 			console.log('Monorepo setup completed! You can now use:');
 			console.log('  wp-monorepo setup:theme    - Create a new theme');
 			console.log('  wp-monorepo setup:plugin   - Create a new plugin');
+			process.exit(0);
 		} else {
 			// We're not in a WordPress installation, use the original setup script
 			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}`, {
 				stdio: 'inherit',
 				cwd: path.dirname(__dirname),
 			});
+			process.exit(0);
 		}
 	} catch (error) {
 		console.error('Setup failed:', error.message);
