@@ -83,31 +83,67 @@ npm link
 npm unlink -g wp-monorepo-manager
 ```
 
-### Step 2: Test Local Package Installation
+### Step 2: Test CLI Commands in Different Contexts
 
-1. **Create a test project directory:**
+The CLI tool supports two different setup scenarios:
+
+#### Scenario A: Initialize in Existing WordPress Installation
+
+1. **Navigate to a WordPress installation:**
 
     ```bash
-    # From parent directory of wp-monorepo-manager
-    mkdir wp-monorepo-test
-    cd wp-monorepo-test
+    # Go to an existing WordPress installation
+    cd /path/to/wordpress-installation
     ```
 
-2. **Test the CLI commands:**
+2. **Test the setup command:**
 
     ```bash
-    # Test help command
-    wp-monorepo --help
-
-    # Test setup command
+    # This should detect WordPress and initialize monorepo structure
     wp-monorepo setup
 
+    # Test help command (should work without errors)
+    wp-monorepo --help
+
     # Test theme setup
-    wp-monorepo setup:theme
+    wp-monorepo setup:theme my-theme
 
     # Test plugin setup
-    wp-monorepo setup:plugin
+    wp-monorepo setup:plugin my-plugin
     ```
+
+**Expected behavior:**
+
+- Detects WordPress installation (wp-config.php, wp-content, etc.)
+- Creates `package.json` at WordPress root
+- Creates `turbo.json` for monorepo configuration
+- Installs dependencies including wp-monorepo-manager
+- Sets up workspace configuration for themes and plugins
+
+#### Scenario B: Create New Project Structure
+
+1. **Navigate to an empty directory:**
+
+    ```bash
+    # Go to an empty directory (not a WordPress installation)
+    cd /path/to/empty-directory
+    ```
+
+2. **Test the setup command:**
+
+    ```bash
+    # This should create a new test project structure
+    wp-monorepo setup
+
+    # Test help command (should work without errors)
+    wp-monorepo --help
+    ```
+
+**Expected behavior:**
+
+- Creates new directory structure with WordPress + monorepo
+- Sets up complete development environment
+- Links the development package for testing
 
 ### Step 3: Verify Package Functionality
 
@@ -133,6 +169,42 @@ npm unlink -g wp-monorepo-manager
 
 ## Test Project Directory Structure
 
+### Scenario A: Existing WordPress Installation
+
+Your WordPress directory structure should look like this after setup:
+
+```
+wordpress-installation/
+│
+├── wp-config.php              # Existing WordPress config
+├── wp-content/                # Existing WordPress content
+├── wp-admin/                  # Existing WordPress admin
+├── wp-includes/               # Existing WordPress includes
+├── package.json               # Created by wp-monorepo setup
+├── turbo.json                 # Created by wp-monorepo setup
+├── node_modules/              # Created by npm install
+└── wp-content/
+    ├── plugins/
+    │   └── [your-plugin]/     # Created with setup:plugin
+    │       ├── package.json
+    │       ├── [plugin-name].php
+    │       └── src/
+    │           ├── scripts/
+    │           │   └── index.js
+    │           └── styles.scss
+    └── themes/
+        └── [your-theme]/      # Created with setup:theme
+            ├── package.json
+            ├── index.php
+            ├── style.css
+            └── src/
+                ├── scripts/
+                │   └── index.js
+                └── styles.scss
+```
+
+### Scenario B: New Project Structure
+
 Your test directory structure should look like this:
 
 ```
@@ -144,9 +216,13 @@ parent-directory/
 │   ├── scripts/
 │   └── ...
 │
-└── wp-monorepo-test/        # Test directory
+└── wp-monorepo-test/        # Test directory (created by setup)
     ├── package.json
     ├── turbo.json
+    ├── wp-config.php        # WordPress installation
+    ├── wp-content/
+    ├── wp-admin/
+    ├── wp-includes/
     └── wp-content/
         ├── plugins/
         │   └── [your-plugin]/     # Created with setup:plugin
@@ -183,7 +259,30 @@ which wp-monorepo
 
 **Expected:** All dependencies should install without errors, the package should be linkable, and the `wp-monorepo` command should be available globally.
 
-### 2. Configuration Files
+### 2. CLI Command Testing
+
+Test CLI commands from different contexts:
+
+```bash
+# Test help command from anywhere (should work without errors)
+wp-monorepo --help
+
+# Test setup command from WordPress installation
+cd /path/to/wordpress
+wp-monorepo setup
+
+# Test setup command from empty directory
+cd /path/to/empty-directory
+wp-monorepo setup
+```
+
+**Expected:**
+
+- Help command should work from any directory without webpack configuration errors
+- Setup command should detect context and behave appropriately
+- No package.json should be required before running setup
+
+### 3. Configuration Files
 
 Test each configuration file in the test project:
 
@@ -200,7 +299,7 @@ node -e "console.log(require('./webpack.config.js'))"
 
 **Expected:** Each command should output a valid configuration.
 
-### 3. Development Mode
+### 4. Development Mode
 
 Test development workflow:
 
@@ -215,7 +314,7 @@ npm run start
 - File watching should work
 - Changes should trigger rebuilds
 
-### 4. Linting and Formatting
+### 5. Linting and Formatting
 
 Test linting and formatting commands:
 
@@ -293,6 +392,13 @@ After running all tests, you should have:
 - **Ensure package.json** has correct `bin` configuration
 - **Test with `which wp-monorepo`** to confirm command location
 
+### Setup Command Issues
+
+- **WordPress detection**: Ensure you're in a WordPress root directory (contains wp-config.php, wp-content, etc.)
+- **Package.json conflicts**: If package.json already exists, the setup will use the existing one
+- **Permission issues**: Ensure you have write permissions in the target directory
+- **Network issues**: Check internet connection for npm install
+
 ## Test Data Templates
 
 For testing themes and plugins, use the provided templates in the `templates/` directory:
@@ -342,3 +448,5 @@ Before publishing:
 - [ ] README.md is up to date
 - [ ] Version number is correct
 - [ ] Changelog is updated
+- [ ] CLI works in both WordPress and non-WordPress contexts
+- [ ] Setup command properly detects and handles different environments
