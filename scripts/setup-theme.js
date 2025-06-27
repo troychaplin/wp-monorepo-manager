@@ -5,7 +5,7 @@ const readline = require('readline');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
+const TARGET_DIR = process.cwd(); // Use current working directory instead of hardcoded path
 
 // Create readline interface for user input
 const rl = readline.createInterface({
@@ -32,15 +32,16 @@ function promptUser(question) {
 	});
 }
 
+// Convert theme name to lowercase hyphenated folder name
+function toFolderName(name) {
+	return name
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
 async function setupTheme() {
 	try {
-		// Check if target directory exists
-		if (!fs.existsSync(TARGET_DIR)) {
-			console.log('Error: Target directory does not exist. Please run setup first.');
-			rl.close();
-			return;
-		}
-
 		// Get theme name from user
 		const themeName = await promptUser('Enter theme name: ');
 		if (!themeName.trim()) {
@@ -49,12 +50,26 @@ async function setupTheme() {
 			return;
 		}
 
-		const themeDir = path.join(TARGET_DIR, 'wp-content/themes', themeName);
+		// Generate default folder name from theme name
+		const defaultFolderName = toFolderName(themeName);
+
+		// Get theme folder name from user
+		const themeFolderName = await promptUser(
+			`Enter theme folder name (default: ${defaultFolderName}): `
+		);
+		const folderName = themeFolderName.trim() || defaultFolderName;
+
+		// Determine the theme directory path
+		// Check if we're in a WordPress installation (has wp-content/themes)
+		const wpContentThemesPath = path.join(TARGET_DIR, 'wp-content/themes');
+		const themeDir = fs.existsSync(wpContentThemesPath)
+			? path.join(wpContentThemesPath, folderName)
+			: path.join(TARGET_DIR, 'themes', folderName);
 
 		// Check if theme already exists
 		if (fs.existsSync(themeDir)) {
 			const shouldOverwrite = await promptUser(
-				`Theme "${themeName}" already exists. Overwrite? (y/n): `
+				`Theme "${folderName}" already exists. Overwrite? (y/n): `
 			);
 			if (shouldOverwrite.toLowerCase() !== 'y' && shouldOverwrite.toLowerCase() !== 'yes') {
 				console.log('Setup cancelled.');
@@ -139,13 +154,12 @@ Author: Your Name
 }`
 		);
 
-		// Install dependencies in the theme directory
-		execSync('npm install', { cwd: themeDir, stdio: 'inherit' });
-
-		console.log(`\nTheme "${themeName}" created successfully!`);
+		console.log(`\nTheme "${themeName}" created successfully in "${folderName}" folder!`);
+		console.log(`\nTheme location: ${themeDir}`);
 		console.log(`\nNext steps:`);
-		console.log(`1. cd wp-content/themes/${themeName}`);
-		console.log(`2. npm run build`);
+		console.log(`1. Add the theme to your root package.json workspaces if needed`);
+		console.log(`2. Run npm install from the project root to install dependencies`);
+		console.log(`3. Use npm run build from the project root to build all themes`);
 
 		rl.close();
 	} catch (error) {
