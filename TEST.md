@@ -1,6 +1,6 @@
 # WordPress Monorepo Manager Testing
 
-This document outlines the testing process for the WordPress Monorepo Manager package before publishing.
+This document outlines the testing process for the WordPress Monorepo Manager package during development.
 
 ## Prerequisites
 
@@ -9,108 +9,282 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
 - WordPress development environment
 - Git
 
-## Testing Environment Setup
+## Development Testing Workflow
 
-You have two options for setting up the test environment:
+This section covers testing the package during development, before publishing.
 
-### Option 1: Using the Setup Script (Recommended)
+### Step 1: Local Package Development
 
-Run the setup script from the wp-monorepo-manager directory:
+1. **Clone and set up the development environment:**
+
+    ```bash
+    # Clone the repository
+    git clone https://github.com/troychaplin/wp-monorepo-manager.git
+    cd wp-monorepo-manager
+
+    # Install dependencies
+    npm install
+
+    # Create a global link to the package
+    npm link
+    ```
+
+2. **Test the setup scripts:**
+
+    ```bash
+    # Create the basic monorepo structure
+    npm run setup-monorepo
+
+    # Create a theme (optional)
+    npm run setup-theme
+
+    # Create a plugin (optional)
+    npm run setup-plugin
+    ```
+
+3. **Verify the development environment:**
+
+    ```bash
+    # Check that the CLI command is available
+    wp-monorepo --help
+
+    # Verify the package is linked correctly
+    npm list -g wp-monorepo-manager
+
+    # Test that you can run setup commands
+    wp-monorepo setup --help
+    ```
+
+4. **Cleanup when done testing:**
+
+    ```bash
+    # Remove the global link
+    npm unlink -g wp-monorepo-manager
+    ```
+
+### Understanding npm link
+
+`npm link` creates a symbolic link between your local package and the global npm packages directory, making it available globally for testing.
+
+**What it does:**
+
+- Makes your local package available globally as if it were installed
+- Enables CLI testing from anywhere
+- Provides immediate feedback for changes
+
+**Usage:**
 
 ```bash
-# Default setup (creates wp-monorepo-test directory)
-npm run setup-test
+# From wp-monorepo-manager directory
+npm link
+# Creates: /usr/local/lib/node_modules/wp-monorepo-manager -> /path/to/your/local/package
 
-# Custom directory setup
-npm run setup-test -- /path/to/your/directory
+# Cleanup when done
+npm unlink -g wp-monorepo-manager
 ```
 
-This will:
+### Step 2: Test CLI Commands in Different Contexts
 
-- Create the test directory (default: wp-monorepo-test, or your specified path)
-- Check for existing WordPress installation
-- Set up the project structure
-- Create test theme and plugin
-- Install dependencies
-- Link the package locally
+The CLI tool supports two different setup scenarios:
 
-Note: If the target directory already exists or contains a WordPress installation, you'll be prompted to confirm before proceeding.
+#### Scenario A: Initialize in Existing WordPress Installation
 
-### Option 2: Manual Setup
-
-1. Create a test directory at the same level as the wp-monorepo-manager repository:
+1. **Navigate to a WordPress installation:**
 
     ```bash
-    # Assuming you are in the parent directory of wp-monorepo-manager
-    mkdir wp-monorepo-test
-    cd wp-monorepo-test
+    # Go to an existing WordPress installation
+    cd /path/to/wordpress-installation
     ```
 
-2. Initialize a new npm project:
+2. **Test the setup command:**
 
     ```bash
-    npm init -y
+    # This should detect WordPress and initialize monorepo structure
+    wp-monorepo setup
+
+    # Test help command (should work without errors)
+    wp-monorepo --help
+
+    # Test theme setup
+    wp-monorepo setup:theme my-theme
+
+    # Test plugin setup
+    wp-monorepo setup:plugin my-plugin
     ```
 
-3. Install the package locally:
+**Expected behavior:**
+
+- Detects WordPress installation (wp-config.php, wp-content, etc.)
+- Creates `package.json` at WordPress root
+- Creates `turbo.json` for monorepo configuration
+- Installs dependencies including wp-monorepo-manager
+- Sets up workspace configuration for themes and plugins
+
+#### Scenario B: Create New Project Structure
+
+1. **Navigate to an empty directory:**
 
     ```bash
-    npm install ../wp-monorepo-manager
+    # Go to an empty directory (not a WordPress installation)
+    cd /path/to/empty-directory
     ```
 
-4. Install required peer dependencies:
+2. **Test the setup command:**
+
     ```bash
-    npm install --save-dev turbo
+    # This should create a new test project structure
+    wp-monorepo setup
+
+    # Test help command (should work without errors)
+    wp-monorepo --help
+    ```
+
+**Expected behavior:**
+
+- Creates new directory structure with WordPress + monorepo
+- Sets up complete development environment
+- Links the development package for testing
+
+### Step 3: Verify Package Functionality
+
+1. **Check package installation:**
+
+    ```bash
+    # Verify the package is linked
+    npm list wp-monorepo-manager
+    ```
+
+2. **Test build process:**
+
+    ```bash
+    # Build all projects
+    npm run build
+
+    # Build specific theme (replace with actual theme name)
+    npm run build --workspace=wp-content/themes/your-theme
+
+    # Build specific plugin (replace with actual plugin name)
+    npm run build --workspace=wp-content/plugins/your-plugin
     ```
 
 ## Test Project Directory Structure
 
-Your directory structure should look like this:
+### Scenario A: Existing WordPress Installation
+
+Your WordPress directory structure should look like this after setup:
+
+```
+wordpress-installation/
+│
+├── wp-config.php              # Existing WordPress config
+├── wp-content/                # Existing WordPress content
+├── wp-admin/                  # Existing WordPress admin
+├── wp-includes/               # Existing WordPress includes
+├── package.json               # Created by wp-monorepo setup
+├── turbo.json                 # Created by wp-monorepo setup
+├── node_modules/              # Created by npm install
+└── wp-content/
+    ├── plugins/
+    │   └── [your-plugin]/     # Created with setup:plugin
+    │       ├── package.json
+    │       ├── [plugin-name].php
+    │       └── src/
+    │           ├── scripts/
+    │           │   └── index.js
+    │           └── styles.scss
+    └── themes/
+        └── [your-theme]/      # Created with setup:theme
+            ├── package.json
+            ├── index.php
+            ├── style.css
+            └── src/
+                ├── scripts/
+                │   └── index.js
+                └── styles.scss
+```
+
+### Scenario B: New Project Structure
+
+Your test directory structure should look like this:
 
 ```
 parent-directory/
 │
-├── wp-monorepo-manager/     # The package repository
+├── wp-monorepo-manager/     # The package repository (development)
 │   ├── package.json
 │   ├── config/
+│   ├── scripts/
 │   └── ...
 │
-└── your-test-directory/     # Your test directory (default: wp-monorepo-test)
+└── wp-monorepo-test/        # Test directory (created by setup)
     ├── package.json
     ├── turbo.json
+    ├── wp-config.php        # WordPress installation
+    ├── wp-content/
+    ├── wp-admin/
+    ├── wp-includes/
     └── wp-content/
         ├── plugins/
-        │   └── test-plugin/
+        │   └── [your-plugin]/     # Created with setup:plugin
         │       ├── package.json
+        │       ├── [plugin-name].php
         │       └── src/
         │           ├── scripts/
         │           │   └── index.js
-        │           ├── styles.scss
-        │           └── editor-styles.scss
+        │           └── styles.scss
         └── themes/
-            └── test-theme/
+            └── [your-theme]/      # Created with setup:theme
                 ├── package.json
+                ├── index.php
+                ├── style.css
                 └── src/
                     ├── scripts/
                     │   └── index.js
-                    ├── styles.scss
-                    └── editor-styles.scss
+                    └── styles.scss
 ```
 
-## Test Cases
+## Comprehensive Test Cases
 
-### 1. Package Installation
+### 1. Package Development Setup
 
 ```bash
-# Verify package installation
-npm list wp-monorepo-manager
+# From wp-monorepo-manager directory
+npm install
+npm link
+
+# Verify the package is properly set up and linked
+npm list
+which wp-monorepo
 ```
 
-Expected: Package should be listed in dependencies.
+**Expected:** All dependencies should install without errors, the package should be linkable, and the `wp-monorepo` command should be available globally.
 
-### 2. Configuration Files
+### 2. CLI Command Testing
 
-Test each configuration file:
+Test CLI commands from different contexts:
+
+```bash
+# Test help command from anywhere (should work without errors)
+wp-monorepo --help
+
+# Test setup command from WordPress installation
+cd /path/to/wordpress
+wp-monorepo setup
+
+# Test setup command from empty directory
+cd /path/to/empty-directory
+wp-monorepo setup
+```
+
+**Expected:**
+
+- Help command should work from any directory without webpack configuration errors
+- Setup command should detect context and behave appropriately
+- No package.json should be required before running setup
+
+### 3. Configuration Files
+
+Test each configuration file in the test project:
 
 ```bash
 # ESLint
@@ -123,28 +297,7 @@ npx stylelint --print-config .stylelintrc.js
 node -e "console.log(require('./webpack.config.js'))"
 ```
 
-Expected: Each command should output a valid configuration.
-
-### 3. Build Process
-
-Test the build process for both theme and plugin:
-
-```bash
-# Build all projects
-npm run build
-
-# Build specific theme
-npm run build --workspace=wp-content/themes/test-theme
-
-# Build specific plugin
-npm run build --workspace=wp-content/plugins/test-plugin
-```
-
-Expected:
-
-- `dist` directories should be created
-- JS and CSS files should be generated
-- No build errors should occur
+**Expected:** Each command should output a valid configuration.
 
 ### 4. Development Mode
 
@@ -155,142 +308,132 @@ Test development workflow:
 npm run start
 ```
 
-Expected:
+**Expected:**
 
 - Development server should start
 - File watching should work
 - Changes should trigger rebuilds
 
-### 5. Linting
+### 5. Linting and Formatting
 
-Test linting commands:
+Test linting and formatting commands:
 
 ```bash
 # Lint all projects
 npm run lint
 
-# Lint specific theme
-npm run lint --workspace=wp-content/themes/test-theme
-
-# Lint specific plugin
-npm run lint --workspace=wp-content/plugins/test-plugin
-```
-
-Expected:
-
-- Linting should run without errors
-- Known issues should be reported
-
-### 6. Formatting
-
-Test formatting commands:
-
-```bash
 # Format all projects
 npm run format
 
-# Format specific theme
-npm run format --workspace=wp-content/themes/test-theme
+# Lint specific theme (replace 'your-theme' with actual theme name)
+npm run lint --workspace=wp-content/themes/your-theme
 
-# Format specific plugin
-npm run format --workspace=wp-content/plugins/test-plugin
+# Format specific plugin (replace 'your-plugin' with actual plugin name)
+npm run format --workspace=wp-content/plugins/your-plugin
 ```
 
-Expected:
+**Expected:**
 
+- Linting should run without errors
 - Code should be formatted according to standards
-- No formatting errors should occur
-
-## Test Data
-
-### Theme Test Files
-
-1. `wp-content/themes/test-theme/src/scripts/index.js`:
-
-```javascript
-console.log('Theme script loaded');
-```
-
-2. `wp-content/themes/test-theme/src/styles.scss`:
-
-```scss
-body {
-	background: #fff;
-}
-```
-
-3. `wp-content/themes/test-theme/src/editor-styles.scss`:
-
-```scss
-.editor-styles-wrapper {
-	background: #fff;
-}
-```
-
-### Plugin Test Files
-
-1. `wp-content/plugins/test-plugin/src/scripts/index.js`:
-
-```javascript
-console.log('Plugin script loaded');
-```
-
-2. `wp-content/plugins/test-plugin/src/styles.scss`:
-
-```scss
-.plugin-container {
-	padding: 20px;
-}
-```
-
-3. `wp-content/plugins/test-plugin/src/editor-styles.scss`:
-
-```scss
-.block-editor-block-list__block {
-	margin: 20px 0;
-}
-```
+- Known issues should be reported appropriately
 
 ## Expected Output
 
 After running all tests, you should have:
 
-1. Working build process:
+### 1. Working Build Process
 
-    - Compiled JS files
-    - Compiled CSS files
-    - No empty files
-    - Proper file structure
+- Compiled JS files in `dist/scripts/` directories
+- Compiled CSS files in `dist/styles/` directories
+- No empty files
+- Proper file structure maintained
 
-2. Working development environment:
+### 2. Working Development Environment
 
-    - Hot reloading
-    - Source maps
-    - Error reporting
+- Hot reloading functionality
+- Source maps for debugging
+- Clear error reporting
+- File watching across all workspaces
 
-3. Working linting and formatting:
-    - Consistent code style
-    - No linting errors
-    - Proper formatting
+### 3. Working Linting and Formatting
 
-## Common Issues
+- Consistent code style across all files
+- No linting errors in JavaScript, CSS, and PHP
+- Proper formatting according to project standards
 
-1. **Build Failures**
+## Common Issues and Troubleshooting
 
-    - Check webpack configuration
-    - Verify entry points
-    - Check file paths
+### Build Failures
 
-2. **Linting Errors**
+- **Check webpack configuration** in `config/webpack/webpack.config.js`
+- **Verify entry points** in individual `package.json` files
+- **Check file paths** and ensure all source files exist
+- **Review build logs** for specific error messages
 
-    - Verify ESLint configuration
-    - Check StyleLint rules
-    - Review PHPCS settings
+### Linting Errors
 
-3. **Development Server Issues**
-    - Check port availability
-    - Verify WordPress installation
-    - Check file permissions
+- **Verify ESLint configuration** in `config/eslint/`
+- **Check StyleLint rules** in `config/stylelint/`
+- **Review PHPCS settings** in `config/phpcs/phpcs.xml.dist`
+- **Ensure all dependencies** are properly installed
+
+### Development Server Issues
+
+- **Check port availability** (default: 3000)
+- **Verify WordPress installation** is accessible
+- **Check file permissions** on generated files
+- **Review browser console** for JavaScript errors
+
+### CLI Command Issues
+
+- **Verify npm link** is properly set up
+- **Check PATH environment** includes npm global binaries
+- **Ensure package.json** has correct `bin` configuration
+- **Test with `which wp-monorepo`** to confirm command location
+
+### Setup Command Issues
+
+- **WordPress detection**: Ensure you're in a WordPress root directory (contains wp-config.php, wp-content, etc.)
+- **Package.json conflicts**: If package.json already exists, the setup will use the existing one
+- **Permission issues**: Ensure you have write permissions in the target directory
+- **Network issues**: Check internet connection for npm install
+
+## Test Data Templates
+
+For testing themes and plugins, use the provided templates in the `templates/` directory:
+
+- **Theme templates:** `templates/theme/`
+- **Plugin templates:** `templates/plugin/`
+
+These templates provide the basic structure needed for testing the build process and development workflow.
+
+## Development vs Published Package Testing
+
+### Development Testing (Current Focus)
+
+This document focuses on **development testing** - testing the package while you're developing it:
+
+- **Local linking**: Uses `npm link` to test the package as if it were installed
+- **Direct script execution**: Runs setup scripts directly from the package directory
+- **Immediate feedback**: Changes to the package are immediately available for testing
+- **Pre-publishing**: Done before the package is published
+
+### Published Package Testing (Post-Publishing)
+
+After publishing, you would test the actual published package:
+
+```bash
+# Install the published package
+npm install -g wp-monorepo-manager
+
+# Test in a real project
+mkdir real-project
+cd real-project
+wp-monorepo setup
+```
+
+**Note:** Published package testing is not covered in this document as it's done after the package is published to npm.
 
 ## Final Checklist
 
@@ -305,3 +448,5 @@ Before publishing:
 - [ ] README.md is up to date
 - [ ] Version number is correct
 - [ ] Changelog is updated
+- [ ] CLI works in both WordPress and non-WordPress contexts
+- [ ] Setup command properly detects and handles different environments

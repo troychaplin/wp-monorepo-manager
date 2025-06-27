@@ -12,49 +12,234 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 ## Quick Start
 
-1. Install the package:
+### Option 1: Global Installation (Recommended for CLI usage)
+
+1. Install the package globally:
 
     ```bash
-    npm install --save-dev wp-monorepo-manager
+    npm install -g wp-monorepo-manager
     ```
 
 2. Set up your monorepo structure:
 
-    ```
-    my-wordpress-project/
-    ├── package.json
-    ├── turbo.json
-    ├── wp-content/
-    │   ├── plugins/
-    │   │   └── my-plugin/
-    │   └── themes/
-    │       └── my-theme/
-    ```
-
-3. Configure your root package.json:
-
-    ```json
-    {
-    	"name": "my-wordpress-project",
-    	"private": true,
-    	"workspaces": ["wp-content/plugins/*", "wp-content/themes/*"],
-    	"scripts": {
-    		"build": "turbo run build",
-    		"start": "turbo run start",
-    		"lint": "turbo run lint",
-    		"format": "turbo run format"
-    	},
-    	"devDependencies": {
-    		"wp-monorepo-manager": "^0.1.0",
-    		"turbo": "^2.0.0"
-    	}
-    }
-    ```
-
-4. Run your first build:
     ```bash
-    npm run build
+    # Create the basic monorepo structure
+    wp-monorepo setup
+
+    # Create a theme (optional)
+    wp-monorepo setup:theme
+
+    # Create a plugin (optional)
+    wp-monorepo setup:plugin
     ```
+
+### Option 2: Local Project Installation
+
+1. Create a new directory for your project and navigate to it:
+
+    ```bash
+    mkdir my-wordpress-project
+    cd my-wordpress-project
+    ```
+
+2. Install the package locally:
+
+    ```bash
+    npm install wp-monorepo-manager
+    ```
+
+3. Set up your monorepo structure using npm scripts:
+
+    ```bash
+    # Create the basic monorepo structure
+    npx wp-monorepo setup
+
+    # Create a theme (optional)
+    npx wp-monorepo setup:theme
+
+    # Create a plugin (optional)
+    npx wp-monorepo setup:plugin
+    ```
+
+### Project Structure
+
+Your project structure will look like this:
+
+```
+my-wordpress-project/
+├── package.json
+├── turbo.json
+├── wp-content/
+│   ├── plugins/
+│   │   └── my-plugin/
+│   └── themes/
+│       └── my-theme/
+```
+
+### Configuration
+
+Your root package.json will be automatically configured with:
+
+```json
+{
+	"name": "my-wordpress-project",
+	"version": "1.0.0",
+	"private": true,
+	"workspaces": ["wp-content/themes/*", "wp-content/plugins/*"],
+	"scripts": {
+		"build": "turbo run build",
+		"build:dev": "turbo run build:dev",
+		"build:prod": "turbo run build:prod",
+		"start": "turbo run start",
+		"lint": "turbo run lint",
+		"format": "turbo run format",
+		"clean": "turbo run clean"
+	},
+	"dependencies": {
+		"@wordpress/browserslist-config": "^6.25.0",
+		"@wordpress/eslint-plugin": "22.11.0",
+		"@wordpress/scripts": "30.18.0",
+		"css-loader": "^7.1.2",
+		"eslint-config-wordpress": "2.0.0",
+		"postcss-import": "^16.1.0",
+		"prettier": "3.5.3",
+		"sass": "^1.71.0",
+		"sass-loader": "^16.0.5",
+		"stylelint": "16.20.0",
+		"stylelint-scss": "^6.11.1",
+		"turbo": "2.5.4"
+	},
+	"packageManager": "npm@10.2.4"
+}
+```
+
+### Run Your First Build
+
+```bash
+npm run build
+```
+
+## Installation Options
+
+### Global Installation Benefits
+
+- **Convenience**: Run `wp-monorepo` commands from anywhere
+- **Consistency**: Same version across all projects
+- **Quick setup**: No need to install in each project
+- **CLI experience**: Familiar command-line interface
+
+### Local Installation Benefits
+
+- **Project isolation**: Each project can use different versions
+- **Team consistency**: Version is locked in package.json
+- **CI/CD friendly**: Dependencies are explicitly declared
+- **No global pollution**: Doesn't affect system-wide npm packages
+
+### When to Use Each
+
+**Use Global Installation when:**
+
+- You frequently create new WordPress projects
+- You want a consistent development experience
+- You prefer CLI tools over npm scripts
+- You're working on personal projects
+
+**Use Local Installation when:**
+
+- You're working on team projects
+- You need version control per project
+- You're setting up CI/CD pipelines
+- You want to ensure reproducible builds
+
+## Configuration
+
+The package includes pre-configured settings for various development tools. These configurations are located in the `config/` directory:
+
+### ESLint Configuration
+
+ESLint is configured to enforce JavaScript/TypeScript coding standards. Create a `.eslintrc.json` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/eslint"]
+}
+```
+
+### StyleLint Configuration
+
+StyleLint ensures consistent CSS/SCSS coding standards. Create a `.stylelintrc.json` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/stylelint"]
+}
+```
+
+You may also want to create a `.stylelintignore` file to exclude certain files:
+
+```
+node_modules
+dist
+build
+```
+
+### Prettier Configuration
+
+Prettier provides code formatting rules. Create a `.prettierrc` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/prettier"]
+}
+```
+
+Optionally create a `.prettierignore` file to exclude files from formatting:
+
+```
+node_modules
+dist
+build
+```
+
+### PHPCS Configuration
+
+PHP_CodeSniffer enforces PHP coding standards. Create a `phpcs.xml` file in your project root:
+
+```xml
+<?xml version="1.0"?>
+<ruleset name="WordPress Monorepo Standards">
+    <rule ref="wp-monorepo-manager/config/phpcs"/>
+</ruleset>
+```
+
+### Webpack Configuration
+
+Webpack is configured for asset bundling. Create a `webpack.config.js` file in your project root:
+
+```javascript
+const { webpackConfig } = require('wp-monorepo-manager/config/webpack');
+
+module.exports = webpackConfig;
+```
+
+### Editor Configuration
+
+The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. Create an `.editorconfig` file in your project root:
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
+indent_size = 2
+```
 
 ## Available Commands
 
