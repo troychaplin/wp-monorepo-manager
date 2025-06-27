@@ -4,9 +4,16 @@ const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
 
-// Get the command from arguments
-const command = process.argv[2];
-const subCommand = process.argv[3];
+// Get the command from arguments and parse colon syntax
+const fullCommand = process.argv[2];
+let command, subCommand;
+
+if (fullCommand && fullCommand.includes(':')) {
+	[command, subCommand] = fullCommand.split(':');
+} else {
+	command = fullCommand;
+	subCommand = process.argv[3];
+}
 
 // Get the current working directory
 const cwd = process.cwd();
@@ -45,8 +52,8 @@ if (
 	console.log('');
 	console.log('Examples:');
 	console.log('  wp-monorepo setup              # Initialize monorepo structure');
-	console.log('  wp-monorepo setup:theme my-theme    # Create a new theme');
-	console.log('  wp-monorepo setup:plugin my-plugin  # Create a new plugin');
+	console.log('  wp-monorepo setup:theme        # Create a new theme');
+	console.log('  wp-monorepo setup:plugin       # Create a new plugin');
 	return;
 }
 
@@ -60,6 +67,15 @@ if (command === 'setup') {
 				: 'setup-monorepo';
 
 	try {
+		// If we have a subcommand (theme or plugin), run the specific setup script
+		if (subCommand === 'theme' || subCommand === 'plugin') {
+			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}`, {
+				stdio: 'inherit',
+				cwd: cwd,
+			});
+			return;
+		}
+
 		// Check if we're in a WordPress installation
 		if (isWordPressInstallation(cwd)) {
 			// We're in a WordPress installation, so we need to create package.json here

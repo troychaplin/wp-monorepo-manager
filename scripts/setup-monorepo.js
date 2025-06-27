@@ -5,7 +5,7 @@ const readline = require('readline');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = process.argv[2] || path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
+const TARGET_DIR = process.argv[2] || process.cwd(); // Use current directory as default
 
 // Create readline interface for user input
 const rl = readline.createInterface({
@@ -48,7 +48,7 @@ async function setup() {
 			const isWordPress = isWordPressInstallation(TARGET_DIR);
 			const message = isWordPress
 				? `A WordPress installation was detected in ${TARGET_DIR}. Do you want to proceed with adding the monorepo structure? (y/n): `
-				: `The test directory already exists. Do you want to proceed with setup? (y/n): `;
+				: `The directory already exists. Do you want to proceed with setup? (y/n): `;
 
 			const shouldProceed = await promptUser(message);
 			if (!shouldProceed) {
@@ -64,7 +64,7 @@ async function setup() {
 
 		// Create root package.json
 		const rootPackageJson = {
-			name: 'wp-monorepo-test',
+			name: path.basename(TARGET_DIR),
 			version: '1.0.0',
 			private: true,
 			workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
@@ -78,9 +78,7 @@ async function setup() {
 				clean: 'turbo run clean',
 			},
 			dependencies: {
-				'wp-monorepo-manager': TARGET_DIR.includes('wp-monorepo-test')
-					? 'file:../wp-monorepo-manager'
-					: 'wp-monorepo-manager',
+				'wp-monorepo-manager': 'wp-monorepo-manager',
 				'@wordpress/browserslist-config': '^6.25.0',
 				'@wordpress/eslint-plugin': '22.11.0',
 				'@wordpress/scripts': '30.18.0',

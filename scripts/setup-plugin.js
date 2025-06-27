@@ -5,7 +5,7 @@ const readline = require('readline');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = path.resolve(PACKAGE_DIR, '../wp-monorepo-test');
+const TARGET_DIR = process.cwd(); // Use current working directory instead of hardcoded path
 
 // Create readline interface for user input
 const rl = readline.createInterface({
@@ -32,15 +32,16 @@ function promptUser(question) {
 	});
 }
 
+// Convert plugin name to lowercase hyphenated folder name
+function toFolderName(name) {
+	return name
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
 async function setupPlugin() {
 	try {
-		// Check if target directory exists
-		if (!fs.existsSync(TARGET_DIR)) {
-			console.log('Error: Target directory does not exist. Please run setup first.');
-			rl.close();
-			return;
-		}
-
 		// Get plugin name from user
 		const pluginName = await promptUser('Enter plugin name: ');
 		if (!pluginName.trim()) {
@@ -49,12 +50,26 @@ async function setupPlugin() {
 			return;
 		}
 
-		const pluginDir = path.join(TARGET_DIR, 'wp-content/plugins', pluginName);
+		// Generate default folder name from plugin name
+		const defaultFolderName = toFolderName(pluginName);
+
+		// Get plugin folder name from user
+		const pluginFolderName = await promptUser(
+			`Enter plugin folder name (default: ${defaultFolderName}): `
+		);
+		const folderName = pluginFolderName.trim() || defaultFolderName;
+
+		// Determine the plugin directory path
+		// Check if we're in a WordPress installation (has wp-content/plugins)
+		const wpContentPluginsPath = path.join(TARGET_DIR, 'wp-content/plugins');
+		const pluginDir = fs.existsSync(wpContentPluginsPath)
+			? path.join(wpContentPluginsPath, folderName)
+			: path.join(TARGET_DIR, 'plugins', folderName);
 
 		// Check if plugin already exists
 		if (fs.existsSync(pluginDir)) {
 			const shouldOverwrite = await promptUser(
-				`Plugin "${pluginName}" already exists. Overwrite? (y/n): `
+				`Plugin "${folderName}" already exists. Overwrite? (y/n): `
 			);
 			if (shouldOverwrite.toLowerCase() !== 'y' && shouldOverwrite.toLowerCase() !== 'yes') {
 				console.log('Setup cancelled.');
@@ -65,7 +80,7 @@ async function setupPlugin() {
 
 		// Create plugin package.json
 		const pluginPackageJson = {
-			name: pluginName,
+			name: folderName,
 			version: '1.0.0',
 			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
@@ -87,7 +102,7 @@ async function setupPlugin() {
 		// Create plugin files
 		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
 		writeFile(
-			path.join(pluginDir, `${pluginName}.php`),
+			path.join(pluginDir, 'plugin.php'),
 			`<?php
 /**
  * Plugin Name: ${pluginName}
@@ -142,6 +157,15 @@ add_action('wp_enqueue_scripts', '${pluginName.replace(/[^a-zA-Z0-9]/g, '_')}_en
 }`
 		);
 		writeFile(
+			path.join(pluginDir, 'src/editor-styles.scss'),
+			`/* ${pluginName} Editor Styles */
+
+/* Styles for the WordPress editor */
+.wp-block {
+	/* Editor-specific styles here */
+}`
+		);
+		writeFile(
 			path.join(pluginDir, 'README.md'),
 			`# ${pluginName}
 
@@ -159,14 +183,54 @@ npm run clean     # Clean build artifacts
 \`\`\`
 `
 		);
+		writeFile(
+			path.join(pluginDir, '.gitignore'),
+			`# Dependencies
+node_modules/
 
-		// Install dependencies in the plugin directory
-		execSync('npm install', { cwd: pluginDir, stdio: 'inherit' });
+# Build artifacts
+dist/
 
-		console.log(`\nPlugin "${pluginName}" created successfully!`);
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+`
+		);
+
+		console.log(`\nPlugin "${pluginName}" created successfully in "${folderName}" folder!`);
+		console.log(`\nPlugin location: ${pluginDir}`);
 		console.log(`\nNext steps:`);
-		console.log(`1. cd wp-content/plugins/${pluginName}`);
-		console.log(`2. npm run build`);
+		console.log(`1. Add the plugin to your root package.json workspaces if needed`);
+		console.log(`2. Run npm install from the project root to install dependencies`);
+		console.log(`3. Use npm run build from the project root to build all plugins`);
 
 		rl.close();
 	} catch (error) {

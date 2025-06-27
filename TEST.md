@@ -29,20 +29,7 @@ This section covers testing the package during development, before publishing.
     npm link
     ```
 
-2. **Test the setup scripts:**
-
-    ```bash
-    # Create the basic monorepo structure
-    npm run setup-monorepo
-
-    # Create a theme (optional)
-    npm run setup-theme
-
-    # Create a plugin (optional)
-    npm run setup-plugin
-    ```
-
-3. **Verify the development environment:**
+2. **Test the CLI commands:**
 
     ```bash
     # Check that the CLI command is available
@@ -51,11 +38,13 @@ This section covers testing the package during development, before publishing.
     # Verify the package is linked correctly
     npm list -g wp-monorepo-manager
 
-    # Test that you can run setup commands
+    # Test setup commands
     wp-monorepo setup --help
+    wp-monorepo setup:theme --help
+    wp-monorepo setup:plugin --help
     ```
 
-4. **Cleanup when done testing:**
+3. **Cleanup when done testing:**
 
     ```bash
     # Remove the global link
@@ -106,10 +95,10 @@ The CLI tool supports two different setup scenarios:
     wp-monorepo --help
 
     # Test theme setup
-    wp-monorepo setup:theme my-theme
+    wp-monorepo setup:theme
 
     # Test plugin setup
-    wp-monorepo setup:plugin my-plugin
+    wp-monorepo setup:plugin
     ```
 
 **Expected behavior:**
@@ -132,7 +121,7 @@ The CLI tool supports two different setup scenarios:
 2. **Test the setup command:**
 
     ```bash
-    # This should create a new test project structure
+    # This should create a new project structure
     wp-monorepo setup
 
     # Test help command (should work without errors)
@@ -141,11 +130,41 @@ The CLI tool supports two different setup scenarios:
 
 **Expected behavior:**
 
-- Creates new directory structure with WordPress + monorepo
+- Creates new directory structure with monorepo configuration
 - Sets up complete development environment
 - Links the development package for testing
 
-### Step 3: Verify Package Functionality
+### Step 3: Test Theme and Plugin Creation
+
+1. **Test theme creation:**
+
+    ```bash
+    # From project root (after running wp-monorepo setup)
+    wp-monorepo setup:theme
+    ```
+
+**Expected behavior:**
+
+- Prompts for theme name (e.g., "My Awesome Theme")
+- Prompts for theme folder name (e.g., "my-awesome-theme")
+- Creates theme structure in appropriate directory
+- Does NOT install dependencies (monorepo architecture)
+
+2. **Test plugin creation:**
+
+    ```bash
+    # From project root (after running wp-monorepo setup)
+    wp-monorepo setup:plugin
+    ```
+
+**Expected behavior:**
+
+- Prompts for plugin name (e.g., "My Awesome Plugin")
+- Prompts for plugin folder name (e.g., "my-awesome-plugin")
+- Creates plugin structure in appropriate directory
+- Does NOT install dependencies (monorepo architecture)
+
+### Step 4: Verify Package Functionality
 
 1. **Check package installation:**
 
@@ -216,31 +235,29 @@ parent-directory/
 │   ├── scripts/
 │   └── ...
 │
-└── wp-monorepo-test/        # Test directory (created by setup)
+└── your-project/            # Test directory (created by setup)
     ├── package.json
     ├── turbo.json
-    ├── wp-config.php        # WordPress installation
     ├── wp-content/
-    ├── wp-admin/
-    ├── wp-includes/
-    └── wp-content/
-        ├── plugins/
-        │   └── [your-plugin]/     # Created with setup:plugin
-        │       ├── package.json
-        │       ├── [plugin-name].php
-        │       └── src/
-        │           ├── scripts/
-        │           │   └── index.js
-        │           └── styles.scss
-        └── themes/
-            └── [your-theme]/      # Created with setup:theme
-                ├── package.json
-                ├── index.php
-                ├── style.css
-                └── src/
-                    ├── scripts/
-                    │   └── index.js
-                    └── styles.scss
+    │   ├── plugins/
+    │   │   └── [your-plugin]/     # Created with setup:plugin
+    │   │       ├── package.json
+    │   │       ├── [plugin-name].php
+    │   │       └── src/
+    │   │           ├── scripts/
+    │   │           │   └── index.js
+    │   │           └── styles.scss
+    │   └── themes/
+    │       └── [your-theme]/      # Created with setup:theme
+    │           ├── package.json
+    │           ├── index.php
+    │           ├── style.css
+    │           └── src/
+    │               ├── scripts/
+    │               │   └── index.js
+    │               └── styles.scss
+    └── plugins/             # Alternative location for non-WordPress projects
+        └── [your-plugin]/
 ```
 
 ## Comprehensive Test Cases
@@ -282,7 +299,28 @@ wp-monorepo setup
 - Setup command should detect context and behave appropriately
 - No package.json should be required before running setup
 
-### 3. Configuration Files
+### 3. Theme and Plugin Creation Testing
+
+```bash
+# Test theme creation
+wp-monorepo setup:theme
+# Should prompt for theme name and folder name
+# Should create theme structure without installing dependencies
+
+# Test plugin creation
+wp-monorepo setup:plugin
+# Should prompt for plugin name and folder name
+# Should create plugin structure without installing dependencies
+```
+
+**Expected:**
+
+- Prompts for both display name and folder name
+- Creates appropriate directory structure
+- Does NOT run npm install in individual theme/plugin directories
+- Provides helpful next steps for monorepo workflow
+
+### 4. Configuration Files
 
 Test each configuration file in the test project:
 
@@ -299,7 +337,7 @@ node -e "console.log(require('./webpack.config.js'))"
 
 **Expected:** Each command should output a valid configuration.
 
-### 4. Development Mode
+### 5. Development Mode
 
 Test development workflow:
 
@@ -314,7 +352,7 @@ npm run start
 - File watching should work
 - Changes should trigger rebuilds
 
-### 5. Linting and Formatting
+### 6. Linting and Formatting
 
 Test linting and formatting commands:
 
@@ -450,3 +488,5 @@ Before publishing:
 - [ ] Changelog is updated
 - [ ] CLI works in both WordPress and non-WordPress contexts
 - [ ] Setup command properly detects and handles different environments
+- [ ] Theme and plugin creation works with proper prompts
+- [ ] Monorepo architecture is properly implemented (no individual dependency installation)
