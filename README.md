@@ -20,10 +20,13 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     npm install -g wp-monorepo-manager
     ```
 
-2. Set up your monorepo structure:
+2. Set up your monorepo structure in an existing WordPress installation:
 
     ```bash
-    # Create the basic monorepo structure
+    # Navigate to your WordPress installation root
+    cd /path/to/your/wordpress-site
+
+    # Create the monorepo configuration
     wp-monorepo setup
 
     # Create a theme (optional)
@@ -35,11 +38,10 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 ### Option 2: Local Project Installation
 
-1. Create a new directory for your project and navigate to it:
+1. Navigate to your existing WordPress installation:
 
     ```bash
-    mkdir my-wordpress-project
-    cd my-wordpress-project
+    cd /path/to/your/wordpress-site
     ```
 
 2. Install the package locally:
@@ -51,7 +53,7 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 3. Set up your monorepo structure using npm scripts:
 
     ```bash
-    # Create the basic monorepo structure
+    # Create the monorepo configuration
     npx wp-monorepo setup
 
     # Create a theme (optional)
@@ -63,61 +65,154 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 ### Project Structure
 
-Your project structure will look like this:
+Your existing WordPress installation will be enhanced with monorepo configuration:
 
 ```
-my-wordpress-project/
-├── package.json
-├── turbo.json
-├── wp-content/
-│   ├── plugins/
-│   │   └── my-plugin/
-│   └── themes/
-│       └── my-theme/
+your-wordpress-site/
+├── package.json          # Created by setup
+├── turbo.json           # Created by setup
+├── .eslintrc.json       # Created by setup
+├── .stylelintrc.json    # Created by setup
+├── .prettierrc          # Created by setup
+├── phpcs.xml.dist       # Created by setup
+├── .editorconfig        # Created by setup
+├── .gitignore           # Created by setup
+├── wp-config.php        # Existing WordPress file
+├── wp-content/          # Existing WordPress directory
+│   ├── plugins/         # Existing plugins directory
+│   └── themes/          # Existing themes directory
+└── ... (other WordPress files)
 ```
 
 ### Configuration
 
-Your root package.json will be automatically configured with:
+The package includes pre-configured settings for various development tools. These configurations are automatically created during the setup process and are located in the `config/` directory:
+
+### ESLint Configuration
+
+ESLint is configured to enforce JavaScript/TypeScript coding standards. The setup process automatically creates a `.eslintrc.json` file in your project root:
 
 ```json
 {
-	"name": "my-wordpress-project",
-	"version": "1.0.0",
-	"private": true,
-	"workspaces": ["wp-content/themes/*", "wp-content/plugins/*"],
-	"scripts": {
-		"build": "turbo run build",
-		"build:dev": "turbo run build:dev",
-		"build:prod": "turbo run build:prod",
-		"start": "turbo run start",
-		"lint": "turbo run lint",
-		"format": "turbo run format",
-		"clean": "turbo run clean"
-	},
-	"dependencies": {
-		"@wordpress/browserslist-config": "^6.25.0",
-		"@wordpress/eslint-plugin": "22.11.0",
-		"@wordpress/scripts": "30.18.0",
-		"css-loader": "^7.1.2",
-		"eslint-config-wordpress": "2.0.0",
-		"postcss-import": "^16.1.0",
-		"prettier": "3.5.3",
-		"sass": "^1.71.0",
-		"sass-loader": "^16.0.5",
-		"stylelint": "16.20.0",
-		"stylelint-scss": "^6.11.1",
-		"turbo": "2.5.4"
-	},
-	"packageManager": "npm@10.2.4"
+	"extends": ["wp-monorepo-manager/config/eslint"]
 }
 ```
 
-### Run Your First Build
+### StyleLint Configuration
 
-```bash
-npm run build
+StyleLint ensures consistent CSS/SCSS coding standards. The setup process automatically creates a `.stylelintrc.json` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/stylelint"]
+}
 ```
+
+A `.stylelintignore` file is also created to exclude certain files:
+
+```
+node_modules
+dist
+build
+```
+
+### Prettier Configuration
+
+Prettier provides code formatting rules. The setup process automatically creates a `.prettierrc` file in your project root:
+
+```json
+{
+	"extends": ["wp-monorepo-manager/config/prettier"]
+}
+```
+
+A `.prettierignore` file is also created to exclude files from formatting:
+
+```
+node_modules
+dist
+build
+```
+
+### PHPCS Configuration
+
+PHP_CodeSniffer enforces PHP coding standards. The setup process automatically creates a `phpcs.xml.dist` file in your project root:
+
+```xml
+<?xml version="1.0"?>
+<ruleset name="WordPress Monorepo Standards">
+    <rule ref="wp-monorepo-manager/config/phpcs"/>
+</ruleset>
+```
+
+### Editor Configuration
+
+The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. The setup process automatically creates an `.editorconfig` file in your project root:
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
+indent_size = 2
+```
+
+### Git Configuration
+
+A `.gitignore` file is automatically created to exclude common files and directories:
+
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+```
+
+## Available Commands
+
+- `npm run build` - Build all themes and plugins
+- `npm run build:dev` - Build in development mode
+- `npm run build:prod` - Build in production mode
+- `npm run start` - Start development mode
+- `npm run lint` - Lint all projects
+- `npm run format` - Format all projects
+- `npm run clean` - Clean build artifacts
 
 ## Installation Options
 
@@ -150,106 +245,6 @@ npm run build
 - You need version control per project
 - You're setting up CI/CD pipelines
 - You want to ensure reproducible builds
-
-## Configuration
-
-The package includes pre-configured settings for various development tools. These configurations are located in the `config/` directory:
-
-### ESLint Configuration
-
-ESLint is configured to enforce JavaScript/TypeScript coding standards. Create a `.eslintrc.json` file in your project root:
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/eslint"]
-}
-```
-
-### StyleLint Configuration
-
-StyleLint ensures consistent CSS/SCSS coding standards. Create a `.stylelintrc.json` file in your project root:
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/stylelint"]
-}
-```
-
-You may also want to create a `.stylelintignore` file to exclude certain files:
-
-```
-node_modules
-dist
-build
-```
-
-### Prettier Configuration
-
-Prettier provides code formatting rules. Create a `.prettierrc` file in your project root:
-
-```json
-{
-	"extends": ["wp-monorepo-manager/config/prettier"]
-}
-```
-
-Optionally create a `.prettierignore` file to exclude files from formatting:
-
-```
-node_modules
-dist
-build
-```
-
-### PHPCS Configuration
-
-PHP_CodeSniffer enforces PHP coding standards. Create a `phpcs.xml` file in your project root:
-
-```xml
-<?xml version="1.0"?>
-<ruleset name="WordPress Monorepo Standards">
-    <rule ref="wp-monorepo-manager/config/phpcs"/>
-</ruleset>
-```
-
-### Webpack Configuration
-
-Webpack is configured for asset bundling. Create a `webpack.config.js` file in your project root:
-
-```javascript
-const { webpackConfig } = require('wp-monorepo-manager/config/webpack');
-
-module.exports = webpackConfig;
-```
-
-### Editor Configuration
-
-The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. Create an `.editorconfig` file in your project root:
-
-```ini
-root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-indent_size = 4
-indent_style = space
-insert_final_newline = true
-trim_trailing_whitespace = true
-
-[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
-indent_size = 2
-```
-
-## Available Commands
-
-- `npm run build` - Build all themes and plugins
-- `npm run build:dev` - Build in development mode
-- `npm run build:prod` - Build in production mode
-- `npm run start` - Start development mode
-- `npm run lint` - Lint all projects
-- `npm run format` - Format all projects
-- `npm run clean` - Clean build artifacts
 
 ## Documentation
 

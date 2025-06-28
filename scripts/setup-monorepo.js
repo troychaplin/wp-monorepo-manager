@@ -5,25 +5,65 @@ const {
 	createDirectory,
 	writeFile,
 	promptYesNo,
-	isWordPressInstallation,
 	closeReadline,
 	SHARED_DEPENDENCIES,
 	SHARED_SCRIPTS,
 	TURBO_CONFIG,
+	GITIGNORE_CONTENT,
 } = require('./utils');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
 const TARGET_DIR = process.argv[2] || process.cwd();
 
+// Configuration file templates
+const ESLINTRC_CONTENT = {
+	extends: ['wp-monorepo-manager/config/eslint'],
+};
+
+const STYLELINTRC_CONTENT = {
+	extends: ['wp-monorepo-manager/config/stylelint'],
+};
+
+const STYLELINTIGNORE_CONTENT = `node_modules
+dist
+build
+`;
+
+const PRETTIERRC_CONTENT = {
+	extends: ['wp-monorepo-manager/config/prettier'],
+};
+
+const PRETTIERIGNORE_CONTENT = `node_modules
+dist
+build
+`;
+
+const PHPCS_XML_CONTENT = `<?xml version="1.0"?>
+<ruleset name="WordPress Monorepo Standards">
+    <rule ref="wp-monorepo-manager/config/phpcs"/>
+</ruleset>
+`;
+
+const EDITORCONFIG_CONTENT = `root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
+indent_size = 2
+`;
+
 async function setup() {
 	try {
-		// Check if directory exists and handle WordPress installations
+		// Check if directory exists and ask for confirmation
 		if (fs.existsSync(TARGET_DIR)) {
-			const isWordPress = isWordPressInstallation(TARGET_DIR);
-			const message = isWordPress
-				? `A WordPress installation was detected in ${TARGET_DIR}. Do you want to proceed with adding the monorepo structure? (y/n): `
-				: `The directory already exists. Do you want to proceed with setup? (y/n): `;
+			const message = `The directory ${TARGET_DIR} already exists. Do you want to proceed with adding monorepo configuration? (y/n): `;
 
 			const shouldProceed = await promptYesNo(message);
 			if (!shouldProceed) {
@@ -32,7 +72,7 @@ async function setup() {
 			}
 		}
 
-		// Create target directory
+		// Create target directory if it doesn't exist
 		createDirectory(TARGET_DIR);
 
 		// Create root package.json
@@ -43,19 +83,44 @@ async function setup() {
 			workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
 			scripts: SHARED_SCRIPTS,
 			dependencies: {
-				'wp-monorepo-manager': 'wp-monorepo-manager',
 				...SHARED_DEPENDENCIES,
 			},
 			packageManager: 'npm@10.2.4',
 		};
 
-		// Create wp-content directory structure
-		createDirectory(path.join(TARGET_DIR, 'wp-content/themes'));
-		createDirectory(path.join(TARGET_DIR, 'wp-content/plugins'));
-
 		// Write root files
 		writeFile(path.join(TARGET_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
 		writeFile(path.join(TARGET_DIR, 'turbo.json'), JSON.stringify(TURBO_CONFIG, null, 2));
+		writeFile(path.join(TARGET_DIR, '.gitignore'), GITIGNORE_CONTENT);
+
+		// Write configuration files as documented in README.md
+		console.log('📝 Creating configuration files...');
+
+		// ESLint configuration
+		writeFile(
+			path.join(TARGET_DIR, '.eslintrc.json'),
+			JSON.stringify(ESLINTRC_CONTENT, null, 2)
+		);
+
+		// StyleLint configuration
+		writeFile(
+			path.join(TARGET_DIR, '.stylelintrc.json'),
+			JSON.stringify(STYLELINTRC_CONTENT, null, 2)
+		);
+		writeFile(path.join(TARGET_DIR, '.stylelintignore'), STYLELINTIGNORE_CONTENT);
+
+		// Prettier configuration
+		writeFile(
+			path.join(TARGET_DIR, '.prettierrc'),
+			JSON.stringify(PRETTIERRC_CONTENT, null, 2)
+		);
+		writeFile(path.join(TARGET_DIR, '.prettierignore'), PRETTIERIGNORE_CONTENT);
+
+		// PHPCS configuration
+		writeFile(path.join(TARGET_DIR, 'phpcs.xml.dist'), PHPCS_XML_CONTENT);
+
+		// Editor configuration
+		writeFile(path.join(TARGET_DIR, '.editorconfig'), EDITORCONFIG_CONTENT);
 
 		// Link the package globally from the package directory
 		execSync('npm link', { cwd: PACKAGE_DIR, stdio: 'inherit' });
@@ -63,10 +128,21 @@ async function setup() {
 		// Install dependencies
 		execSync('npm install', { cwd: TARGET_DIR, stdio: 'inherit' });
 
-		// Link the package in the target directory
-		execSync('npm link wp-monorepo-manager', { cwd: TARGET_DIR, stdio: 'inherit' });
+		// Link the package in the target directory (only if not in development mode)
+		if (TARGET_DIR !== PACKAGE_DIR) {
+			execSync('npm link wp-monorepo-manager', { cwd: TARGET_DIR, stdio: 'inherit' });
+		}
 
 		console.log('\n✅ Monorepo setup completed successfully!');
+		console.log('\n📁 Created configuration files:');
+		console.log('  • .eslintrc.json - ESLint configuration');
+		console.log('  • .stylelintrc.json - StyleLint configuration');
+		console.log('  • .stylelintignore - StyleLint ignore rules');
+		console.log('  • .prettierrc - Prettier configuration');
+		console.log('  • .prettierignore - Prettier ignore rules');
+		console.log('  • phpcs.xml.dist - PHP CodeSniffer configuration');
+		console.log('  • .editorconfig - Editor configuration');
+		console.log('  • .gitignore - Git ignore rules');
 		console.log('\nNext steps:');
 		console.log('1. Use "wp-monorepo setup:theme" to create a new theme');
 		console.log('2. Use "wp-monorepo setup:plugin" to create a new plugin');
