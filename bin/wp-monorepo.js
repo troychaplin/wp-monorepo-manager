@@ -78,50 +78,17 @@ if (command === 'setup') {
 
 		// Check if we're in a WordPress installation
 		if (isWordPressInstallation(cwd)) {
-			// We're in a WordPress installation, so we need to create package.json here
+			// We're in a WordPress installation, use the enhanced setup script
 			console.log('WordPress installation detected. Setting up monorepo structure...');
-
-			// Create package.json if it doesn't exist
-			const packageJsonPath = path.join(cwd, 'package.json');
-			if (!fs.existsSync(packageJsonPath)) {
-				const packageJson = {
-					name: 'wp-monorepo-project',
-					version: '1.0.0',
-					private: true,
-					workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
-					scripts: SHARED_SCRIPTS,
-					dependencies: {
-						'wp-monorepo-manager':
-							'file:' + path.relative(cwd, path.dirname(__dirname)),
-						...SHARED_DEPENDENCIES,
-					},
-					packageManager: 'npm@10.2.4',
-				};
-
-				fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-				console.log('Created package.json');
-			}
-
-			// Create turbo.json if it doesn't exist
-			const turboJsonPath = path.join(cwd, 'turbo.json');
-			if (!fs.existsSync(turboJsonPath)) {
-				fs.writeFileSync(turboJsonPath, JSON.stringify(TURBO_CONFIG, null, 2));
-				console.log('Created turbo.json');
-			}
-
-			// Install dependencies
-			console.log('Installing dependencies...');
-			execSync('npm install', { cwd, stdio: 'inherit' });
-
-			console.log('Monorepo setup completed! You can now use:');
-			console.log('  wp-monorepo setup:theme    - Create a new theme');
-			console.log('  wp-monorepo setup:plugin   - Create a new plugin');
+			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}`, {
+				stdio: 'inherit',
+			});
 			process.exit(0);
 		} else {
 			// We're not in a WordPress installation, use the original setup script
-			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}`, {
+			console.log('Empty directory detected. Setting up monorepo structure...');
+			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}`, {
 				stdio: 'inherit',
-				cwd: path.dirname(__dirname),
 			});
 			process.exit(0);
 		}
