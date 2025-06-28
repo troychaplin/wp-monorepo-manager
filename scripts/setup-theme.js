@@ -7,7 +7,6 @@ const {
 	promptYesNo,
 	toFolderName,
 	closeReadline,
-	GITIGNORE_CONTENT,
 } = require('./utils');
 
 // Configuration
@@ -33,11 +32,8 @@ async function setupTheme() {
 		const folderName = themeFolderName.trim() || defaultFolderName;
 
 		// Determine the theme directory path
-		// Check if we're in a WordPress installation (has wp-content/themes)
 		const wpContentThemesPath = path.join(TARGET_DIR, 'wp-content/themes');
-		const themeDir = fs.existsSync(wpContentThemesPath)
-			? path.join(wpContentThemesPath, folderName)
-			: path.join(TARGET_DIR, 'themes', folderName);
+		const themeDir = path.join(wpContentThemesPath, folderName);
 
 		// Check if theme already exists
 		if (fs.existsSync(themeDir)) {
@@ -153,8 +149,6 @@ npm run clean     # Clean build artifacts
 \`\`\`
 `
 		);
-		writeFile(path.join(themeDir, '.gitignore'), GITIGNORE_CONTENT);
-
 		console.log(`\n✅ Theme "${themeName}" created successfully in ${themeDir}`);
 
 		closeReadline();

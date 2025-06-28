@@ -7,7 +7,6 @@ const {
 	promptYesNo,
 	toFolderName,
 	closeReadline,
-	GITIGNORE_CONTENT,
 } = require('./utils');
 
 // Configuration
@@ -33,11 +32,8 @@ async function setupPlugin() {
 		const folderName = pluginFolderName.trim() || defaultFolderName;
 
 		// Determine the plugin directory path
-		// Check if we're in a WordPress installation (has wp-content/plugins)
 		const wpContentPluginsPath = path.join(TARGET_DIR, 'wp-content/plugins');
-		const pluginDir = fs.existsSync(wpContentPluginsPath)
-			? path.join(wpContentPluginsPath, folderName)
-			: path.join(TARGET_DIR, 'plugins', folderName);
+		const pluginDir = path.join(wpContentPluginsPath, folderName);
 
 		// Check if plugin already exists
 		if (fs.existsSync(pluginDir)) {
@@ -160,8 +156,6 @@ npm run clean     # Clean build artifacts
 \`\`\`
 `
 		);
-		writeFile(path.join(pluginDir, '.gitignore'), GITIGNORE_CONTENT);
-
 		console.log(`\n✅ Plugin "${pluginName}" created successfully in ${pluginDir}`);
 
 		closeReadline();
