@@ -16,52 +16,52 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 1. Install the package globally:
 
-    ```bash
-    npm install -g wp-monorepo-manager
-    ```
+   ```bash
+   npm install -g wp-monorepo-manager
+   ```
 
 2. Set up your monorepo structure in an existing WordPress installation:
 
-    ```bash
-    # Navigate to your WordPress installation root
-    cd /path/to/your/wordpress-site
+   ```bash
+   # Navigate to your WordPress installation root
+   cd /path/to/your/wordpress-site
 
-    # Create the monorepo configuration
-    wp-monorepo setup
+   # Create the monorepo configuration
+   wp-monorepo setup
 
-    # Create a theme (optional)
-    wp-monorepo setup:theme
+   # Create a theme (optional)
+   wp-monorepo setup:theme
 
-    # Create a plugin (optional)
-    wp-monorepo setup:plugin
-    ```
+   # Create a plugin (optional)
+   wp-monorepo setup:plugin
+   ```
 
 ### Option 2: Local Project Installation
 
 1. Navigate to your existing WordPress installation:
 
-    ```bash
-    cd /path/to/your/wordpress-site
-    ```
+   ```bash
+   cd /path/to/your/wordpress-site
+   ```
 
 2. Install the package locally:
 
-    ```bash
-    npm install wp-monorepo-manager
-    ```
+   ```bash
+   npm install wp-monorepo-manager
+   ```
 
 3. Set up your monorepo structure using npm scripts:
 
-    ```bash
-    # Create the monorepo configuration
-    npx wp-monorepo setup
+   ```bash
+   # Create the monorepo configuration
+   npx wp-monorepo setup
 
-    # Create a theme (optional)
-    npx wp-monorepo setup:theme
+   # Create a theme (optional)
+   npx wp-monorepo setup:theme
 
-    # Create a plugin (optional)
-    npx wp-monorepo setup:plugin
-    ```
+   # Create a plugin (optional)
+   npx wp-monorepo setup:plugin
+   ```
 
 ### Project Structure
 
@@ -71,6 +71,7 @@ Your existing WordPress installation will be enhanced with monorepo configuratio
 your-wordpress-site/
 ├── package.json          # Created by setup
 ├── turbo.json           # Created by setup
+├── composer.json        # Created by setup
 ├── .eslintrc.json       # Created by setup
 ├── .stylelintrc.json    # Created by setup
 ├── .prettierrc          # Created by setup
@@ -94,7 +95,7 @@ ESLint is configured to enforce JavaScript/TypeScript coding standards. The setu
 
 ```json
 {
-	"extends": ["wp-monorepo-manager/config/eslint"]
+  "extends": ["wp-monorepo-manager/config/eslint"]
 }
 ```
 
@@ -104,7 +105,7 @@ StyleLint ensures consistent CSS/SCSS coding standards. The setup process automa
 
 ```json
 {
-	"extends": ["wp-monorepo-manager/config/stylelint"]
+  "extends": ["wp-monorepo-manager/config/stylelint"]
 }
 ```
 
@@ -122,7 +123,7 @@ Prettier provides code formatting rules. The setup process automatically creates
 
 ```json
 {
-	"extends": ["wp-monorepo-manager/config/prettier"]
+  "extends": ["wp-monorepo-manager/config/prettier"]
 }
 ```
 
@@ -203,6 +204,32 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 ```
+
+### Composer Configuration
+
+A `composer.json` file is automatically created to manage PHP dependencies and coding standards:
+
+```json
+{
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.12.0",
+    "wp-coding-standards/wpcs": "^3.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin",
+    "format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true",
+    "lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme",
+    "format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true"
+  }
+}
+```
+
+This includes PHP CodeSniffer and WordPress Coding Standards for PHP code quality.
 
 ## Available Commands
 
