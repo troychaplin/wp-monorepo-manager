@@ -74,16 +74,7 @@ const COMPOSER_JSON_CONTENT = {
 			'dealerdirect/phpcodesniffer-composer-installer': true,
 		},
 	},
-	scripts: {
-		'lint-plugin-php':
-			'./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin',
-		'format-plugin-php':
-			'./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true',
-		'lint-theme-php':
-			'./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme',
-		'format-theme-php':
-			'./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true',
-	},
+	scripts: {},
 };
 
 async function setup() {
