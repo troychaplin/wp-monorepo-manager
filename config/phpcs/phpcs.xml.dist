@@ -22,11 +22,6 @@
         <exclude name="WordPress.Security.NonceVerification"/>
     </rule>
 
-    <!-- Rules: WordPress VIP Coding Standards -->
-    <rule ref="WordPressVIPMinimum">
-        <exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions"/>
-    </rule>
-
     <!-- Rules: WordPress Coding Standards Extra -->
     <rule ref="WordPress-Extra">
         <exclude name="WordPress.Files.FileName"/>

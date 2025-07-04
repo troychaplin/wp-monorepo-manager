@@ -39,8 +39,14 @@ build
 `;
 
 const PHPCS_XML_CONTENT = `<?xml version="1.0"?>
-<ruleset name="WordPress Monorepo Standards">
-    <rule ref="wp-monorepo-manager/config/phpcs"/>
+<ruleset name="Project PHPCS">
+    <!-- Inherit all rules from the package -->
+    <rule ref="node_modules/wp-monorepo-manager/config/phpcs/phpcs.xml.dist"/>
+    
+    <!-- Users can add their own customizations below -->
+    <!-- Example: -->
+    <!-- <exclude-pattern>some/path/to/exclude</exclude-pattern> -->
+    <!-- <rule ref="SomeOtherStandard"/> -->
 </ruleset>
 `;
 
@@ -59,25 +65,16 @@ indent_size = 2
 `;
 
 const COMPOSER_JSON_CONTENT = {
-	require_dev: {
+	'require-dev': {
 		'squizlabs/php_codesniffer': '^3.12.0',
 		'wp-coding-standards/wpcs': '^3.1',
 	},
 	config: {
-		allow_plugins: {
+		'allow-plugins': {
 			'dealerdirect/phpcodesniffer-composer-installer': true,
 		},
 	},
-	scripts: {
-		'lint-plugin-php':
-			'./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin',
-		'format-plugin-php':
-			'./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true',
-		'lint-theme-php':
-			'./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme',
-		'format-theme-php':
-			'./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true',
-	},
+	scripts: {},
 };
 
 async function setup() {
