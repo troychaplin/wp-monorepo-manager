@@ -8,8 +8,6 @@
 	],
 	"scripts": {
 		"build": "turbo run build",
-		"build:dev": "turbo run build:dev",
-		"build:prod": "turbo run build:prod",
 		"start": "turbo run start",
 		"lint": "turbo run lint",
 		"format": "turbo run format",

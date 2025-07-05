@@ -238,7 +238,6 @@ A custom WordPress plugin.
 
 \`\`\`bash
 npm run build    # Build for production
-npm run build:dev # Build for development
 npm run start     # Start development mode
 npm run lint      # Run linting
 npm run format    # Format code

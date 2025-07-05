@@ -123,8 +123,6 @@ async function setupTheme() {
 			browserslist: ['extends @wordpress/browserslist-config'],
 			scripts: {
 				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
 				start: 'wp-monorepo-manager start',
 				lint: 'wp-monorepo-manager lint',
 				format: 'wp-monorepo-manager format',
@@ -210,7 +208,6 @@ A custom WordPress theme.
 
 \`\`\`bash
 npm run build    # Build for production
-npm run build:dev # Build for development
 npm run start     # Start development mode
 npm run lint      # Run linting
 npm run format    # Format code
