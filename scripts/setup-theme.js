@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const {
 	createDirectory,
 	writeFile,
@@ -10,22 +11,48 @@ const {
 } = require('./utils');
 
 // Configuration
+const PACKAGE_DIR = path.resolve(__dirname, '..');
 const TARGET_DIR = process.cwd();
 
-// Function to update composer.json with theme scripts
-async function updateComposerJson(folderName) {
-	const composerPath = path.join(TARGET_DIR, 'composer.json');
+// Function to copy composer.json template for theme
+async function copyComposerJson(folderName) {
+	const composerTemplatePath = path.join(
+		PACKAGE_DIR,
+		'config',
+		'composer',
+		'composer-theme.json'
+	);
+	const themeComposerPath = path.join(
+		TARGET_DIR,
+		'wp-content',
+		'themes',
+		folderName,
+		'composer.json'
+	);
 
-	// Check if composer.json exists
-	if (!fs.existsSync(composerPath)) {
-		console.log('\n⚠️  composer.json not found in the current directory.');
+	try {
+		// Copy the composer template
+		fs.copyFileSync(composerTemplatePath, themeComposerPath);
+		console.log('\n✅ Theme composer.json created');
+	} catch (error) {
+		console.error('❌ Error creating composer.json:', error.message);
+	}
+}
+
+// Function to update root composer.json with theme scripts
+async function updateRootComposerJson(folderName) {
+	const rootComposerPath = path.join(TARGET_DIR, 'composer.json');
+
+	// Check if root composer.json exists
+	if (!fs.existsSync(rootComposerPath)) {
+		console.log('\n⚠️  composer.json not found in the root directory.');
 		console.log('   Composer scripts will not be added.');
 		return;
 	}
 
 	try {
 		// Read existing composer.json
-		const composerContent = fs.readFileSync(composerPath, 'utf8');
+		const composerContent = fs.readFileSync(rootComposerPath, 'utf8');
 		const composer = JSON.parse(composerContent);
 
 		// Initialize scripts object if it doesn't exist
@@ -38,29 +65,6 @@ async function updateComposerJson(folderName) {
 		const lintScriptName = `lint-theme-php-${scriptNamePrefix}`;
 		const formatScriptName = `format-theme-php-${scriptNamePrefix}`;
 
-		// Check for existing scripts with the same names
-		const existingScripts = [];
-		if (composer.scripts[lintScriptName]) {
-			existingScripts.push(lintScriptName);
-		}
-		if (composer.scripts[formatScriptName]) {
-			existingScripts.push(formatScriptName);
-		}
-
-		// If scripts already exist, ask user what to do
-		if (existingScripts.length > 0) {
-			console.log('\n⚠️  Composer scripts already exist:');
-			existingScripts.forEach(script => {
-				console.log(`   • ${script}`);
-			});
-			console.log('\nThese scripts will be updated to point to the new theme.');
-			const shouldReplace = await promptYesNo('Replace existing scripts? (y/n): ');
-			if (!shouldReplace) {
-				console.log('📝 Skipping composer.json update.');
-				return;
-			}
-		}
-
 		// Add new scripts
 		composer.scripts[lintScriptName] =
 			`./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/${folderName}`;
@@ -68,12 +72,12 @@ async function updateComposerJson(folderName) {
 			`./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/${folderName} || true`;
 
 		// Write updated composer.json
-		fs.writeFileSync(composerPath, JSON.stringify(composer, null, 2));
-		console.log('\n✅ Composer scripts added:');
+		fs.writeFileSync(rootComposerPath, JSON.stringify(composer, null, 2));
+		console.log('\n✅ Root composer.json updated with scripts:');
 		console.log(`   • ${lintScriptName} - Lint PHP files`);
 		console.log(`   • ${formatScriptName} - Format PHP files`);
 	} catch (error) {
-		console.error('❌ Error updating composer.json:', error.message);
+		console.error('❌ Error updating root composer.json:', error.message);
 	}
 }
 
@@ -215,8 +219,15 @@ npm run clean     # Clean build artifacts
 `
 		);
 
-		// Update composer.json with theme scripts
-		await updateComposerJson(folderName);
+		// Create composer.json for theme
+		await copyComposerJson(folderName);
+
+		// Update root composer.json with theme scripts
+		await updateRootComposerJson(folderName);
+
+		// Install composer dependencies for the theme
+		console.log('\n📦 Installing Composer dependencies for theme...');
+		execSync('composer install', { cwd: themeDir, stdio: 'inherit' });
 
 		console.log(`\n✅ Theme "${themeName}" created successfully in ${themeDir}`);
 
