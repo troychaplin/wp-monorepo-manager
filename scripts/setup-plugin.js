@@ -136,8 +136,12 @@ async function setupPlugin() {
 		const sanitizedName = pluginName.replace(/[^a-zA-Z0-9]/g, '_');
 		const kebabName = pluginName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
+		// Track what was created
+		const createdItems = [];
+
 		// Create plugin files
 		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
+		createdItems.push('package.json');
 
 		// Copy webpack configuration
 		const webpackPluginTemplatePath = path.join(
@@ -148,6 +152,18 @@ async function setupPlugin() {
 		);
 		const webpackPluginPath = path.join(pluginDir, 'webpack.scripts.js');
 		fs.copyFileSync(webpackPluginTemplatePath, webpackPluginPath);
+		createdItems.push('webpack configuration');
+
+		// Copy turbo.json for plugin
+		const turboPluginTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'turbo',
+			'turbo-plugin.json'
+		);
+		const turboPluginPath = path.join(pluginDir, 'turbo.json');
+		fs.copyFileSync(turboPluginTemplatePath, turboPluginPath);
+		createdItems.push('turbo.json configuration');
 		writeFile(
 			path.join(pluginDir, 'plugin.php'),
 			`<?php
@@ -233,46 +249,47 @@ npm run clean     # Clean build artifacts
 
 		// Create composer.json for plugin
 		await copyComposerJson(folderName);
+		createdItems.push('composer.json');
 
 		// Update root composer.json with plugin scripts
 		await updateRootComposerJson(folderName);
+		createdItems.push('root composer scripts');
 
 		// Install composer dependencies for the plugin
-		console.log('\n📦 Installing Composer dependencies for plugin...');
+		console.log('📦 Installing Composer dependencies...');
 		execSync('composer install', { cwd: pluginDir, stdio: 'inherit' });
+		createdItems.push('composer dependencies');
 
-		// Create a static block example
-		console.log('\n🔧 Creating static block example...');
+		// Create blocks
+		console.log('\n🔧 Creating example blocks...');
+
 		execSync(
 			'npx @wordpress/create-block@latest static-example --variant=static --title="Static Block Example" --target-dir=./src/blocks/static-example --textdomain=wp-monorepo-manager --no-plugin',
-			{
-				cwd: pluginDir,
-				stdio: 'inherit',
-			}
+			{ cwd: pluginDir, stdio: 'pipe' }
 		);
+		createdItems.push('static block example');
 
-		// Create a static block example
-		console.log('\n🔧 Creating dynamic block example...');
 		execSync(
 			'npx @wordpress/create-block@latest dynamic-example --variant=dynamic --title="Dynamic Block Example" --target-dir=./src/blocks/dynamic-example --textdomain=wp-monorepo-manager --no-plugin',
-			{
-				cwd: pluginDir,
-				stdio: 'inherit',
-			}
+			{ cwd: pluginDir, stdio: 'pipe' }
 		);
+		createdItems.push('dynamic block example');
 
-		// Create an interactive block example
-		console.log('\n🔧 Creating interactive block example...');
 		execSync(
 			'npx @wordpress/create-block@latest interactive-example --title="Interactive Block Example" --target-dir=./src/blocks/interactive-example --textdomain=wp-monorepo-manager --template @wordpress/create-block-interactive-template --no-plugin',
-			{
-				cwd: pluginDir,
-				stdio: 'inherit',
-				env: { ...process.env, NPM_CONFIG_YES: 'true' },
-			}
+			{ cwd: pluginDir, stdio: 'pipe', env: { ...process.env, NPM_CONFIG_YES: 'true' } }
 		);
+		createdItems.push('interactive block example');
 
-		console.log(`\n✅ Plugin "${pluginName}" created successfully in ${pluginDir}`);
+		// Success summary
+		console.log('\n✅ Plugin setup completed successfully!');
+		console.log(`\n📁 Location: ${path.relative(TARGET_DIR, pluginDir)}`);
+		console.log('\n📋 Created:');
+		createdItems.forEach(item => console.log(`   • ${item}`));
+		console.log('\n🚀 Next steps:');
+		console.log('   1. Run "npm run build" to build the plugin');
+		console.log('   2. Run "npm run start" to start development mode');
+		console.log('   3. Activate the plugin in WordPress admin');
 
 		closeReadline();
 		process.exit(0);

@@ -1,28 +1,58 @@
 {
 	"$schema": "https://turbo.build/schema.json",
-	"globalDependencies": ["**/.env.*local"],
+	"ui": "tui",
+	"globalDependencies": [".env*", "composer.json", "composer.lock", "phpcs.xml.dist"],
+	"globalEnv": ["NODE_ENV", "WP_DEBUG", "WP_DEBUG_LOG"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**"]
+			"outputs": ["build/**"],
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				"src/**",
+				"*.config.js",
+				"*.json",
+				"webpack.config.js",
+				"webpack.scripts.js"
+			],
+			"cache": true
 		},
 		"build:dev": {
 			"dependsOn": ["^build:dev"],
-			"outputs": ["dist/**"]
+			"outputs": ["build/**"],
+			"cache": true
 		},
 		"build:prod": {
 			"dependsOn": ["^build:prod"],
-			"outputs": ["dist/**"]
+			"outputs": ["build/**"],
+			"cache": true
 		},
 		"start": {
 			"cache": false,
-			"persistent": true
+			"persistent": true,
+			"dependsOn": ["^build"]
 		},
 		"lint": {
-			"outputs": []
+			"inputs": [
+				"src/**",
+				"Functions/**",
+				"**/*.{js,jsx,ts,tsx,scss,css,php}",
+				"!build/**",
+				"!vendor/**",
+				"!node_modules/**"
+			],
+			"cache": true
 		},
 		"format": {
-			"outputs": []
+			"inputs": [
+				"src/**",
+				"Functions/**",
+				"**/*.{js,jsx,ts,tsx,scss,css,php,twig}",
+				"!build/**",
+				"!vendor/**",
+				"!node_modules/**"
+			],
+			"cache": true
 		},
 		"clean": {
 			"cache": false
