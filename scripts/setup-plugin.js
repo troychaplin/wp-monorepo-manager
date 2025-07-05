@@ -116,21 +116,16 @@ async function setupPlugin() {
 			}
 		}
 
-		// Create plugin package.json
-		const pluginPackageJson = {
-			name: folderName,
-			version: '1.0.0',
-			browserslist: ['extends @wordpress/browserslist-config'],
-			scripts: {
-				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
-				start: 'wp-monorepo-manager start',
-				lint: 'wp-monorepo-manager lint',
-				format: 'wp-monorepo-manager format',
-				clean: 'wp-monorepo-manager clean',
-			},
-		};
+		// Read plugin package.json template
+		const pluginPackageTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'package',
+			'package-plugin.json'
+		);
+		let pluginPackageContent = fs.readFileSync(pluginPackageTemplatePath, 'utf8');
+		pluginPackageContent = pluginPackageContent.replace(/\{\{PROJECT_NAME\}\}/g, folderName);
+		const pluginPackageJson = JSON.parse(pluginPackageContent);
 
 		// Create plugin directory structure
 		createDirectory(pluginDir);
@@ -143,6 +138,16 @@ async function setupPlugin() {
 
 		// Create plugin files
 		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
+
+		// Copy webpack configuration
+		const webpackPluginTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'webpack',
+			'webpack-plugin.js'
+		);
+		const webpackPluginPath = path.join(pluginDir, 'webpack.scripts.js');
+		fs.copyFileSync(webpackPluginTemplatePath, webpackPluginPath);
 		writeFile(
 			path.join(pluginDir, 'plugin.php'),
 			`<?php
@@ -235,6 +240,37 @@ npm run clean     # Clean build artifacts
 		// Install composer dependencies for the plugin
 		console.log('\n📦 Installing Composer dependencies for plugin...');
 		execSync('composer install', { cwd: pluginDir, stdio: 'inherit' });
+
+		// Create a static block example
+		console.log('\n🔧 Creating static block example...');
+		execSync(
+			'npx @wordpress/create-block@latest static-example --variant=static --title="Static Block Example" --target-dir=./src/blocks/static-example --textdomain=wp-monorepo-manager --no-plugin',
+			{
+				cwd: pluginDir,
+				stdio: 'inherit',
+			}
+		);
+
+		// Create a static block example
+		console.log('\n🔧 Creating dynamic block example...');
+		execSync(
+			'npx @wordpress/create-block@latest dynamic-example --variant=dynamic --title="Dynamic Block Example" --target-dir=./src/blocks/dynamic-example --textdomain=wp-monorepo-manager --no-plugin',
+			{
+				cwd: pluginDir,
+				stdio: 'inherit',
+			}
+		);
+
+		// Create an interactive block example
+		console.log('\n🔧 Creating interactive block example...');
+		execSync(
+			'npx @wordpress/create-block@latest interactive-example --title="Interactive Block Example" --target-dir=./src/blocks/interactive-example --textdomain=wp-monorepo-manager --template @wordpress/create-block-interactive-template --no-plugin',
+			{
+				cwd: pluginDir,
+				stdio: 'inherit',
+				env: { ...process.env, NPM_CONFIG_YES: 'true' },
+			}
+		);
 
 		console.log(`\n✅ Plugin "${pluginName}" created successfully in ${pluginDir}`);
 
