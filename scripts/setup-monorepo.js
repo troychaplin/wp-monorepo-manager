@@ -1,15 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
-const {
-	createDirectory,
-	writeFile,
-	promptYesNo,
-	closeReadline,
-	SHARED_DEPENDENCIES,
-	SHARED_SCRIPTS,
-	TURBO_CONFIG,
-} = require('./utils');
+const { createDirectory, writeFile, promptYesNo, closeReadline } = require('./utils');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
@@ -19,22 +11,15 @@ const TARGET_DIR = process.argv[2] || process.cwd();
 const CONFIG_FILES = {
 	'.editorconfig': path.join(PACKAGE_DIR, 'config', 'editorconfig', '.editorconfig'),
 	'.eslintrc.json': path.join(PACKAGE_DIR, 'config', 'eslint', '.eslintrc.json'),
-	'.stylelintrc.json': path.join(PACKAGE_DIR, 'config', 'stylelint', '.stylelintrc.json'),
+	'.prettierignore': path.join(PACKAGE_DIR, 'config', 'prettier', '.prettierignore'),
 	'.prettierrc': path.join(PACKAGE_DIR, 'config', 'prettier', '.prettierrc'),
+	'.stylelintignore': path.join(PACKAGE_DIR, 'config', 'stylelint', '.stylelintignore'),
+	'.stylelintrc.json': path.join(PACKAGE_DIR, 'config', 'stylelint', '.stylelintrc.json'),
 	'composer.json': path.join(PACKAGE_DIR, 'config', 'composer', 'composer.json'),
+	'package.json': path.join(PACKAGE_DIR, 'config', 'package', 'package.json'),
 	'phpcs.xml.dist': path.join(PACKAGE_DIR, 'config', 'phpcs', 'phpcs.xml.dist'),
+	'turbo.json': path.join(PACKAGE_DIR, 'config', 'turbo', 'turbo.json'),
 };
-
-// Ignore file contents
-const STYLELINTIGNORE_CONTENT = `node_modules
-dist
-build
-`;
-
-const PRETTIERIGNORE_CONTENT = `node_modules
-dist
-build
-`;
 
 async function setup() {
 	try {
@@ -67,36 +52,21 @@ async function setup() {
 		// Create target directory if it doesn't exist
 		createDirectory(TARGET_DIR);
 
-		// Create root package.json
-		const rootPackageJson = {
-			name: path.basename(TARGET_DIR),
-			version: '1.0.0',
-			private: true,
-			workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
-			scripts: SHARED_SCRIPTS,
-			dependencies: {
-				...SHARED_DEPENDENCIES,
-			},
-			packageManager: 'npm@10.2.4',
-		};
-
-		// Write root files
-		writeFile(path.join(TARGET_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
-		writeFile(path.join(TARGET_DIR, 'turbo.json'), JSON.stringify(TURBO_CONFIG, null, 2));
-
 		// Write configuration files as documented in README.md
 		console.log('📝 Creating configuration files...');
 
 		// Copy configuration files from the package
 		for (const [filename, sourcePath] of Object.entries(CONFIG_FILES)) {
 			const targetPath = path.join(TARGET_DIR, filename);
-			fs.copyFileSync(sourcePath, targetPath);
+			let content = fs.readFileSync(sourcePath, 'utf8');
+
+			// Replace template variables
+			const projectName = path.basename(TARGET_DIR);
+			content = content.replace(/\{\{PROJECT_NAME\}\}/g, projectName);
+
+			fs.writeFileSync(targetPath, content);
 			console.log(`  ✓ Copied ${filename}`);
 		}
-
-		// Write ignore files
-		writeFile(path.join(TARGET_DIR, '.stylelintignore'), STYLELINTIGNORE_CONTENT);
-		writeFile(path.join(TARGET_DIR, '.prettierignore'), PRETTIERIGNORE_CONTENT);
 
 		// Link the package globally from the package directory
 		execSync('npm link', { cwd: PACKAGE_DIR, stdio: 'inherit' });
