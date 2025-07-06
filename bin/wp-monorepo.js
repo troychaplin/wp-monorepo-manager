@@ -31,7 +31,7 @@ if (
 	!command ||
 	(command === 'setup' && (subCommand === '--help' || subCommand === '-h'))
 ) {
-	console.log('Usage: wp-monorepo <command> [subcommand]');
+	console.log('Usage: wp-monorepo <command> [subcommand] [flags]');
 	console.log('');
 	console.log('Commands:');
 	console.log('  setup              Create monorepo structure');
@@ -44,6 +44,10 @@ if (
 	console.log('  format             Format code');
 	console.log('  clean              Clean build artifacts');
 	console.log('');
+	console.log('Setup Flags:');
+	console.log('  --dry-run          Preview changes without modifying files');
+	console.log("  --safe             Only create files that don't exist");
+	console.log('');
 	console.log('Setup Usage:');
 	console.log('  Run "wp-monorepo setup" from:');
 	console.log('  - WordPress root directory: Initializes monorepo in existing WordPress');
@@ -51,6 +55,8 @@ if (
 	console.log('');
 	console.log('Examples:');
 	console.log('  wp-monorepo setup              # Initialize monorepo structure');
+	console.log('  wp-monorepo setup --dry-run    # Preview setup changes');
+	console.log('  wp-monorepo setup --safe       # Only create missing files');
 	console.log('  wp-monorepo setup:theme        # Create a new theme');
 	console.log('  wp-monorepo setup:plugin       # Create a new plugin');
 	process.exit(0);
@@ -58,17 +64,26 @@ if (
 
 // Handle setup commands
 if (command === 'setup') {
-	// If we have a subcommand, validate it first
-	if (subCommand) {
-		if (subCommand !== 'theme' && subCommand !== 'plugin') {
-			console.error(`❌ Error: Unknown setup command "${subCommand}"`);
+	// Get additional arguments (flags like --dry-run, --safe)
+	const additionalArgs = process.argv.slice(3).filter(arg => arg.startsWith('--'));
+
+	// If we have a subcommand, validate it first (but exclude flags)
+	const realSubCommand = process.argv.slice(3).find(arg => !arg.startsWith('--'));
+	if (realSubCommand) {
+		if (realSubCommand !== 'theme' && realSubCommand !== 'plugin') {
+			console.error(`❌ Error: Unknown setup command "${realSubCommand}"`);
 			console.log('');
 			console.log('Valid setup commands:');
 			console.log('  wp-monorepo setup         # Initialize monorepo structure');
 			console.log('  wp-monorepo setup:theme   # Create a new theme');
 			console.log('  wp-monorepo setup:plugin  # Create a new plugin');
+			console.log('');
+			console.log('Available flags:');
+			console.log('  --dry-run                 # Preview changes without modifying files');
+			console.log("  --safe                    # Only create files that don't exist");
 			process.exit(1);
 		}
+		subCommand = realSubCommand;
 	}
 
 	const setupScript =
@@ -78,13 +93,19 @@ if (command === 'setup') {
 				? 'setup-plugin'
 				: 'setup-monorepo';
 
+	// Build command with additional arguments
+	const argsString = additionalArgs.length > 0 ? ' ' + additionalArgs.join(' ') : '';
+
 	try {
 		// If we have a subcommand (theme or plugin), run the specific setup script
 		if (subCommand === 'theme' || subCommand === 'plugin') {
-			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}`, {
-				stdio: 'inherit',
-				cwd: cwd,
-			});
+			execSync(
+				`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')}${argsString}`,
+				{
+					stdio: 'inherit',
+					cwd: cwd,
+				}
+			);
 			process.exit(0);
 		}
 
@@ -93,16 +114,22 @@ if (command === 'setup') {
 		if (isWordPressInstallation(cwd)) {
 			// We're in a WordPress installation, use the enhanced setup script
 			console.log('WordPress installation detected. Setting up monorepo structure...');
-			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}`, {
-				stdio: 'inherit',
-			});
+			execSync(
+				`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}${argsString}`,
+				{
+					stdio: 'inherit',
+				}
+			);
 			process.exit(0);
 		} else {
 			// We're not in a WordPress installation, use the original setup script
 			console.log('Empty directory detected. Setting up monorepo structure...');
-			execSync(`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}`, {
-				stdio: 'inherit',
-			});
+			execSync(
+				`node ${path.join(__dirname, '..', 'scripts', setupScript + '.js')} ${cwd}${argsString}`,
+				{
+					stdio: 'inherit',
+				}
+			);
 			process.exit(0);
 		}
 	} catch (error) {

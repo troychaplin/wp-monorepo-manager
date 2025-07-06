@@ -215,6 +215,42 @@ A root-level `composer.json` file is automatically created to manage PHP depende
 
 This includes PHP CodeSniffer and WordPress Coding Standards for PHP code quality. The lint and format scripts automatically scan all themes and plugins.
 
+## Setup Safety Features
+
+The setup process includes several safety measures to protect your existing configuration:
+
+### Automatic Backup
+
+- Existing configuration files are automatically backed up to `.wp-monorepo-backups/[timestamp]/`
+- Backups are created before any files are modified
+- You can restore files manually if needed
+
+### Setup Options
+
+- `wp-monorepo setup` - Standard setup with backup and confirmation
+- `wp-monorepo setup --dry-run` - Preview changes without modifying files
+- `wp-monorepo setup --safe` - Only create files that don't exist
+
+### File Conflict Resolution
+
+When existing configuration files are detected:
+
+1. You'll see a detailed list of files that would be overwritten with modification dates
+2. Files are backed up automatically before proceeding
+3. You can cancel the setup if you need to review existing configurations
+
+### Recovery
+
+If you need to restore backed-up files:
+
+```bash
+# List available backups
+ls -la .wp-monorepo-backups/
+
+# Restore from a specific backup (replace timestamp with actual backup folder)
+cp -r .wp-monorepo-backups/2025-07-06T10-30-00/* .
+```
+
 ## Available Commands
 
 ### CLI Commands (wp-monorepo)

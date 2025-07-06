@@ -3,9 +3,15 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const { createDirectory, promptYesNo, closeReadline } = require('./utils');
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const isDryRun = args.includes('--dry-run');
+const isSafeMode = args.includes('--safe');
+const targetDirArg = args.find(arg => !arg.startsWith('--'));
+
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
-const TARGET_DIR = process.argv[2] || process.cwd();
+const TARGET_DIR = targetDirArg || process.cwd();
 
 // Configuration file paths
 const CONFIG_FILES = {
@@ -21,8 +27,54 @@ const CONFIG_FILES = {
 	'turbo.json': path.join(PACKAGE_DIR, 'config', 'turbo', 'turbo.json'),
 };
 
+function createBackup(targetDir, filesToBackup) {
+	const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+	const backupDir = path.join(targetDir, '.wp-monorepo-backups', timestamp);
+
+	if (filesToBackup.length > 0) {
+		createDirectory(backupDir);
+
+		for (const file of filesToBackup) {
+			const sourcePath = path.join(targetDir, file);
+			const backupPath = path.join(backupDir, file);
+
+			// Create subdirectories if needed
+			const backupSubDir = path.dirname(backupPath);
+			if (backupSubDir !== backupDir) {
+				createDirectory(backupSubDir);
+			}
+
+			fs.copyFileSync(sourcePath, backupPath);
+		}
+
+		console.log(`📦 Backed up existing files to: ${path.relative(targetDir, backupDir)}`);
+		return backupDir;
+	}
+
+	return null;
+}
+
 async function setup() {
 	try {
+		// Handle dry run mode
+		if (isDryRun) {
+			console.log('🔍 DRY RUN MODE - No files will be modified\n');
+
+			console.log('Files that would be created/modified:');
+			for (const filename of Object.keys(CONFIG_FILES)) {
+				const targetPath = path.join(TARGET_DIR, filename);
+				const exists = fs.existsSync(targetPath);
+				console.log(
+					`  ${exists ? '📝' : '✨'} ${filename} ${exists ? '(would overwrite)' : '(would create)'}`
+				);
+			}
+
+			console.log('\nTo actually perform setup, run without --dry-run flag');
+			console.log('Example: wp-monorepo setup');
+			closeReadline();
+			process.exit(0);
+		}
+
 		// Check if there are existing configuration files that would be overwritten
 		const configFiles = [
 			'.editorconfig',
@@ -40,12 +92,31 @@ async function setup() {
 		);
 
 		if (existingConfigFiles.length > 0) {
-			const message = `The following configuration files already exist in ${TARGET_DIR}:\n  ${existingConfigFiles.join('\n  ')}\n\nDo you want to proceed and overwrite them? (y/n): `;
+			console.log('\n⚠️  WARNING: Configuration files already exist!');
+			console.log('\nExisting files that would be overwritten:');
+			existingConfigFiles.forEach(file => {
+				const filePath = path.join(TARGET_DIR, file);
+				const stats = fs.statSync(filePath);
+				console.log(`  • ${file} (modified: ${stats.mtime.toLocaleString()})`);
+			});
 
-			const shouldProceed = await promptYesNo(message);
+			console.log('\n💡 Options:');
+			console.log('  1. Backup existing files and proceed');
+			console.log('  2. Skip setup (you can run this again later)');
+			console.log('  3. Use --dry-run to preview changes first');
+			console.log('  4. Use --safe to only create missing files');
+
+			const shouldProceed = await promptYesNo('\nProceed with backup and setup? (y/n): ');
 			if (!shouldProceed) {
+				console.log('Setup cancelled. Run wp-monorepo setup again when ready.');
 				closeReadline();
 				process.exit(0);
+			}
+
+			// Create backup before proceeding
+			const backupPath = createBackup(TARGET_DIR, existingConfigFiles);
+			if (backupPath) {
+				console.log('✅ Backup created successfully\n');
 			}
 		}
 
@@ -58,6 +129,12 @@ async function setup() {
 		// Copy configuration files from the package
 		for (const [filename, sourcePath] of Object.entries(CONFIG_FILES)) {
 			const targetPath = path.join(TARGET_DIR, filename);
+
+			if (isSafeMode && fs.existsSync(targetPath)) {
+				console.log(`  ⏭️  Skipped ${filename} (already exists, safe mode)`);
+				continue;
+			}
+
 			let content = fs.readFileSync(sourcePath, 'utf8');
 
 			// Replace template variables
