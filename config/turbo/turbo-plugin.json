@@ -11,6 +11,10 @@
 		},
 		"start:scripts": {
 			"env": ["NODE_ENV"]
+		},
+		"lint": {
+			"inputs": ["src/**", "**/*.{js,jsx,ts,tsx,scss,css,php}"],
+			"dependsOn": []
 		}
 	}
 }

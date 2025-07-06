@@ -11,6 +11,8 @@
 		"build:force": "turbo run build --force",
 		"start": "turbo run start",
 		"lint": "turbo run lint",
+		"lint:js": "turbo run lint:js",
+		"lint:css": "turbo run lint:css",
 		"format": "turbo run format",
 		"clean": "turbo run clean"
 	},

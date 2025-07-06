@@ -14,6 +14,9 @@
 		"build:blocks": "wp-scripts build --webpack-copy-php --config webpack.scripts.js",
 		"build:interactive": "wp-scripts build --experimental-modules --webpack-copy-php",
 		"build-blocks-manifest": "wp-scripts build-blocks-manifest --output=src/blocks-manifest.php",
+		"lint": "npm run lint:js && npm run lint:css",
+		"lint:js": "eslint 'src/**/*.{js,jsx,ts,tsx}' --config ../../../.eslintrc.json",
+		"lint:css": "stylelint 'src/**/*.{css,scss}' --config ../../../.stylelintrc.json",
 		"clean": "rm -rf .turbo node_modules build package-lock.json"
 	}
 }
