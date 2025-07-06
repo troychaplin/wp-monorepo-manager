@@ -77,7 +77,6 @@ your-wordpress-site/
 ├── .prettierrc              # Created by setup
 ├── phpcs.xml.dist           # Created by setup
 ├── .editorconfig            # Created by setup
-├── .gitignore               # Created by setup
 ├── wp-config.php            # Existing WordPress file
 ├── wp-content/              # Existing WordPress directory
 │   ├── plugins/             # Existing plugins directory
@@ -127,46 +126,6 @@ PHP_CodeSniffer enforces PHP coding standards. The setup process automatically c
 
 The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. The setup process automatically creates an `.editorconfig` file in your project root by copying the configuration template from the package.
 
-### Git Configuration
-
-A `.gitignore` file is automatically created to exclude common files and directories:
-
-```
-# Dependencies
-node_modules/
-
-# Build artifacts
-build/
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-```
-
 ## Build System
 
 ### Current Architecture
@@ -182,7 +141,7 @@ Each theme and plugin includes its own build configuration:
 
 **Plugins:**
 
-- **Entry points:** `src/scripts/index.js`, `src/styles.scss`, `src/blocks/index.js`
+- **Entry points:** `src/scripts/index.js`, `src/styles.scss`
 - **Output directory:** `build/`
 - **Webpack config:** Uses `@wordpress/scripts` with custom `webpack.scripts.js`
 - **Build orchestration:** Individual `turbo.json` files
@@ -218,9 +177,7 @@ wp-content/plugins/your-plugin/
 ├── src/
 │   ├── scripts/
 │   │   └── index.js         # Main JavaScript entry
-│   ├── styles.scss          # Main stylesheet
-│   └── blocks/              # Gutenberg blocks
-│       └── index.js         # Blocks entry point
+│   └── styles.scss          # Main stylesheet
 └── build/                   # Built assets (generated)
 ```
 
@@ -344,7 +301,6 @@ This tool expects a standard WordPress installation structure:
 
 - `src/scripts/index.js` - Main JavaScript entry point
 - `src/styles.scss` - Main stylesheet
-- `src/blocks/index.js` - Gutenberg blocks entry (optional)
 - `plugin.php` - Main plugin file (auto-generated)
 
 ### Configuration Dependencies
