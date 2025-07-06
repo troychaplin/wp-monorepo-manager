@@ -1,94 +1,38 @@
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
-const {
-	createDirectory,
-	writeFile,
-	promptYesNo,
-	closeReadline,
-	SHARED_DEPENDENCIES,
-	SHARED_SCRIPTS,
-	TURBO_CONFIG,
-} = require('./utils');
+const { createDirectory, writeFile, promptYesNo, closeReadline } = require('./utils');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
 const TARGET_DIR = process.argv[2] || process.cwd();
 
-// Configuration file templates
-const ESLINTRC_CONTENT = {
-	extends: ['wp-monorepo-manager/config/eslint'],
-};
-
-const STYLELINTRC_CONTENT = {
-	extends: ['wp-monorepo-manager/config/stylelint'],
-};
-
-const STYLELINTIGNORE_CONTENT = `node_modules
-dist
-build
-`;
-
-const PRETTIERRC_CONTENT = {
-	extends: ['wp-monorepo-manager/config/prettier'],
-};
-
-const PRETTIERIGNORE_CONTENT = `node_modules
-dist
-build
-`;
-
-const PHPCS_XML_CONTENT = `<?xml version="1.0"?>
-<ruleset name="Project PHPCS">
-    <!-- Inherit all rules from the package -->
-    <rule ref="node_modules/wp-monorepo-manager/config/phpcs/phpcs.xml.dist"/>
-    
-    <!-- Users can add their own customizations below -->
-    <!-- Example: -->
-    <!-- <exclude-pattern>some/path/to/exclude</exclude-pattern> -->
-    <!-- <rule ref="SomeOtherStandard"/> -->
-</ruleset>
-`;
-
-const EDITORCONFIG_CONTENT = `root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-indent_size = 4
-indent_style = space
-insert_final_newline = true
-trim_trailing_whitespace = true
-
-[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
-indent_size = 2
-`;
-
-const COMPOSER_JSON_CONTENT = {
-	'require-dev': {
-		'squizlabs/php_codesniffer': '^3.12.0',
-		'wp-coding-standards/wpcs': '^3.1',
-	},
-	config: {
-		'allow-plugins': {
-			'dealerdirect/phpcodesniffer-composer-installer': true,
-		},
-	},
-	scripts: {},
+// Configuration file paths
+const CONFIG_FILES = {
+	'.editorconfig': path.join(PACKAGE_DIR, 'config', 'editorconfig', '.editorconfig'),
+	'.eslintrc.json': path.join(PACKAGE_DIR, 'config', 'eslint', '.eslintrc.json'),
+	'.prettierignore': path.join(PACKAGE_DIR, 'config', 'prettier', '.prettierignore'),
+	'.prettierrc': path.join(PACKAGE_DIR, 'config', 'prettier', '.prettierrc'),
+	'.stylelintignore': path.join(PACKAGE_DIR, 'config', 'stylelint', '.stylelintignore'),
+	'.stylelintrc.json': path.join(PACKAGE_DIR, 'config', 'stylelint', '.stylelintrc.json'),
+	'composer.json': path.join(PACKAGE_DIR, 'config', 'composer', 'composer.json'),
+	'package.json': path.join(PACKAGE_DIR, 'config', 'package', 'package.json'),
+	'phpcs.xml.dist': path.join(PACKAGE_DIR, 'config', 'phpcs', 'phpcs.xml.dist'),
+	'turbo.json': path.join(PACKAGE_DIR, 'config', 'turbo', 'turbo.json'),
 };
 
 async function setup() {
 	try {
 		// Check if there are existing configuration files that would be overwritten
 		const configFiles = [
-			'package.json',
-			'turbo.json',
-			'.eslintrc.json',
-			'.stylelintrc.json',
-			'.prettierrc',
-			'phpcs.xml.dist',
 			'.editorconfig',
+			'.eslintrc.json',
+			'.prettierrc',
+			'.stylelintrc.json',
 			'composer.json',
+			'package.json',
+			'phpcs.xml.dist',
+			'turbo.json',
 		];
 
 		const existingConfigFiles = configFiles.filter(file =>
@@ -108,57 +52,21 @@ async function setup() {
 		// Create target directory if it doesn't exist
 		createDirectory(TARGET_DIR);
 
-		// Create root package.json
-		const rootPackageJson = {
-			name: path.basename(TARGET_DIR),
-			version: '1.0.0',
-			private: true,
-			workspaces: ['wp-content/themes/*', 'wp-content/plugins/*'],
-			scripts: SHARED_SCRIPTS,
-			dependencies: {
-				...SHARED_DEPENDENCIES,
-			},
-			packageManager: 'npm@10.2.4',
-		};
-
-		// Write root files
-		writeFile(path.join(TARGET_DIR, 'package.json'), JSON.stringify(rootPackageJson, null, 2));
-		writeFile(path.join(TARGET_DIR, 'turbo.json'), JSON.stringify(TURBO_CONFIG, null, 2));
-
 		// Write configuration files as documented in README.md
 		console.log('📝 Creating configuration files...');
 
-		// ESLint configuration
-		writeFile(
-			path.join(TARGET_DIR, '.eslintrc.json'),
-			JSON.stringify(ESLINTRC_CONTENT, null, 2)
-		);
+		// Copy configuration files from the package
+		for (const [filename, sourcePath] of Object.entries(CONFIG_FILES)) {
+			const targetPath = path.join(TARGET_DIR, filename);
+			let content = fs.readFileSync(sourcePath, 'utf8');
 
-		// StyleLint configuration
-		writeFile(
-			path.join(TARGET_DIR, '.stylelintrc.json'),
-			JSON.stringify(STYLELINTRC_CONTENT, null, 2)
-		);
-		writeFile(path.join(TARGET_DIR, '.stylelintignore'), STYLELINTIGNORE_CONTENT);
+			// Replace template variables
+			const projectName = path.basename(TARGET_DIR);
+			content = content.replace(/\{\{PROJECT_NAME\}\}/g, projectName);
 
-		// Prettier configuration
-		writeFile(
-			path.join(TARGET_DIR, '.prettierrc'),
-			JSON.stringify(PRETTIERRC_CONTENT, null, 2)
-		);
-		writeFile(path.join(TARGET_DIR, '.prettierignore'), PRETTIERIGNORE_CONTENT);
-
-		// PHPCS configuration
-		writeFile(path.join(TARGET_DIR, 'phpcs.xml.dist'), PHPCS_XML_CONTENT);
-
-		// Editor configuration
-		writeFile(path.join(TARGET_DIR, '.editorconfig'), EDITORCONFIG_CONTENT);
-
-		// Composer configuration
-		writeFile(
-			path.join(TARGET_DIR, 'composer.json'),
-			JSON.stringify(COMPOSER_JSON_CONTENT, null, 2)
-		);
+			fs.writeFileSync(targetPath, content);
+			console.log(`  ✓ Copied ${filename}`);
+		}
 
 		// Link the package globally from the package directory
 		execSync('npm link', { cwd: PACKAGE_DIR, stdio: 'inherit' });

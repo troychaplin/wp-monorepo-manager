@@ -1,0 +1,20 @@
+{
+	"extends": ["//"],
+	"tasks": {
+		"build": {
+			"inputs": ["src/**", "webpack.scripts.js", "package.json", "plugin.php"],
+			"outputs": ["build/**"],
+			"dependsOn": []
+		},
+		"start:blocks": {
+			"env": ["NODE_ENV"]
+		},
+		"start:scripts": {
+			"env": ["NODE_ENV"]
+		},
+		"lint": {
+			"inputs": ["src/**", "**/*.{js,jsx,ts,tsx,scss,css,php}"],
+			"dependsOn": []
+		}
+	}
+}

@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const {
 	createDirectory,
 	writeFile,
@@ -10,21 +11,48 @@ const {
 } = require('./utils');
 
 // Configuration
+const PACKAGE_DIR = path.resolve(__dirname, '..');
 const TARGET_DIR = process.cwd();
 
-// Function to update composer.json with theme scripts
-function updateComposerJson(folderName) {
-	const composerPath = path.join(TARGET_DIR, 'composer.json');
+// Function to copy composer.json template for theme
+async function copyComposerJson(folderName) {
+	const composerTemplatePath = path.join(
+		PACKAGE_DIR,
+		'config',
+		'composer',
+		'composer-theme.json'
+	);
+	const themeComposerPath = path.join(
+		TARGET_DIR,
+		'wp-content',
+		'themes',
+		folderName,
+		'composer.json'
+	);
 
-	// Check if composer.json exists
-	if (!fs.existsSync(composerPath)) {
-		console.log('⚠️  composer.json not found. Skipping composer.json update.');
+	try {
+		// Copy the composer template
+		fs.copyFileSync(composerTemplatePath, themeComposerPath);
+		console.log('✅ Theme composer.json created');
+	} catch (error) {
+		console.error('❌ Error creating composer.json:', error.message);
+	}
+}
+
+// Function to update root composer.json with theme scripts
+async function updateRootComposerJson(folderName) {
+	const rootComposerPath = path.join(TARGET_DIR, 'composer.json');
+
+	// Check if root composer.json exists
+	if (!fs.existsSync(rootComposerPath)) {
+		console.log('⚠️  composer.json not found in the root directory.');
+		console.log('   Composer scripts will not be added.');
 		return;
 	}
 
 	try {
 		// Read existing composer.json
-		const composerContent = fs.readFileSync(composerPath, 'utf8');
+		const composerContent = fs.readFileSync(rootComposerPath, 'utf8');
 		const composer = JSON.parse(composerContent);
 
 		// Initialize scripts object if it doesn't exist
@@ -44,10 +72,12 @@ function updateComposerJson(folderName) {
 			`./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/${folderName} || true`;
 
 		// Write updated composer.json
-		fs.writeFileSync(composerPath, JSON.stringify(composer, null, 2));
-		console.log(`✅ Added composer scripts: ${lintScriptName}, ${formatScriptName}`);
+		fs.writeFileSync(rootComposerPath, JSON.stringify(composer, null, 2));
+		console.log('✅ Root composer.json updated with scripts:');
+		console.log(`   • ${lintScriptName} - Lint PHP files`);
+		console.log(`   • ${formatScriptName} - Format PHP files`);
 	} catch (error) {
-		console.error('❌ Error updating composer.json:', error.message);
+		console.error('❌ Error updating root composer.json:', error.message);
 	}
 }
 
@@ -86,29 +116,65 @@ async function setupTheme() {
 			}
 		}
 
-		// Create theme package.json
-		const themePackageJson = {
-			name: folderName,
-			version: '1.0.0',
-			browserslist: ['extends @wordpress/browserslist-config'],
-			scripts: {
-				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
-				start: 'wp-monorepo-manager start',
-				lint: 'wp-monorepo-manager lint',
-				format: 'wp-monorepo-manager format',
-				clean: 'wp-monorepo-manager clean',
-			},
-		};
+		// Read theme package.json template
+		const themePackageTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'package',
+			'package-theme.json'
+		);
+		let themePackageContent = fs.readFileSync(themePackageTemplatePath, 'utf8');
+		themePackageContent = themePackageContent.replace(/\{\{PROJECT_NAME\}\}/g, folderName);
+		const themePackageJson = JSON.parse(themePackageContent);
 
 		// Create theme directory structure
 		createDirectory(themeDir);
-		createDirectory(path.join(themeDir, 'src/scripts'));
-		createDirectory(path.join(themeDir, 'src/styles'));
+		createDirectory(path.join(themeDir, 'src'));
+
+		// Sanitize theme name for PHP function names
+		const sanitizedName = themeName.replace(/[^a-zA-Z0-9]/g, '_');
+		const kebabName = themeName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+
+		// Track what was created
+		const createdItems = [];
 
 		// Create theme files
 		writeFile(path.join(themeDir, 'package.json'), JSON.stringify(themePackageJson, null, 2));
+		createdItems.push('package.json');
+
+		// Copy webpack configuration
+		const webpackThemeTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'webpack',
+			'webpack-theme.js'
+		);
+		const webpackThemePath = path.join(themeDir, 'webpack.config.js');
+		fs.copyFileSync(webpackThemeTemplatePath, webpackThemePath);
+		createdItems.push('webpack configuration');
+
+		// Copy turbo.json for theme
+		const turboThemeTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'turbo',
+			'turbo-theme.json'
+		);
+		const turboThemePath = path.join(themeDir, 'turbo.json');
+		fs.copyFileSync(turboThemeTemplatePath, turboThemePath);
+		createdItems.push('turbo.json configuration');
+
+		// Copy .prettierignore for theme
+		const prettierIgnoreTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'prettier',
+			'.prettierignore'
+		);
+		const prettierIgnoreThemePath = path.join(themeDir, '.prettierignore');
+		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnoreThemePath);
+		createdItems.push('.prettierignore configuration');
+		createdItems.push('package.json');
 		writeFile(
 			path.join(themeDir, 'index.php'),
 			`<?php
@@ -138,6 +204,8 @@ get_sidebar();
 get_footer();
 `
 		);
+		createdItems.push('index.php');
+
 		writeFile(
 			path.join(themeDir, 'style.css'),
 			`/*
@@ -150,49 +218,162 @@ Author: Your Name
 /* This file is required by WordPress but styles are compiled from src/styles.scss */
 `
 		);
+		createdItems.push('style.css');
+
 		writeFile(
-			path.join(themeDir, 'src/scripts/index.js'),
-			`console.log("${themeName} theme script loaded");`
+			path.join(themeDir, 'functions.php'),
+			`<?php
+/**
+ * ${themeName} functions and definitions
+ *
+ * @package ${themeName}
+ */
+
+// Prevent direct access
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+// Theme setup
+function ${sanitizedName}_setup() {
+	// Add theme support for various features
+	add_theme_support('post-thumbnails');
+	add_theme_support('title-tag');
+	add_theme_support('html5', array(
+		'search-form',
+		'comment-form',
+		'comment-list',
+		'gallery',
+		'caption',
+	));
+}
+add_action('after_setup_theme', '${sanitizedName}_setup');
+
+// Enqueue scripts and styles
+function ${sanitizedName}_scripts() {
+	wp_enqueue_style(
+		'${kebabName}-style',
+		get_template_directory_uri() . '/build/styles.css',
+		array(),
+		'1.0.0'
+	);
+
+	wp_enqueue_script(
+		'${kebabName}-script',
+		get_template_directory_uri() . '/build/scripts.js',
+		array(),
+		'1.0.0',
+		true
+	);
+}
+add_action('wp_enqueue_scripts', '${sanitizedName}_scripts');
+`
 		);
+		createdItems.push('functions.php');
+
+		writeFile(
+			path.join(themeDir, 'src/scripts.js'),
+			`// eslint-disable-next-line no-console
+console.log("${themeName} theme script loaded");`
+		);
+		createdItems.push('JavaScript entry point');
+
 		writeFile(
 			path.join(themeDir, 'src/styles.scss'),
-			`body { 
+			`/* ${themeName} Theme Styles */
+
+body { 
 	color: #333; 
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	line-height: 1.6;
+	margin: 0;
+	padding: 0;
+}
+
+.site-main {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem;
+}
+
+/* Add your custom styles here */
+.${kebabName} {
+	/* Theme-specific styles */
 }`
 		);
+		createdItems.push('SCSS stylesheet');
 		writeFile(
 			path.join(themeDir, 'src/editor-styles.scss'),
 			`/* ${themeName} Editor Styles */
 
 /* Styles for the WordPress editor */
 .wp-block {
-	/* Editor-specific styles here */
-}`
+	max-width: 100%;
+}
+
+.editor-styles-wrapper {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	line-height: 1.6;
+}
+
+/* Add editor-specific styles here */`
 		);
+		createdItems.push('editor stylesheet');
+
 		writeFile(
 			path.join(themeDir, 'README.md'),
 			`# ${themeName}
 
-A custom WordPress theme.
+A custom WordPress theme built with the WordPress Monorepo Manager.
 
 ## Development
 
 \`\`\`bash
-npm run build    # Build for production
-npm run build:dev # Build for development
-npm run start     # Start development mode
-npm run lint      # Run linting
-npm run format    # Format code
-npm run clean     # Clean build artifacts
+npm run build       # Build for production
+npm run start       # Start development mode with watch
+npm run format      # Format code with Prettier
+npm run clean       # Clean build artifacts
 \`\`\`
+
+## Theme Structure
+
+- \`src/scripts.js\` - Main JavaScript file
+- \`src/styles.scss\` - Main stylesheet
+- \`src/editor-styles.scss\` - Editor-specific styles
+- \`build/\` - Built assets (generated automatically)
+
+## Features
+
+- Modern build system with Webpack
+- SCSS support
+- Editor styles
+- WordPress coding standards
 `
 		);
+		createdItems.push('README.md');
 
-		// Update composer.json with theme scripts
-		updateComposerJson(folderName);
+		// Create composer.json for theme
+		await copyComposerJson(folderName);
+		createdItems.push('composer.json');
 
-		console.log(`\n✅ Theme "${themeName}" created successfully in ${themeDir}`);
+		// Update root composer.json with theme scripts
+		await updateRootComposerJson(folderName);
+		createdItems.push('root composer scripts');
+
+		// Install composer dependencies for the theme
+		console.log('\n📦 Installing Composer dependencies...');
+		execSync('composer install', { cwd: themeDir, stdio: 'inherit' });
+		createdItems.push('composer dependencies');
+
+		// Success summary
+		console.log('\n✅ Theme setup completed successfully!');
+		console.log(`\n📁 Location: ${path.relative(TARGET_DIR, themeDir)}`);
+		console.log('\n📋 Created:');
+		createdItems.forEach(item => console.log(`   • ${item}`));
+		console.log('\n🚀 Next steps:');
+		console.log('   1. Run "npm run build" to build the theme');
+		console.log('   2. Run "npm run start" to start development mode');
+		console.log('   3. Activate the theme in WordPress admin');
 
 		closeReadline();
 		process.exit(0);

@@ -16,52 +16,52 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 
 1. Install the package globally:
 
-   ```bash
-   npm install -g wp-monorepo-manager
-   ```
+    ```bash
+    npm install -g wp-monorepo-manager
+    ```
 
 2. Set up your monorepo structure in an existing WordPress installation:
 
-   ```bash
-   # Navigate to your WordPress installation root
-   cd /path/to/your/wordpress-site
+    ```bash
+    # Navigate to your WordPress installation root
+    cd /path/to/your/wordpress-site
 
-   # Create the monorepo configuration
-   wp-monorepo setup
+    # Create the monorepo configuration
+    wp-monorepo setup
 
-   # Create a theme (optional)
-   wp-monorepo setup:theme
+    # Create a theme (optional)
+    wp-monorepo setup:theme
 
-   # Create a plugin (optional)
-   wp-monorepo setup:plugin
-   ```
+    # Create a plugin (optional)
+    wp-monorepo setup:plugin
+    ```
 
 ### Option 2: Local Project Installation
 
 1. Navigate to your existing WordPress installation:
 
-   ```bash
-   cd /path/to/your/wordpress-site
-   ```
+    ```bash
+    cd /path/to/your/wordpress-site
+    ```
 
 2. Install the package locally:
 
-   ```bash
-   npm install wp-monorepo-manager
-   ```
+    ```bash
+    npm install wp-monorepo-manager
+    ```
 
 3. Set up your monorepo structure using npm scripts:
 
-   ```bash
-   # Create the monorepo configuration
-   npx wp-monorepo setup
+    ```bash
+    # Create the monorepo configuration
+    npx wp-monorepo setup
 
-   # Create a theme (optional)
-   npx wp-monorepo setup:theme
+    # Create a theme (optional)
+    npx wp-monorepo setup:theme
 
-   # Create a plugin (optional)
-   npx wp-monorepo setup:plugin
-   ```
+    # Create a plugin (optional)
+    npx wp-monorepo setup:plugin
+    ```
 
 ### Project Structure
 
@@ -91,23 +91,11 @@ The package includes pre-configured settings for various development tools. Thes
 
 ### ESLint Configuration
 
-ESLint is configured to enforce JavaScript/TypeScript coding standards. The setup process automatically creates a `.eslintrc.json` file in your project root:
-
-```json
-{
-  "extends": ["wp-monorepo-manager/config/eslint"]
-}
-```
+ESLint is configured to enforce JavaScript/TypeScript coding standards. The setup process automatically creates a `.eslintrc.json` file in your project root by copying the configuration template from the package.
 
 ### StyleLint Configuration
 
-StyleLint ensures consistent CSS/SCSS coding standards. The setup process automatically creates a `.stylelintrc.json` file in your project root:
-
-```json
-{
-  "extends": ["wp-monorepo-manager/config/stylelint"]
-}
-```
+StyleLint ensures consistent CSS/SCSS coding standards. The setup process automatically creates a `.stylelintrc.json` file in your project root by copying the configuration template from the package.
 
 A `.stylelintignore` file is also created to exclude certain files:
 
@@ -119,13 +107,7 @@ build
 
 ### Prettier Configuration
 
-Prettier provides code formatting rules. The setup process automatically creates a `.prettierrc` file in your project root:
-
-```json
-{
-  "extends": ["wp-monorepo-manager/config/prettier"]
-}
-```
+Prettier provides code formatting rules. The setup process automatically creates a `.prettierrc` file in your project root by copying the configuration template from the package.
 
 A `.prettierignore` file is also created to exclude files from formatting:
 
@@ -137,33 +119,11 @@ build
 
 ### PHPCS Configuration
 
-PHP_CodeSniffer enforces PHP coding standards. The setup process automatically creates a `phpcs.xml.dist` file in your project root:
-
-```xml
-<?xml version="1.0"?>
-<ruleset name="WordPress Monorepo Standards">
-    <rule ref="wp-monorepo-manager/config/phpcs"/>
-</ruleset>
-```
+PHP_CodeSniffer enforces PHP coding standards. The setup process automatically creates a `phpcs.xml.dist` file in your project root by copying the configuration template from the package.
 
 ### Editor Configuration
 
-The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. The setup process automatically creates an `.editorconfig` file in your project root:
-
-```ini
-root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-indent_size = 4
-indent_style = space
-insert_final_newline = true
-trim_trailing_whitespace = true
-
-[*.{js,jsx,ts,tsx,json,yml,yaml,md}]
-indent_size = 2
-```
+The package includes `.editorconfig` settings for consistent coding styles across different editors and IDEs. The setup process automatically creates an `.editorconfig` file in your project root by copying the configuration template from the package.
 
 ### Git Configuration
 
@@ -211,21 +171,21 @@ A `composer.json` file is automatically created to manage PHP dependencies and c
 
 ```json
 {
-  "require-dev": {
-    "squizlabs/php_codesniffer": "^3.12.0",
-    "wp-coding-standards/wpcs": "^3.1"
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  },
-  "scripts": {
-    "lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin",
-    "format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true",
-    "lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme",
-    "format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true"
-  }
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.12.0",
+		"wp-coding-standards/wpcs": "^3.1"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin",
+		"format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true",
+		"lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme",
+		"format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true"
+	}
 }
 ```
 
@@ -233,12 +193,21 @@ This includes PHP CodeSniffer and WordPress Coding Standards for PHP code qualit
 
 ## Available Commands
 
+### CLI Commands (wp-monorepo)
+
+- `wp-monorepo setup` - Create monorepo structure
+- `wp-monorepo setup:theme` - Create a new theme
+- `wp-monorepo setup:plugin` - Create a new plugin
+
+**Note:** Build commands (`wp-monorepo build`, `wp-monorepo build:dev`, `wp-monorepo build:prod`) are planned for future releases.
+
+### NPM Scripts (after setup)
+
 - `npm run build` - Build all themes and plugins
-- `npm run build:dev` - Build in development mode
-- `npm run build:prod` - Build in production mode
-- `npm run start` - Start development mode
-- `npm run lint` - Lint all projects
-- `npm run format` - Format all projects
+- `npm run build:force` - Force rebuild (bypasses cache)
+- `npm run start` - Start development server
+- `npm run lint` - Run linting across all projects
+- `npm run format` - Format code across all projects
 - `npm run clean` - Clean build artifacts
 
 ## Installation Options
@@ -272,6 +241,28 @@ This includes PHP CodeSniffer and WordPress Coding Standards for PHP code qualit
 - You need version control per project
 - You're setting up CI/CD pipelines
 - You want to ensure reproducible builds
+
+## Known Issues
+
+### Build Cache Issues
+
+**Issue**: After setting up new themes or plugins, they may not build correctly on the first attempt due to Turborepo cache conflicts.
+
+**Symptoms**:
+
+- Theme or plugin shows "cache hit" but no actual build output
+- Missing build assets even though build reports success
+- "FULL TURBO" message but no files generated
+
+**Solution**: Use the force build command to bypass cache and rebuild:
+
+```bash
+npm run build:force
+```
+
+This forces Turborepo to bypass the cache and actually execute the build process, creating the proper build outputs and cache entries for future builds.
+
+**Prevention**: The issue typically occurs when multiple projects are created quickly with similar source file structures. The updated turbo.json configurations in recent versions help prevent this by using more specific cache keys.
 
 ## Documentation
 

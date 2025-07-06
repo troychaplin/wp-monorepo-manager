@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const {
 	createDirectory,
 	writeFile,
@@ -10,21 +11,48 @@ const {
 } = require('./utils');
 
 // Configuration
+const PACKAGE_DIR = path.resolve(__dirname, '..');
 const TARGET_DIR = process.cwd();
 
-// Function to update composer.json with plugin scripts
-function updateComposerJson(folderName) {
-	const composerPath = path.join(TARGET_DIR, 'composer.json');
+// Function to copy composer.json template for plugin
+async function copyComposerJson(folderName) {
+	const composerTemplatePath = path.join(
+		PACKAGE_DIR,
+		'config',
+		'composer',
+		'composer-plugin.json'
+	);
+	const pluginComposerPath = path.join(
+		TARGET_DIR,
+		'wp-content',
+		'plugins',
+		folderName,
+		'composer.json'
+	);
 
-	// Check if composer.json exists
-	if (!fs.existsSync(composerPath)) {
-		console.log('⚠️  composer.json not found. Skipping composer.json update.');
+	try {
+		// Copy the composer template
+		fs.copyFileSync(composerTemplatePath, pluginComposerPath);
+		console.log('\n✅ Plugin composer.json created');
+	} catch (error) {
+		console.error('❌ Error creating composer.json:', error.message);
+	}
+}
+
+// Function to update root composer.json with plugin scripts
+async function updateRootComposerJson(folderName) {
+	const rootComposerPath = path.join(TARGET_DIR, 'composer.json');
+
+	// Check if root composer.json exists
+	if (!fs.existsSync(rootComposerPath)) {
+		console.log('\n⚠️  composer.json not found in the root directory.');
+		console.log('   Composer scripts will not be added.');
 		return;
 	}
 
 	try {
 		// Read existing composer.json
-		const composerContent = fs.readFileSync(composerPath, 'utf8');
+		const composerContent = fs.readFileSync(rootComposerPath, 'utf8');
 		const composer = JSON.parse(composerContent);
 
 		// Initialize scripts object if it doesn't exist
@@ -34,8 +62,8 @@ function updateComposerJson(folderName) {
 
 		// Create script names using the pattern
 		const scriptNamePrefix = folderName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-		const lintScriptName = `lint-php-${scriptNamePrefix}`;
-		const formatScriptName = `format-php-${scriptNamePrefix}`;
+		const lintScriptName = `lint-plugin-php-${scriptNamePrefix}`;
+		const formatScriptName = `format-plugin-php-${scriptNamePrefix}`;
 
 		// Add new scripts
 		composer.scripts[lintScriptName] =
@@ -44,10 +72,12 @@ function updateComposerJson(folderName) {
 			`./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/${folderName} || true`;
 
 		// Write updated composer.json
-		fs.writeFileSync(composerPath, JSON.stringify(composer, null, 2));
-		console.log(`✅ Added composer scripts: ${lintScriptName}, ${formatScriptName}`);
+		fs.writeFileSync(rootComposerPath, JSON.stringify(composer, null, 2));
+		console.log('\n✅ Root composer.json updated with scripts:');
+		console.log(`   • ${lintScriptName} - Lint PHP files`);
+		console.log(`   • ${formatScriptName} - Format PHP files`);
 	} catch (error) {
-		console.error('❌ Error updating composer.json:', error.message);
+		console.error('❌ Error updating root composer.json:', error.message);
 	}
 }
 
@@ -86,21 +116,16 @@ async function setupPlugin() {
 			}
 		}
 
-		// Create plugin package.json
-		const pluginPackageJson = {
-			name: folderName,
-			version: '1.0.0',
-			browserslist: ['extends @wordpress/browserslist-config'],
-			scripts: {
-				build: 'wp-monorepo-manager build',
-				'build:dev': 'wp-monorepo-manager build:dev',
-				'build:prod': 'wp-monorepo-manager build:prod',
-				start: 'wp-monorepo-manager start',
-				lint: 'wp-monorepo-manager lint',
-				format: 'wp-monorepo-manager format',
-				clean: 'wp-monorepo-manager clean',
-			},
-		};
+		// Read plugin package.json template
+		const pluginPackageTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'package',
+			'package-plugin.json'
+		);
+		let pluginPackageContent = fs.readFileSync(pluginPackageTemplatePath, 'utf8');
+		pluginPackageContent = pluginPackageContent.replace(/\{\{PROJECT_NAME\}\}/g, folderName);
+		const pluginPackageJson = JSON.parse(pluginPackageContent);
 
 		// Create plugin directory structure
 		createDirectory(pluginDir);
@@ -111,8 +136,45 @@ async function setupPlugin() {
 		const sanitizedName = pluginName.replace(/[^a-zA-Z0-9]/g, '_');
 		const kebabName = pluginName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
+		// Track what was created
+		const createdItems = [];
+
 		// Create plugin files
 		writeFile(path.join(pluginDir, 'package.json'), JSON.stringify(pluginPackageJson, null, 2));
+		createdItems.push('package.json');
+
+		// Copy webpack configuration
+		const webpackPluginTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'webpack',
+			'webpack-plugin.js'
+		);
+		const webpackPluginPath = path.join(pluginDir, 'webpack.scripts.js');
+		fs.copyFileSync(webpackPluginTemplatePath, webpackPluginPath);
+		createdItems.push('webpack configuration');
+
+		// Copy turbo.json for plugin
+		const turboPluginTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'turbo',
+			'turbo-plugin.json'
+		);
+		const turboPluginPath = path.join(pluginDir, 'turbo.json');
+		fs.copyFileSync(turboPluginTemplatePath, turboPluginPath);
+		createdItems.push('turbo.json configuration');
+
+		// Copy .prettierignore for plugin
+		const prettierIgnoreTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'prettier',
+			'.prettierignore'
+		);
+		const prettierIgnorePluginPath = path.join(pluginDir, '.prettierignore');
+		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnorePluginPath);
+		createdItems.push('.prettierignore configuration');
 		writeFile(
 			path.join(pluginDir, 'plugin.php'),
 			`<?php
@@ -187,7 +249,6 @@ A custom WordPress plugin.
 
 \`\`\`bash
 npm run build    # Build for production
-npm run build:dev # Build for development
 npm run start     # Start development mode
 npm run lint      # Run linting
 npm run format    # Format code
@@ -196,10 +257,49 @@ npm run clean     # Clean build artifacts
 `
 		);
 
-		// Update composer.json with plugin scripts
-		updateComposerJson(folderName);
+		// Create composer.json for plugin
+		await copyComposerJson(folderName);
+		createdItems.push('composer.json');
 
-		console.log(`\n✅ Plugin "${pluginName}" created successfully in ${pluginDir}`);
+		// Update root composer.json with plugin scripts
+		await updateRootComposerJson(folderName);
+		createdItems.push('root composer scripts');
+
+		// Install composer dependencies for the plugin
+		console.log('📦 Installing Composer dependencies...');
+		execSync('composer install', { cwd: pluginDir, stdio: 'inherit' });
+		createdItems.push('composer dependencies');
+
+		// Create blocks
+		console.log('\n🔧 Creating example blocks...');
+
+		execSync(
+			'npx @wordpress/create-block@latest static-example --variant=static --title="Static Block Example" --target-dir=./src/blocks/static-example --textdomain=wp-monorepo-manager --no-plugin',
+			{ cwd: pluginDir, stdio: 'pipe' }
+		);
+		createdItems.push('static block example');
+
+		execSync(
+			'npx @wordpress/create-block@latest dynamic-example --variant=dynamic --title="Dynamic Block Example" --target-dir=./src/blocks/dynamic-example --textdomain=wp-monorepo-manager --no-plugin',
+			{ cwd: pluginDir, stdio: 'pipe' }
+		);
+		createdItems.push('dynamic block example');
+
+		execSync(
+			'npx @wordpress/create-block@latest interactive-example --title="Interactive Block Example" --target-dir=./src/blocks/interactive-example --textdomain=wp-monorepo-manager --template @wordpress/create-block-interactive-template --no-plugin',
+			{ cwd: pluginDir, stdio: 'pipe', env: { ...process.env, NPM_CONFIG_YES: 'true' } }
+		);
+		createdItems.push('interactive block example');
+
+		// Success summary
+		console.log('\n✅ Plugin setup completed successfully!');
+		console.log(`\n📁 Location: ${path.relative(TARGET_DIR, pluginDir)}`);
+		console.log('\n📋 Created:');
+		createdItems.forEach(item => console.log(`   • ${item}`));
+		console.log('\n🚀 Next steps:');
+		console.log('   1. Run "npm run build" to build the plugin');
+		console.log('   2. Run "npm run start" to start development mode');
+		console.log('   3. Activate the plugin in WordPress admin');
 
 		closeReadline();
 		process.exit(0);
