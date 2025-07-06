@@ -157,6 +157,20 @@ async function setupTheme() {
 		writeFile(path.join(themeDir, 'functions.php'), functionsPhpContent);
 		createdItems.push('functions.php');
 
+		// Copy and customize header.php template
+		const headerPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'header.php');
+		let headerPhpContent = fs.readFileSync(headerPhpTemplatePath, 'utf8');
+		headerPhpContent = headerPhpContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'header.php'), headerPhpContent);
+		createdItems.push('header.php');
+
+		// Copy and customize footer.php template
+		const footerPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'footer.php');
+		let footerPhpContent = fs.readFileSync(footerPhpTemplatePath, 'utf8');
+		footerPhpContent = footerPhpContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'footer.php'), footerPhpContent);
+		createdItems.push('footer.php');
+
 		// Copy and customize scripts.js template
 		const scriptsTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'scripts.js');
 		let scriptsContent = fs.readFileSync(scriptsTemplatePath, 'utf8');
@@ -203,6 +217,10 @@ async function setupTheme() {
 		console.log('   1. Run "npm run build" to build the theme');
 		console.log('   2. Run "npm run start" to start development mode');
 		console.log('   3. Activate the theme in WordPress admin');
+		console.log('\n🔧 Troubleshooting:');
+		console.log(
+			'   • Should you have issues with the build, run "npm run build:fix" to clear the turbo cache and rebuild'
+		);
 
 		closeReadline();
 		process.exit(0);

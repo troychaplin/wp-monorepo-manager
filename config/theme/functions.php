@@ -10,24 +10,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Theme setup
-function {{SANITIZED_NAME}}_setup()
-{
-    // Add theme support for various features
-    add_theme_support('post-thumbnails');
-    add_theme_support('title-tag');
-    add_theme_support(
-        'html5', array(
-        'search-form',
-        'comment-form',
-        'comment-list',
-        'gallery',
-        'caption',
-        )
-    );
-}
-add_action('after_setup_theme', '{{SANITIZED_NAME}}_setup');
-
 // Enqueue scripts and styles
 function {{SANITIZED_NAME}}_scripts()
 {
