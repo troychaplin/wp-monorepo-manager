@@ -8,6 +8,7 @@
 	],
 	"scripts": {
 		"build": "turbo run build",
+		"build:force": "turbo run build --force",
 		"start": "turbo run start",
 		"lint": "turbo run lint",
 		"format": "turbo run format",

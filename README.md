@@ -204,10 +204,11 @@ This includes PHP CodeSniffer and WordPress Coding Standards for PHP code qualit
 ### NPM Scripts (after setup)
 
 - `npm run build` - Build all themes and plugins
-- `npm run build:dev` - Build in development mode
-- `npm run build:prod` - Build in production mode
-
-**Note:** Development server, linting, formatting, and cleaning commands are planned for future releases.
+- `npm run build:force` - Force rebuild (bypasses cache)
+- `npm run start` - Start development server
+- `npm run lint` - Run linting across all projects
+- `npm run format` - Format code across all projects
+- `npm run clean` - Clean build artifacts
 
 ## Installation Options
 
@@ -240,6 +241,28 @@ This includes PHP CodeSniffer and WordPress Coding Standards for PHP code qualit
 - You need version control per project
 - You're setting up CI/CD pipelines
 - You want to ensure reproducible builds
+
+## Known Issues
+
+### Build Cache Issues
+
+**Issue**: After setting up new themes or plugins, they may not build correctly on the first attempt due to Turborepo cache conflicts.
+
+**Symptoms**:
+
+- Theme or plugin shows "cache hit" but no actual build output
+- Missing build assets even though build reports success
+- "FULL TURBO" message but no files generated
+
+**Solution**: Use the force build command to bypass cache and rebuild:
+
+```bash
+npm run build:force
+```
+
+This forces Turborepo to bypass the cache and actually execute the build process, creating the proper build outputs and cache entries for future builds.
+
+**Prevention**: The issue typically occurs when multiple projects are created quickly with similar source file structures. The updated turbo.json configurations in recent versions help prevent this by using more specific cache keys.
 
 ## Documentation
 

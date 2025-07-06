@@ -2,8 +2,9 @@
 	"extends": ["//"],
 	"tasks": {
 		"build": {
-			"inputs": ["src/**", "webpack.scripts.js"],
-			"outputs": ["build/**"]
+			"inputs": ["src/**", "webpack.scripts.js", "package.json", "plugin.php"],
+			"outputs": ["build/**"],
+			"dependsOn": []
 		},
 		"start:blocks": {
 			"env": ["NODE_ENV"]
