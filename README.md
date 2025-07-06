@@ -175,6 +175,7 @@ wp-content/plugins/your-plugin/
 ├── webpack.scripts.js       # Custom webpack config
 ├── plugin.php               # Main plugin file
 ├── src/
+│   ├── blocks/
 │   ├── scripts/
 │   │   └── index.js         # Main JavaScript entry
 │   └── styles.scss          # Main stylesheet

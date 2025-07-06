@@ -87,8 +87,7 @@ async function setupPlugin() {
 
 		// Create plugin directory structure
 		createDirectory(pluginDir);
-		createDirectory(path.join(pluginDir, 'src/scripts'));
-		createDirectory(path.join(pluginDir, 'src/styles'));
+		createDirectory(path.join(pluginDir, 'src'));
 
 		// Sanitize plugin name for PHP function names
 		const sanitizedName = pluginName.replace(/[^a-zA-Z0-9]/g, '_');
@@ -133,87 +132,48 @@ async function setupPlugin() {
 		const prettierIgnorePluginPath = path.join(pluginDir, '.prettierignore');
 		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnorePluginPath);
 		createdItems.push('.prettierignore configuration');
-		writeFile(
-			path.join(pluginDir, 'plugin.php'),
-			`<?php
-/**
- * Plugin Name: ${pluginName}
- * Description: A custom WordPress plugin
- * Version: 1.0.0
- * Author: Your Name
- *
- * @package ${pluginName}
- */
 
-// Prevent direct access
-if (!defined('ABSPATH')) {
-	exit;
-}
+		// Copy and customize plugin.php template
+		const pluginPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'plugin', 'plugin.php');
+		let pluginPhpContent = fs.readFileSync(pluginPhpTemplatePath, 'utf8');
 
-// Plugin initialization
-function ${sanitizedName}_init() {
-	// Plugin initialization code here
-}
-add_action('init', '${sanitizedName}_init');
+		// Replace template placeholders
+		pluginPhpContent = pluginPhpContent
+			.replace(/\{\{PLUGIN_NAME\}\}/g, pluginName)
+			.replace(/\{\{PLUGIN_DESCRIPTION\}\}/g, `${pluginName} - A custom WordPress plugin`)
+			.replace(/\{\{SANITIZED_NAME\}\}/g, sanitizedName)
+			.replace(/\{\{KEBAB_NAME\}\}/g, kebabName);
 
-// Enqueue scripts and styles
-function ${sanitizedName}_enqueue_scripts() {
-	wp_enqueue_script(
-		'${kebabName}-script',
-		plugin_dir_url(__FILE__) . 'dist/scripts/index.js',
-		array(),
-		'1.0.0',
-		true
-	);
+		writeFile(path.join(pluginDir, 'plugin.php'), pluginPhpContent);
+		createdItems.push('plugin.php');
 
-	wp_enqueue_style(
-		'${kebabName}-style',
-		plugin_dir_url(__FILE__) . 'dist/styles/index.css',
-		array(),
-		'1.0.0'
-	);
-}
-add_action('wp_enqueue_scripts', '${sanitizedName}_enqueue_scripts');
-`
+		// Copy and customize scripts.js template
+		const scriptsTemplatePath = path.join(PACKAGE_DIR, 'config', 'plugin', 'scripts.js');
+		let scriptsContent = fs.readFileSync(scriptsTemplatePath, 'utf8');
+		scriptsContent = scriptsContent.replace(/\{\{PLUGIN_NAME\}\}/g, pluginName);
+		writeFile(path.join(pluginDir, 'src/scripts.js'), scriptsContent);
+		createdItems.push('JavaScript entry point');
+
+		// Copy and customize styles.scss template
+		const stylesTemplatePath = path.join(PACKAGE_DIR, 'config', 'plugin', 'styles.scss');
+		let stylesContent = fs.readFileSync(stylesTemplatePath, 'utf8');
+		stylesContent = stylesContent
+			.replace(/\{\{KEBAB_NAME\}\}/g, kebabName)
+			.replace(/\{\{PLUGIN_NAME\}\}/g, pluginName);
+		writeFile(path.join(pluginDir, 'src/styles.scss'), stylesContent);
+		createdItems.push('SCSS stylesheet');
+
+		// Copy and customize editor-styles.scss template
+		const editorStylesTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'plugin',
+			'editor-styles.scss'
 		);
-		writeFile(
-			path.join(pluginDir, 'src/scripts/index.js'),
-			`console.log("${pluginName} plugin script loaded");`
-		);
-		writeFile(
-			path.join(pluginDir, 'src/styles.scss'),
-			`/* ${pluginName} Plugin Styles */
-
-.plugin-${kebabName} {
-	/* Plugin styles here */
-}`
-		);
-		writeFile(
-			path.join(pluginDir, 'src/editor-styles.scss'),
-			`/* ${pluginName} Editor Styles */
-
-/* Styles for the WordPress editor */
-.wp-block {
-	/* Editor-specific styles here */
-}`
-		);
-		writeFile(
-			path.join(pluginDir, 'README.md'),
-			`# ${pluginName}
-
-A custom WordPress plugin.
-
-## Development
-
-\`\`\`bash
-npm run build    # Build for production
-npm run start     # Start development mode
-npm run lint      # Run linting
-npm run format    # Format code
-npm run clean     # Clean build artifacts
-\`\`\`
-`
-		);
+		let editorStylesContent = fs.readFileSync(editorStylesTemplatePath, 'utf8');
+		editorStylesContent = editorStylesContent.replace(/\{\{PLUGIN_NAME\}\}/g, pluginName);
+		writeFile(path.join(pluginDir, 'src/editor-styles.scss'), editorStylesContent);
+		createdItems.push('editor stylesheet');
 
 		// Create composer.json for plugin
 		await copyComposerJson(folderName);
@@ -254,6 +214,8 @@ npm run clean     # Clean build artifacts
 		console.log('   1. Run "npm run build" to build the plugin');
 		console.log('   2. Run "npm run start" to start development mode');
 		console.log('   3. Activate the plugin in WordPress admin');
+		console.log('\n💡 To add blocks later:');
+		console.log('   • Run "npx @wordpress/create-block" inside the plugin directory');
 
 		closeReadline();
 		process.exit(0);

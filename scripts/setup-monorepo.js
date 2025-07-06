@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
-const { createDirectory, writeFile, promptYesNo, closeReadline } = require('./utils');
+const { createDirectory, promptYesNo, closeReadline } = require('./utils');
 
 // Configuration
 const PACKAGE_DIR = path.resolve(__dirname, '..');
