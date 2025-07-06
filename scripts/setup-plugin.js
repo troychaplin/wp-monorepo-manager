@@ -91,6 +91,7 @@ async function setupPlugin() {
 
 		// Sanitize plugin name for PHP function names
 		const sanitizedName = pluginName.replace(/[^a-zA-Z0-9]/g, '_');
+		const sanitizedNameLower = pluginName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
 		const kebabName = pluginName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
 		// Track what was created
@@ -141,7 +142,7 @@ async function setupPlugin() {
 		pluginPhpContent = pluginPhpContent
 			.replace(/\{\{PLUGIN_NAME\}\}/g, pluginName)
 			.replace(/\{\{PLUGIN_DESCRIPTION\}\}/g, `${pluginName} - A custom WordPress plugin`)
-			.replace(/\{\{SANITIZED_NAME\}\}/g, sanitizedName)
+			.replace(/\{\{SANITIZED_NAME\}\}/g, sanitizedNameLower)
 			.replace(/\{\{KEBAB_NAME\}\}/g, kebabName);
 
 		writeFile(path.join(pluginDir, 'plugin.php'), pluginPhpContent);
