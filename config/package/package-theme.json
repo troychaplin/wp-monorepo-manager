@@ -1,0 +1,18 @@
+{
+	"name": "{{PROJECT_NAME}}",
+	"description": "A WordPress theme for a monorepo project",
+	"version": "1.0.0",
+	"author": "Your Name",
+	"license": "GPL-2.0-or-later",
+	"packageManager": "npm@10.2.4",
+	"main": "index.js",
+	"scripts": {
+		"build": "rm -rf build && npm run build:webpack",
+		"build:webpack": "webpack --mode production",
+		"start": "concurrently 'npm run start:webpack'",
+		"start:webpack": "webpack --mode=development --watch",
+		"format": "prettier --write .",
+		"clean": "rm -rf .turbo node_modules build package-lock.json",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	}
+}
