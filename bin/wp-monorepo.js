@@ -38,8 +38,7 @@ if (
 	console.log('  setup:theme        Create a new theme');
 	console.log('  setup:plugin       Create a new plugin');
 	console.log('  build              Build for production');
-	console.log('  build:dev          Build for development');
-	console.log('  build:prod         Build for production');
+	console.log('  build:force        Force rebuild (bypasses turbo cache)');
 	console.log('  start              Start development server');
 	console.log('  lint               Run linting');
 	console.log('  format             Format code');
@@ -54,11 +53,24 @@ if (
 	console.log('  wp-monorepo setup              # Initialize monorepo structure');
 	console.log('  wp-monorepo setup:theme        # Create a new theme');
 	console.log('  wp-monorepo setup:plugin       # Create a new plugin');
-	return;
+	process.exit(0);
 }
 
 // Handle setup commands
 if (command === 'setup') {
+	// If we have a subcommand, validate it first
+	if (subCommand) {
+		if (subCommand !== 'theme' && subCommand !== 'plugin') {
+			console.error(`❌ Error: Unknown setup command "${subCommand}"`);
+			console.log('');
+			console.log('Valid setup commands:');
+			console.log('  wp-monorepo setup         # Initialize monorepo structure');
+			console.log('  wp-monorepo setup:theme   # Create a new theme');
+			console.log('  wp-monorepo setup:plugin  # Create a new plugin');
+			process.exit(1);
+		}
+	}
+
 	const setupScript =
 		subCommand === 'theme'
 			? 'setup-theme'
@@ -76,6 +88,7 @@ if (command === 'setup') {
 			process.exit(0);
 		}
 
+		// Only run main setup if no subcommand was provided
 		// Check if we're in a WordPress installation
 		if (isWordPressInstallation(cwd)) {
 			// We're in a WordPress installation, use the enhanced setup script

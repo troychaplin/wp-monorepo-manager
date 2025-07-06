@@ -39,48 +39,6 @@ async function copyComposerJson(folderName) {
 	}
 }
 
-// Function to update root composer.json with theme scripts
-async function updateRootComposerJson(folderName) {
-	const rootComposerPath = path.join(TARGET_DIR, 'composer.json');
-
-	// Check if root composer.json exists
-	if (!fs.existsSync(rootComposerPath)) {
-		console.log('⚠️  composer.json not found in the root directory.');
-		console.log('   Composer scripts will not be added.');
-		return;
-	}
-
-	try {
-		// Read existing composer.json
-		const composerContent = fs.readFileSync(rootComposerPath, 'utf8');
-		const composer = JSON.parse(composerContent);
-
-		// Initialize scripts object if it doesn't exist
-		if (!composer.scripts) {
-			composer.scripts = {};
-		}
-
-		// Create script names using the pattern
-		const scriptNamePrefix = folderName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-		const lintScriptName = `lint-theme-php-${scriptNamePrefix}`;
-		const formatScriptName = `format-theme-php-${scriptNamePrefix}`;
-
-		// Add new scripts
-		composer.scripts[lintScriptName] =
-			`./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/${folderName}`;
-		composer.scripts[formatScriptName] =
-			`./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/${folderName} || true`;
-
-		// Write updated composer.json
-		fs.writeFileSync(rootComposerPath, JSON.stringify(composer, null, 2));
-		console.log('✅ Root composer.json updated with scripts:');
-		console.log(`   • ${lintScriptName} - Lint PHP files`);
-		console.log(`   • ${formatScriptName} - Format PHP files`);
-	} catch (error) {
-		console.error('❌ Error updating root composer.json:', error.message);
-	}
-}
-
 async function setupTheme() {
 	try {
 		// Get theme name from user
@@ -132,7 +90,7 @@ async function setupTheme() {
 		createDirectory(path.join(themeDir, 'src'));
 
 		// Sanitize theme name for PHP function names
-		const sanitizedName = themeName.replace(/[^a-zA-Z0-9]/g, '_');
+		const sanitizedName = themeName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
 		const kebabName = themeName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
 		// Track what was created
@@ -174,191 +132,76 @@ async function setupTheme() {
 		const prettierIgnoreThemePath = path.join(themeDir, '.prettierignore');
 		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnoreThemePath);
 		createdItems.push('.prettierignore configuration');
-		createdItems.push('package.json');
-		writeFile(
-			path.join(themeDir, 'index.php'),
-			`<?php
-/**
- * ${themeName}
- *
- * @package ${themeName}
- */
 
-get_header(); ?>
-
-<main id="main" class="site-main">
-	<?php
-	if (have_posts()) :
-		while (have_posts()) :
-			the_post();
-			get_template_part('template-parts/content', get_post_type());
-		endwhile;
-	else :
-		get_template_part('template-parts/content', 'none');
-	endif;
-	?>
-</main>
-
-<?php
-get_sidebar();
-get_footer();
-`
-		);
+		// Copy and customize index.php template
+		const indexPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'index.php');
+		let indexPhpContent = fs.readFileSync(indexPhpTemplatePath, 'utf8');
+		indexPhpContent = indexPhpContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'index.php'), indexPhpContent);
 		createdItems.push('index.php');
 
-		writeFile(
-			path.join(themeDir, 'style.css'),
-			`/*
-Theme Name: ${themeName}
-Description: A custom WordPress theme
-Version: 1.0.0
-Author: Your Name
-*/
-
-/* This file is required by WordPress but styles are compiled from src/styles.scss */
-`
-		);
+		// Copy and customize style.css template
+		const styleCssTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'style.css');
+		let styleCssContent = fs.readFileSync(styleCssTemplatePath, 'utf8');
+		styleCssContent = styleCssContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'style.css'), styleCssContent);
 		createdItems.push('style.css');
 
-		writeFile(
-			path.join(themeDir, 'functions.php'),
-			`<?php
-/**
- * ${themeName} functions and definitions
- *
- * @package ${themeName}
- */
-
-// Prevent direct access
-if (!defined('ABSPATH')) {
-	exit;
-}
-
-// Theme setup
-function ${sanitizedName}_setup() {
-	// Add theme support for various features
-	add_theme_support('post-thumbnails');
-	add_theme_support('title-tag');
-	add_theme_support('html5', array(
-		'search-form',
-		'comment-form',
-		'comment-list',
-		'gallery',
-		'caption',
-	));
-}
-add_action('after_setup_theme', '${sanitizedName}_setup');
-
-// Enqueue scripts and styles
-function ${sanitizedName}_scripts() {
-	wp_enqueue_style(
-		'${kebabName}-style',
-		get_template_directory_uri() . '/build/styles.css',
-		array(),
-		'1.0.0'
-	);
-
-	wp_enqueue_script(
-		'${kebabName}-script',
-		get_template_directory_uri() . '/build/scripts.js',
-		array(),
-		'1.0.0',
-		true
-	);
-}
-add_action('wp_enqueue_scripts', '${sanitizedName}_scripts');
-`
-		);
+		// Copy and customize functions.php template
+		const functionsPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'functions.php');
+		let functionsPhpContent = fs.readFileSync(functionsPhpTemplatePath, 'utf8');
+		functionsPhpContent = functionsPhpContent
+			.replace(/\{\{THEME_NAME\}\}/g, themeName)
+			.replace(/\{\{SANITIZED_NAME\}\}/g, sanitizedName)
+			.replace(/\{\{KEBAB_NAME\}\}/g, kebabName);
+		writeFile(path.join(themeDir, 'functions.php'), functionsPhpContent);
 		createdItems.push('functions.php');
 
-		writeFile(
-			path.join(themeDir, 'src/scripts.js'),
-			`// eslint-disable-next-line no-console
-console.log("${themeName} theme script loaded");`
-		);
+		// Copy and customize header.php template
+		const headerPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'header.php');
+		let headerPhpContent = fs.readFileSync(headerPhpTemplatePath, 'utf8');
+		headerPhpContent = headerPhpContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'header.php'), headerPhpContent);
+		createdItems.push('header.php');
+
+		// Copy and customize footer.php template
+		const footerPhpTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'footer.php');
+		let footerPhpContent = fs.readFileSync(footerPhpTemplatePath, 'utf8');
+		footerPhpContent = footerPhpContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'footer.php'), footerPhpContent);
+		createdItems.push('footer.php');
+
+		// Copy and customize scripts.js template
+		const scriptsTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'scripts.js');
+		let scriptsContent = fs.readFileSync(scriptsTemplatePath, 'utf8');
+		scriptsContent = scriptsContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'src/scripts.js'), scriptsContent);
 		createdItems.push('JavaScript entry point');
 
-		writeFile(
-			path.join(themeDir, 'src/styles.scss'),
-			`/* ${themeName} Theme Styles */
-
-body { 
-	color: #333; 
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-	line-height: 1.6;
-	margin: 0;
-	padding: 0;
-}
-
-.site-main {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 2rem;
-}
-
-/* Add your custom styles here */
-.${kebabName} {
-	/* Theme-specific styles */
-}`
-		);
+		// Copy and customize styles.scss template
+		const stylesTemplatePath = path.join(PACKAGE_DIR, 'config', 'theme', 'styles.scss');
+		let stylesContent = fs.readFileSync(stylesTemplatePath, 'utf8');
+		stylesContent = stylesContent
+			.replace(/\{\{THEME_NAME\}\}/g, themeName)
+			.replace(/\{\{KEBAB_NAME\}\}/g, kebabName);
+		writeFile(path.join(themeDir, 'src/styles.scss'), stylesContent);
 		createdItems.push('SCSS stylesheet');
-		writeFile(
-			path.join(themeDir, 'src/editor-styles.scss'),
-			`/* ${themeName} Editor Styles */
 
-/* Styles for the WordPress editor */
-.wp-block {
-	max-width: 100%;
-}
-
-.editor-styles-wrapper {
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-	line-height: 1.6;
-}
-
-/* Add editor-specific styles here */`
+		// Copy and customize editor-styles.scss template
+		const editorStylesTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'theme',
+			'editor-styles.scss'
 		);
+		let editorStylesContent = fs.readFileSync(editorStylesTemplatePath, 'utf8');
+		editorStylesContent = editorStylesContent.replace(/\{\{THEME_NAME\}\}/g, themeName);
+		writeFile(path.join(themeDir, 'src/editor-styles.scss'), editorStylesContent);
 		createdItems.push('editor stylesheet');
-
-		writeFile(
-			path.join(themeDir, 'README.md'),
-			`# ${themeName}
-
-A custom WordPress theme built with the WordPress Monorepo Manager.
-
-## Development
-
-\`\`\`bash
-npm run build       # Build for production
-npm run start       # Start development mode with watch
-npm run format      # Format code with Prettier
-npm run clean       # Clean build artifacts
-\`\`\`
-
-## Theme Structure
-
-- \`src/scripts.js\` - Main JavaScript file
-- \`src/styles.scss\` - Main stylesheet
-- \`src/editor-styles.scss\` - Editor-specific styles
-- \`build/\` - Built assets (generated automatically)
-
-## Features
-
-- Modern build system with Webpack
-- SCSS support
-- Editor styles
-- WordPress coding standards
-`
-		);
-		createdItems.push('README.md');
 
 		// Create composer.json for theme
 		await copyComposerJson(folderName);
 		createdItems.push('composer.json');
-
-		// Update root composer.json with theme scripts
-		await updateRootComposerJson(folderName);
-		createdItems.push('root composer scripts');
 
 		// Install composer dependencies for the theme
 		console.log('\n📦 Installing Composer dependencies...');
@@ -374,6 +217,10 @@ npm run clean       # Clean build artifacts
 		console.log('   1. Run "npm run build" to build the theme');
 		console.log('   2. Run "npm run start" to start development mode');
 		console.log('   3. Activate the theme in WordPress admin');
+		console.log('\n🔧 Troubleshooting:');
+		console.log(
+			'   • Should you have issues with the build, run "npm run build:force" to clear the turbo cache and rebuild'
+		);
 
 		closeReadline();
 		process.exit(0);

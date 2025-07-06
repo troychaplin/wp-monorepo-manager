@@ -5,7 +5,7 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		...defaultConfig.entry,
-		scripts: path.resolve(__dirname, 'src/scripts/index.js'),
+		scripts: path.resolve(__dirname, 'src/scripts.js'),
 	},
 	output: {
 		...defaultConfig.output,
