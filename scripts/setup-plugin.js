@@ -39,48 +39,6 @@ async function copyComposerJson(folderName) {
 	}
 }
 
-// Function to update root composer.json with plugin scripts
-async function updateRootComposerJson(folderName) {
-	const rootComposerPath = path.join(TARGET_DIR, 'composer.json');
-
-	// Check if root composer.json exists
-	if (!fs.existsSync(rootComposerPath)) {
-		console.log('\n⚠️  composer.json not found in the root directory.');
-		console.log('   Composer scripts will not be added.');
-		return;
-	}
-
-	try {
-		// Read existing composer.json
-		const composerContent = fs.readFileSync(rootComposerPath, 'utf8');
-		const composer = JSON.parse(composerContent);
-
-		// Initialize scripts object if it doesn't exist
-		if (!composer.scripts) {
-			composer.scripts = {};
-		}
-
-		// Create script names using the pattern
-		const scriptNamePrefix = folderName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-		const lintScriptName = `lint-plugin-php-${scriptNamePrefix}`;
-		const formatScriptName = `format-plugin-php-${scriptNamePrefix}`;
-
-		// Add new scripts
-		composer.scripts[lintScriptName] =
-			`./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/${folderName}`;
-		composer.scripts[formatScriptName] =
-			`./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/${folderName} || true`;
-
-		// Write updated composer.json
-		fs.writeFileSync(rootComposerPath, JSON.stringify(composer, null, 2));
-		console.log('\n✅ Root composer.json updated with scripts:');
-		console.log(`   • ${lintScriptName} - Lint PHP files`);
-		console.log(`   • ${formatScriptName} - Format PHP files`);
-	} catch (error) {
-		console.error('❌ Error updating root composer.json:', error.message);
-	}
-}
-
 async function setupPlugin() {
 	try {
 		// Get plugin name from user
@@ -260,10 +218,6 @@ npm run clean     # Clean build artifacts
 		// Create composer.json for plugin
 		await copyComposerJson(folderName);
 		createdItems.push('composer.json');
-
-		// Update root composer.json with plugin scripts
-		await updateRootComposerJson(folderName);
-		createdItems.push('root composer scripts');
 
 		// Install composer dependencies for the plugin
 		console.log('📦 Installing Composer dependencies...');
