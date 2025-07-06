@@ -164,6 +164,17 @@ async function setupPlugin() {
 		const turboPluginPath = path.join(pluginDir, 'turbo.json');
 		fs.copyFileSync(turboPluginTemplatePath, turboPluginPath);
 		createdItems.push('turbo.json configuration');
+
+		// Copy .prettierignore for plugin
+		const prettierIgnoreTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'prettier',
+			'.prettierignore'
+		);
+		const prettierIgnorePluginPath = path.join(pluginDir, '.prettierignore');
+		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnorePluginPath);
+		createdItems.push('.prettierignore configuration');
 		writeFile(
 			path.join(pluginDir, 'plugin.php'),
 			`<?php

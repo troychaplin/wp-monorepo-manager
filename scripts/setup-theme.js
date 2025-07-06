@@ -163,6 +163,17 @@ async function setupTheme() {
 		const turboThemePath = path.join(themeDir, 'turbo.json');
 		fs.copyFileSync(turboThemeTemplatePath, turboThemePath);
 		createdItems.push('turbo.json configuration');
+
+		// Copy .prettierignore for theme
+		const prettierIgnoreTemplatePath = path.join(
+			PACKAGE_DIR,
+			'config',
+			'prettier',
+			'.prettierignore'
+		);
+		const prettierIgnoreThemePath = path.join(themeDir, '.prettierignore');
+		fs.copyFileSync(prettierIgnoreTemplatePath, prettierIgnoreThemePath);
+		createdItems.push('.prettierignore configuration');
 		createdItems.push('package.json');
 		writeFile(
 			path.join(themeDir, 'index.php'),
@@ -259,21 +270,11 @@ add_action('wp_enqueue_scripts', '${sanitizedName}_scripts');
 `
 		);
 		createdItems.push('functions.php');
-		writeFile(
-			path.join(themeDir, 'style.css'),
-			`/*
-Theme Name: ${themeName}
-Description: A custom WordPress theme
-Version: 1.0.0
-Author: Your Name
-*/
 
-/* This file is required by WordPress but styles are compiled from src/styles.scss */
-`
-		);
 		writeFile(
 			path.join(themeDir, 'src/scripts.js'),
-			`console.log("${themeName} theme script loaded");`
+			`// eslint-disable-next-line no-console
+console.log("${themeName} theme script loaded");`
 		);
 		createdItems.push('JavaScript entry point');
 
