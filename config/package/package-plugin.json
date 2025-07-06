@@ -17,6 +17,7 @@
 		"lint": "npm run lint:js && npm run lint:css",
 		"lint:js": "eslint 'src/**/*.{js,jsx,ts,tsx}' --config ../../../.eslintrc.json",
 		"lint:css": "stylelint 'src/**/*.{css,scss}' --config ../../../.stylelintrc.json",
+		"format": "prettier --write .",
 		"clean": "rm -rf .turbo node_modules build package-lock.json"
 	}
 }
