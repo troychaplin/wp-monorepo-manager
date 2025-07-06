@@ -38,8 +38,7 @@ if (
 	console.log('  setup:theme        Create a new theme');
 	console.log('  setup:plugin       Create a new plugin');
 	console.log('  build              Build for production');
-	console.log('  build:dev          Build for development');
-	console.log('  build:prod         Build for production');
+	console.log('  build:force        Force rebuild (bypasses turbo cache)');
 	console.log('  start              Start development server');
 	console.log('  lint               Run linting');
 	console.log('  format             Format code');
@@ -54,7 +53,7 @@ if (
 	console.log('  wp-monorepo setup              # Initialize monorepo structure');
 	console.log('  wp-monorepo setup:theme        # Create a new theme');
 	console.log('  wp-monorepo setup:plugin       # Create a new plugin');
-	return;
+	process.exit(0);
 }
 
 // Handle setup commands

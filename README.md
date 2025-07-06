@@ -69,19 +69,21 @@ Your existing WordPress installation will be enhanced with monorepo configuratio
 
 ```
 your-wordpress-site/
-├── package.json          # Created by setup
-├── turbo.json           # Created by setup
-├── composer.json        # Created by setup
-├── .eslintrc.json       # Created by setup
-├── .stylelintrc.json    # Created by setup
-├── .prettierrc          # Created by setup
-├── phpcs.xml.dist       # Created by setup
-├── .editorconfig        # Created by setup
-├── .gitignore           # Created by setup
-├── wp-config.php        # Existing WordPress file
-├── wp-content/          # Existing WordPress directory
-│   ├── plugins/         # Existing plugins directory
-│   └── themes/          # Existing themes directory
+├── package.json             # Created by setup
+├── turbo.json               # Created by setup
+├── composer.json            # Created by setup
+├── .eslintrc.json           # Created by setup
+├── .stylelintrc.json        # Created by setup
+├── .prettierrc              # Created by setup
+├── phpcs.xml.dist           # Created by setup
+├── .editorconfig            # Created by setup
+├── .gitignore               # Created by setup
+├── wp-config.php            # Existing WordPress file
+├── wp-content/              # Existing WordPress directory
+│   ├── plugins/             # Existing plugins directory
+│   │   └── your-plugin/     # Created plugins (build/ directory for assets)
+│   └── themes/              # Existing themes directory
+│       └── your-theme/      # Created themes (build/ directory for assets)
 └── ... (other WordPress files)
 ```
 
@@ -134,7 +136,7 @@ A `.gitignore` file is automatically created to exclude common files and directo
 node_modules/
 
 # Build artifacts
-dist/
+build/
 
 # Environment files
 .env
@@ -165,9 +167,66 @@ pids
 coverage/
 ```
 
+## Build System
+
+### Current Architecture
+
+Each theme and plugin includes its own build configuration:
+
+**Themes:**
+
+- **Entry points:** `src/scripts.js`, `src/styles.scss`, `src/editor-styles.scss`
+- **Output directory:** `build/` (referenced in `functions.php`)
+- **Webpack config:** `webpack.config.js` (copied from template)
+- **Build orchestration:** Individual `turbo.json` files
+
+**Plugins:**
+
+- **Entry points:** `src/scripts/index.js`, `src/styles.scss`, `src/blocks/index.js`
+- **Output directory:** `build/`
+- **Webpack config:** Uses `@wordpress/scripts` with custom `webpack.scripts.js`
+- **Build orchestration:** Individual `turbo.json` files
+
+### Theme Structure
+
+```
+wp-content/themes/your-theme/
+├── package.json             # Build scripts and dependencies
+├── turbo.json               # Build orchestration
+├── webpack.config.js        # Webpack configuration
+├── functions.php            # WordPress theme setup
+├── index.php                # Main theme file
+├── style.css                # WordPress theme header
+├── src/
+│   ├── scripts.js           # Main JavaScript entry
+│   ├── styles.scss          # Main stylesheet
+│   └── editor-styles.scss   # Editor-specific styles
+└── build/                   # Built assets (generated)
+    ├── scripts.js
+    ├── styles.css
+    └── editor-styles.css
+```
+
+### Plugin Structure
+
+```
+wp-content/plugins/your-plugin/
+├── package.json             # Build scripts and dependencies
+├── turbo.json               # Build orchestration
+├── webpack.scripts.js       # Custom webpack config
+├── plugin.php               # Main plugin file
+├── src/
+│   ├── scripts/
+│   │   └── index.js         # Main JavaScript entry
+│   ├── styles.scss          # Main stylesheet
+│   └── blocks/              # Gutenberg blocks
+│       └── index.js         # Blocks entry point
+└── build/                   # Built assets (generated)
+```
+
 ### Composer Configuration
 
-A `composer.json` file is automatically created to manage PHP dependencies and coding standards:
+A root-level `composer.json` file is automatically created to manage PHP dependencies and coding standards:
 
 ```json
 {
@@ -181,15 +240,13 @@ A `composer.json` file is automatically created to manage PHP dependencies and c
 		}
 	},
 	"scripts": {
-		"lint-plugin-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/plugins/test-plugin",
-		"format-plugin-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/plugins/test-plugin || true",
-		"lint-theme-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes/test-theme",
-		"format-theme-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes/test-theme || true"
+		"lint-php": "./vendor/bin/phpcs --standard=phpcs.xml.dist ./wp-content/themes ./wp-content/plugins",
+		"format-php": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source ./wp-content/themes ./wp-content/plugins || true"
 	}
 }
 ```
 
-This includes PHP CodeSniffer and WordPress Coding Standards for PHP code quality.
+This includes PHP CodeSniffer and WordPress Coding Standards for PHP code quality. The lint and format scripts automatically scan all themes and plugins.
 
 ## Available Commands
 
@@ -199,16 +256,14 @@ This includes PHP CodeSniffer and WordPress Coding Standards for PHP code qualit
 - `wp-monorepo setup:theme` - Create a new theme
 - `wp-monorepo setup:plugin` - Create a new plugin
 
-**Note:** Build commands (`wp-monorepo build`, `wp-monorepo build:dev`, `wp-monorepo build:prod`) are planned for future releases.
-
 ### NPM Scripts (after setup)
 
 - `npm run build` - Build all themes and plugins
-- `npm run build:force` - Force rebuild (bypasses cache)
-- `npm run start` - Start development server
-- `npm run lint` - Run linting across all projects
-- `npm run format` - Format code across all projects
-- `npm run clean` - Clean build artifacts
+- `npm run build:force` - Force rebuild (bypasses turbo cache)
+- `npm run start` - Start development server (planned for future release)
+- `npm run lint` - Run linting across all projects (planned for future release)
+- `npm run format` - Format code across all projects (planned for future release)
+- `npm run clean` - Clean build artifacts (planned for future release)
 
 ## Installation Options
 
@@ -263,6 +318,52 @@ npm run build:force
 This forces Turborepo to bypass the cache and actually execute the build process, creating the proper build outputs and cache entries for future builds.
 
 **Prevention**: The issue typically occurs when multiple projects are created quickly with similar source file structures. The updated turbo.json configurations in recent versions help prevent this by using more specific cache keys.
+
+## Requirements and Limitations
+
+### Directory Structure Requirements
+
+This tool expects a standard WordPress installation structure:
+
+- **WordPress root** with `wp-config.php`, `wp-content/`, `wp-includes/`, `wp-admin/`
+- **Theme location:** `wp-content/themes/`
+- **Plugin location:** `wp-content/plugins/`
+
+### Source File Conventions
+
+**Themes must follow this structure:**
+
+- `src/scripts.js` - Main JavaScript entry point
+- `src/styles.scss` - Main stylesheet
+- `src/editor-styles.scss` - Editor styles
+- `functions.php` - WordPress theme functions (auto-generated)
+- `index.php` - Main theme file (auto-generated)
+- `style.css` - WordPress theme header (auto-generated)
+
+**Plugins must follow this structure:**
+
+- `src/scripts/index.js` - Main JavaScript entry point
+- `src/styles.scss` - Main stylesheet
+- `src/blocks/index.js` - Gutenberg blocks entry (optional)
+- `plugin.php` - Main plugin file (auto-generated)
+
+### Configuration Dependencies
+
+The setup creates configuration files at specific locations that themes/plugins depend on:
+
+- **Root-level configs:** `.eslintrc.json`, `.stylelintrc.json`, `.prettierrc`, `phpcs.xml.dist`
+- **Relative paths:** Theme/plugin lint scripts reference configs 3 levels up (`../../../.eslintrc.json`)
+- **Build output:** All themes/plugins output to `build/` directory
+
+### WordPress Integration
+
+Generated themes and plugins include WordPress-specific integration:
+
+- **Theme functions:** Auto-generated PHP functions based on theme name
+- **Asset enqueuing:** `functions.php` references `/build/styles.css` and `/build/scripts.js`
+- **Plugin headers:** Auto-generated plugin headers in `plugin.php`
+
+⚠️ **Important:** Changing file locations or names after setup may break the build system. See [HEAVY.md](./HEAVY.md) for detailed information about configuration dependencies.
 
 ## Documentation
 
