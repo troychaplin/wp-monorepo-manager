@@ -219,7 +219,7 @@ async function setupPlugin() {
 		console.log('   • Run "npx @wordpress/create-block" inside the plugin directory');
 		console.log('\n🔧 Troubleshooting:');
 		console.log(
-			'   • Should you have issues with the build, run "npm run build:fix" to clear the turbo cache and rebuild'
+			'   • Should you have issues with the build, run "npm run build:force" to clear the turbo cache and rebuild'
 		);
 
 		closeReadline();

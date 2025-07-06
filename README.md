@@ -141,10 +141,11 @@ Each theme and plugin includes its own build configuration:
 
 **Plugins:**
 
-- **Entry points:** `src/scripts/index.js`, `src/styles.scss`
+- **Entry points:** `src/scripts.js`, `src/styles.scss`, `src/editor-styles.scss`
 - **Output directory:** `build/`
 - **Webpack config:** Uses `@wordpress/scripts` with custom `webpack.scripts.js`
 - **Build orchestration:** Individual `turbo.json` files
+- **Blocks:** Auto-generated example blocks (static, dynamic, interactive)
 
 ### Theme Structure
 
@@ -154,6 +155,8 @@ wp-content/themes/your-theme/
 ├── turbo.json               # Build orchestration
 ├── webpack.config.js        # Webpack configuration
 ├── functions.php            # WordPress theme setup
+├── header.php               # Theme header template
+├── footer.php               # Theme footer template
 ├── index.php                # Main theme file
 ├── style.css                # WordPress theme header
 ├── src/
@@ -175,11 +178,17 @@ wp-content/plugins/your-plugin/
 ├── webpack.scripts.js       # Custom webpack config
 ├── plugin.php               # Main plugin file
 ├── src/
-│   ├── blocks/
-│   ├── scripts/
-│   │   └── index.js         # Main JavaScript entry
-│   └── styles.scss          # Main stylesheet
+│   ├── blocks/              # WordPress blocks (auto-generated)
+│   │   ├── static-example/
+│   │   ├── dynamic-example/
+│   │   └── interactive-example/
+│   ├── scripts.js           # Main JavaScript entry
+│   ├── styles.scss          # Main stylesheet
+│   └── editor-styles.scss   # Editor-specific styles
 └── build/                   # Built assets (generated)
+    ├── blocks/              # Built block assets
+    ├── scripts.js
+    └── styles.css
 ```
 
 ### Composer Configuration
@@ -295,13 +304,16 @@ This tool expects a standard WordPress installation structure:
 - `src/styles.scss` - Main stylesheet
 - `src/editor-styles.scss` - Editor styles
 - `functions.php` - WordPress theme functions (auto-generated)
+- `header.php` - Theme header template (auto-generated)
+- `footer.php` - Theme footer template (auto-generated)
 - `index.php` - Main theme file (auto-generated)
 - `style.css` - WordPress theme header (auto-generated)
 
 **Plugins must follow this structure:**
 
-- `src/scripts/index.js` - Main JavaScript entry point
+- `src/scripts.js` - Main JavaScript entry point
 - `src/styles.scss` - Main stylesheet
+- `src/editor-styles.scss` - Editor-specific styles
 - `plugin.php` - Main plugin file (auto-generated)
 
 ### Configuration Dependencies
