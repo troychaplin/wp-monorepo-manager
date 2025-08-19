@@ -31,7 +31,7 @@ if (
 	!command ||
 	(command === 'setup' && (subCommand === '--help' || subCommand === '-h'))
 ) {
-	console.log('Usage: wp-monorepo <command> [subcommand] [flags]');
+	console.log('Usage: wp-dependency <command> [subcommand] [flags]');
 	console.log('');
 	console.log('Commands:');
 	console.log('  setup              Create monorepo structure');
@@ -49,16 +49,16 @@ if (
 	console.log("  --safe             Only create files that don't exist");
 	console.log('');
 	console.log('Setup Usage:');
-	console.log('  Run "wp-monorepo setup" from:');
+	console.log('  Run "wp-dependency setup" from:');
 	console.log('  - WordPress root directory: Initializes monorepo in existing WordPress');
 	console.log('  - Empty directory: Creates new WordPress + monorepo structure');
 	console.log('');
 	console.log('Examples:');
-	console.log('  wp-monorepo setup              # Initialize monorepo structure');
-	console.log('  wp-monorepo setup --dry-run    # Preview setup changes');
-	console.log('  wp-monorepo setup --safe       # Only create missing files');
-	console.log('  wp-monorepo setup:theme        # Create a new theme');
-	console.log('  wp-monorepo setup:plugin       # Create a new plugin');
+	console.log('  wp-dependency setup              # Initialize monorepo structure');
+	console.log('  wp-dependency setup --dry-run    # Preview setup changes');
+	console.log('  wp-dependency setup --safe       # Only create missing files');
+	console.log('  wp-dependency setup:theme        # Create a new theme');
+	console.log('  wp-dependency setup:plugin       # Create a new plugin');
 	process.exit(0);
 }
 
@@ -74,9 +74,9 @@ if (command === 'setup') {
 			console.error(`❌ Error: Unknown setup command "${realSubCommand}"`);
 			console.log('');
 			console.log('Valid setup commands:');
-			console.log('  wp-monorepo setup         # Initialize monorepo structure');
-			console.log('  wp-monorepo setup:theme   # Create a new theme');
-			console.log('  wp-monorepo setup:plugin  # Create a new plugin');
+			console.log('  wp-dependency setup         # Initialize monorepo structure');
+			console.log('  wp-dependency setup:theme   # Create a new theme');
+			console.log('  wp-dependency setup:plugin  # Create a new plugin');
 			console.log('');
 			console.log('Available flags:');
 			console.log('  --dry-run                 # Preview changes without modifying files');
@@ -236,7 +236,7 @@ switch (command) {
 		break;
 
 	default:
-		console.log('Usage: wp-monorepo <command> [subcommand]');
+		console.log('Usage: wp-dependency <command> [subcommand]');
 		console.log('');
 		console.log('Commands:');
 		console.log('  setup              Create monorepo structure');

@@ -29,7 +29,7 @@ const CONFIG_FILES = {
 
 function createBackup(targetDir, filesToBackup) {
 	const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-	const backupDir = path.join(targetDir, '.wp-monorepo-backups', timestamp);
+	const backupDir = path.join(targetDir, '.wp-dependency-backups', timestamp);
 
 	if (filesToBackup.length > 0) {
 		createDirectory(backupDir);
@@ -70,7 +70,7 @@ async function setup() {
 			}
 
 			console.log('\nTo actually perform setup, run without --dry-run flag');
-			console.log('Example: wp-monorepo setup');
+			console.log('Example: wp-dependency setup');
 			closeReadline();
 			process.exit(0);
 		}
@@ -108,7 +108,7 @@ async function setup() {
 
 			const shouldProceed = await promptYesNo('\nProceed with backup and setup? (y/n): ');
 			if (!shouldProceed) {
-				console.log('Setup cancelled. Run wp-monorepo setup again when ready.');
+				console.log('Setup cancelled. Run wp-dependency setup again when ready.');
 				closeReadline();
 				process.exit(0);
 			}
@@ -157,7 +157,7 @@ async function setup() {
 
 		// Link the package in the target directory (only if not in development mode)
 		if (TARGET_DIR !== PACKAGE_DIR) {
-			execSync('npm link wp-monorepo-manager', {
+			execSync('npm link wp-dependency-manager', {
 				cwd: TARGET_DIR,
 				stdio: 'inherit',
 			});
@@ -174,8 +174,8 @@ async function setup() {
 		console.log('  • .editorconfig - Editor configuration');
 		console.log('  • composer.json - Composer configuration');
 		console.log('\nNext steps:');
-		console.log('1. Use "wp-monorepo setup:theme" to create a new theme');
-		console.log('2. Use "wp-monorepo setup:plugin" to create a new plugin');
+		console.log('1. Use "wp-dependency setup:theme" to create a new theme');
+		console.log('2. Use "wp-dependency setup:plugin" to create a new plugin');
 
 		closeReadline();
 		process.exit(0);

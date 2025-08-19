@@ -182,11 +182,11 @@ Sanitization only replaces non-alphanumeric with underscores, could create confl
 
 **Issue:** README lists commands not yet implemented:
 
-- `wp-monorepo build` - "planned for future releases"
-- `wp-monorepo start` - "not implemented yet"
-- `wp-monorepo lint` - "not implemented yet"
-- `wp-monorepo format` - "not implemented yet"
-- `wp-monorepo clean` - "not implemented yet"
+- `wp-dependency build` - "planned for future releases"
+- `wp-dependency start` - "not implemented yet"
+- `wp-dependency lint` - "not implemented yet"
+- `wp-dependency format` - "not implemented yet"
+- `wp-dependency clean` - "not implemented yet"
 
 ### 3. Inconsistent Build Directory References
 

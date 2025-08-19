@@ -15,9 +15,9 @@ This is a **WordPress Monorepo Manager** - a build tool for managing WordPress t
 ## Project Structure
 
 ```
-wp-monorepo-manager/
+wp-dependency-manager/
 ├── bin/
-│   └── wp-monorepo.js          # CLI entry point
+│   └── wp-dependency.js          # CLI entry point
 ├── config/                      # Standardized configuration templates
 │   ├── composer/               # Composer configurations
 │   ├── editorconfig/           # Editor configuration
@@ -58,15 +58,15 @@ wp-monorepo-manager/
 
 ## CLI Commands
 
-The main CLI tool (`wp-monorepo`) supports these commands:
+The main CLI tool (`wp-dependency`) supports these commands:
 
 ### Setup Commands
 
-- `wp-monorepo setup` - Create monorepo structure
-- `wp-monorepo setup:theme` - Create a new theme
-- `wp-monorepo setup:plugin` - Create a new plugin
+- `wp-dependency setup` - Create monorepo structure
+- `wp-dependency setup:theme` - Create a new theme
+- `wp-dependency setup:plugin` - Create a new plugin
 
-**Note:** Build commands (`wp-monorepo build`, `wp-monorepo build:dev`, `wp-monorepo build:prod`) are planned for future releases.
+**Note:** Build commands (`wp-dependency build`, `wp-dependency build:dev`, `wp-dependency build:prod`) are planned for future releases.
 
 ### NPM Scripts (after setup)
 
@@ -179,14 +179,14 @@ wp-content/plugins/plugin-name/
 
 ```bash
 # Install globally
-npm install -g wp-monorepo-manager
+npm install -g wp-dependency-manager
 
 # Set up monorepo in WordPress installation
-wp-monorepo setup
+wp-dependency setup
 
 # Create theme/plugin
-wp-monorepo setup:theme
-wp-monorepo setup:plugin
+wp-dependency setup:theme
+wp-dependency setup:plugin
 ```
 
 ### 2. Development
@@ -199,19 +199,19 @@ npm run build:dev
 npm run build:prod
 ```
 
-**Note:** Development server (`wp-monorepo start`) is not yet implemented in the current version.
+**Note:** Development server (`wp-dependency start`) is not yet implemented in the current version.
 
 ### 3. Code Quality
 
 ```bash
 # Lint code (planned for future release)
-wp-monorepo lint
+wp-dependency lint
 
 # Format code (planned for future release)
-wp-monorepo format
+wp-dependency format
 
 # Clean build artifacts (planned for future release)
-wp-monorepo clean
+wp-dependency clean
 ```
 
 **Note:** These commands are planned for future releases. For now, use individual tools:

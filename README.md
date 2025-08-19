@@ -1,10 +1,10 @@
-# WordPress Monorepo Manager
+# WordPress Dependency Manager
 
 A build tool for managing WordPress themes and plugins in a monorepo structure. This package provides standardized configurations and build tools for efficient WordPress development.
 
 ## Features
 
-- **Monorepo Management**: Use Turborepo to manage multiple WordPress themes and plugins
+- **Build Management**: Use Turborepo to manage multiple WordPress themes and plugins
 - **Standardized Configurations**: Pre-configured settings for ESLint, StyleLint, PHPCS, and Webpack
 - **Build Tools**: Unified build process for all themes and plugins
 - **Development Workflow**: Consistent development experience across projects
@@ -17,7 +17,7 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 1. Install the package globally:
 
     ```bash
-    npm install -g wp-monorepo-manager
+    npm install -g wp-dependency-manager
     ```
 
 2. Set up your monorepo structure in an existing WordPress installation:
@@ -27,13 +27,13 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
     cd /path/to/your/wordpress-site
 
     # Create the monorepo configuration
-    wp-monorepo setup
+    wp-dependency setup
 
     # Create a theme (optional)
-    wp-monorepo setup:theme
+    wp-dependency setup:theme
 
     # Create a plugin (optional)
-    wp-monorepo setup:plugin
+    wp-dependency setup:plugin
     ```
 
 ### Option 2: Local Project Installation
@@ -47,20 +47,20 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 2. Install the package locally:
 
     ```bash
-    npm install wp-monorepo-manager
+    npm install wp-dependency-manager
     ```
 
 3. Set up your monorepo structure using npm scripts:
 
     ```bash
     # Create the monorepo configuration
-    npx wp-monorepo setup
+    npx wp-dependency setup
 
     # Create a theme (optional)
-    npx wp-monorepo setup:theme
+    npx wp-dependency setup:theme
 
     # Create a plugin (optional)
-    npx wp-monorepo setup:plugin
+    npx wp-dependency setup:plugin
     ```
 
 ### Project Structure
@@ -221,15 +221,15 @@ The setup process includes several safety measures to protect your existing conf
 
 ### Automatic Backup
 
-- Existing configuration files are automatically backed up to `.wp-monorepo-backups/[timestamp]/`
+- Existing configuration files are automatically backed up to `.wp-dependency-backups/[timestamp]/`
 - Backups are created before any files are modified
 - You can restore files manually if needed
 
 ### Setup Options
 
-- `wp-monorepo setup` - Standard setup with backup and confirmation
-- `wp-monorepo setup --dry-run` - Preview changes without modifying files
-- `wp-monorepo setup --safe` - Only create files that don't exist
+- `wp-dependency setup` - Standard setup with backup and confirmation
+- `wp-dependency setup --dry-run` - Preview changes without modifying files
+- `wp-dependency setup --safe` - Only create files that don't exist
 
 ### File Conflict Resolution
 
@@ -245,19 +245,19 @@ If you need to restore backed-up files:
 
 ```bash
 # List available backups
-ls -la .wp-monorepo-backups/
+ls -la .wp-dependency-backups/
 
 # Restore from a specific backup (replace timestamp with actual backup folder)
-cp -r .wp-monorepo-backups/2025-07-06T10-30-00/* .
+cp -r .wp-dependency-backups/2025-07-06T10-30-00/* .
 ```
 
 ## Available Commands
 
-### CLI Commands (wp-monorepo)
+### CLI Commands (wp-dependency)
 
-- `wp-monorepo setup` - Create monorepo structure
-- `wp-monorepo setup:theme` - Create a new theme
-- `wp-monorepo setup:plugin` - Create a new plugin
+- `wp-dependency setup` - Create monorepo structure
+- `wp-dependency setup:theme` - Create a new theme
+- `wp-dependency setup:plugin` - Create a new plugin
 
 ### NPM Scripts (after setup)
 
@@ -272,7 +272,7 @@ cp -r .wp-monorepo-backups/2025-07-06T10-30-00/* .
 
 ### Global Installation Benefits
 
-- **Convenience**: Run `wp-monorepo` commands from anywhere
+- **Convenience**: Run `wp-dependency` commands from anywhere
 - **Consistency**: Same version across all projects
 - **Quick setup**: No need to install in each project
 - **CLI experience**: Familiar command-line interface

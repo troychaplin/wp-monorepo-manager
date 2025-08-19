@@ -189,19 +189,19 @@ async function setupPlugin() {
 		console.log('\n🔧 Creating example blocks...');
 
 		execSync(
-			'npx @wordpress/create-block@latest static-example --variant=static --title="Static Block Example" --target-dir=./src/blocks/static-example --textdomain=wp-monorepo-manager --no-plugin',
+			'npx @wordpress/create-block@latest static-example --variant=static --title="Static Block Example" --target-dir=./src/blocks/static-example --textdomain=wp-dependency-manager --no-plugin',
 			{ cwd: pluginDir, stdio: 'pipe' }
 		);
 		createdItems.push('static block example');
 
 		execSync(
-			'npx @wordpress/create-block@latest dynamic-example --variant=dynamic --title="Dynamic Block Example" --target-dir=./src/blocks/dynamic-example --textdomain=wp-monorepo-manager --no-plugin',
+			'npx @wordpress/create-block@latest dynamic-example --variant=dynamic --title="Dynamic Block Example" --target-dir=./src/blocks/dynamic-example --textdomain=wp-dependency-manager --no-plugin',
 			{ cwd: pluginDir, stdio: 'pipe' }
 		);
 		createdItems.push('dynamic block example');
 
 		execSync(
-			'npx @wordpress/create-block@latest interactive-example --title="Interactive Block Example" --target-dir=./src/blocks/interactive-example --textdomain=wp-monorepo-manager --template @wordpress/create-block-interactive-template --no-plugin',
+			'npx @wordpress/create-block@latest interactive-example --title="Interactive Block Example" --target-dir=./src/blocks/interactive-example --textdomain=wp-dependency-manager --template @wordpress/create-block-interactive-template --no-plugin',
 			{ cwd: pluginDir, stdio: 'pipe', env: { ...process.env, NPM_CONFIG_YES: 'true' } }
 		);
 		createdItems.push('interactive block example');

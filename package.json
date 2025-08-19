@@ -1,11 +1,11 @@
 {
-	"name": "wp-monorepo-manager",
+	"name": "wp-dependency-manager",
 	"version": "0.1.0",
 	"description": "A build tool for managing WordPress themes and plugins in a monorepo structure",
 	"main": "index.js",
 	"bin": {
-		"wp-monorepo": "./bin/wp-monorepo.js",
-		"wp-monorepo-manager": "./bin/wp-monorepo.js"
+		"wp-dependency": "./bin/wp-dependency.js",
+		"wp-dependency-manager": "./bin/wp-dependency.js"
 	},
 	"packageManager": "npm@10.2.4",
 	"files": [
