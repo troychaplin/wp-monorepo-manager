@@ -103,7 +103,7 @@ The setup includes automatic backup and safety options:
 
 ## Documentation
 
-- **[DOCS.md](./docs/DOCS.md)** - Complete API documentation, configuration details, and advanced usage
+- **[DOCS.md](./docs/DOCS.md)** - Complete documentation, configuration details, and advanced usage
 - **[TEST.md](./docs/TEST.md)** - Test scenarios and validation procedures
 - **[REVIEW.md](./docs/REVIEW.md)** - Known limitations, hard-coded dependencies, and improvement areas
 
