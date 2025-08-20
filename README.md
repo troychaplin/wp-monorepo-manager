@@ -1,5 +1,7 @@
 # WordPress Dependency Manager
 
+> ⚠️ **Development Status**: This is a prototype tool currently in active development. Features and APIs may change without notice. Not recommended for production use.
+
 A build tool for managing WordPress themes and plugins in a monorepo structure. This package provides standardized configurations and build tools for efficient WordPress development.
 
 ## Features
