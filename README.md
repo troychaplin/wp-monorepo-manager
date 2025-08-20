@@ -12,6 +12,10 @@ A build tool for managing WordPress themes and plugins in a monorepo structure. 
 - **Development Workflow**: Consistent development experience across projects
 - **Code Quality**: Enforced coding standards across all projects
 
+## Installation & Testing
+
+> 📦 **Package Status**: This package is not yet published to npm. For testing and development, please see [TEST.md](./docs/TEST.md) for setup instructions using local development methods.
+
 ## Quick Start
 
 ### Global Installation (Recommended)
