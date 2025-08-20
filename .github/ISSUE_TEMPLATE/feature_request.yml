@@ -1,5 +1,5 @@
 name: 🚀 Feature Request
-description: Suggest a new feature or enhancement for Block Accessibility Checks
+description: Suggest a new feature or enhancement for WordPress Dependency Manager
 title: '[Feature]: '
 labels: ['enhancement', 'feature-request']
 assignees: ['troychaplin']
@@ -7,7 +7,7 @@ body:
     - type: markdown
       attributes:
           value: |
-              Thanks for suggesting a new feature! Your ideas help make Block Accessibility Checks better for everyone.
+              Thanks for suggesting a new feature! Your ideas help make WordPress Dependency Manager better for everyone.
 
     - type: checkboxes
       id: prerequisites
@@ -24,15 +24,18 @@ body:
           label: Feature Category
           description: What type of feature are you requesting?
           options:
-              - New Accessibility Check
-              - Existing Accessibility Check
-              - Developer API Enhancement
-              - User Interface Improvement
-              - Settings/Configuration Option
+              - CLI Command Enhancement
+              - New CLI Command
+              - Build System Improvement
+              - Configuration Template
+              - WordPress Integration
+              - Safety Feature Enhancement
+              - Developer Experience Improvement
+              - Documentation Enhancement
               - Performance Enhancement
-              - Integration Feature
-              - Automation/Workflow Improvement
-              - Other Support Request
+              - Workflow Automation
+              - Template Generation
+              - Other
       validations:
           required: true
 
@@ -41,84 +44,57 @@ body:
       attributes:
           label: Feature Summary
           description: A clear and concise description of the feature you'd like to see
-          placeholder: |
-              Briefly describe the feature you're requesting. Does it involve a new accessibility check, a block type enhancement, or something else? Be as specific as possible.
+          placeholder: Briefly describe the feature you're requesting...
       validations:
           required: true
 
     - type: dropdown
-      id: target-blocks
+      id: target-scope
       attributes:
-          label: Target Block Types
-          description: Which blocks should this feature apply to?
+          label: Target Scope
+          description: What part of the tool should this feature apply to?
           options:
-              - Specific Core Block (specify below)
-              - Multiple Core Blocks
-              - Custom/Third-party Blocks
-              - All Blocks
-              - New Block Type
-              - Not block-specific
+              - wp-dependency setup command
+              - wp-dependency setup:theme command
+              - wp-dependency setup:plugin command
+              - Build system (npm run build)
+              - Configuration templates
+              - Safety features (--dry-run, --safe, backups)
+              - WordPress integration
+              - CLI output/messaging
+              - Documentation
+              - All commands
+              - New functionality area
       validations:
           required: true
-
-    - type: input
-      id: specific-blocks
-      attributes:
-          label: Specific Block Names
-          description: If applicable, list the specific block types (e.g., core/video, core/audio)
-          placeholder: core/video, core/audio
-
-    - type: dropdown
-      id: wcag-relation
-      attributes:
-          label: WCAG Guidelines
-          description: Which WCAG guidelines does this feature address?
-          multiple: true
-          options:
-              - WCAG 2.1 Level A
-              - WCAG 2.1 Level AA
-              - WCAG 2.1 Level AAA
-              - WCAG 2.2 Level A
-              - WCAG 2.2 Level AA
-              - WCAG 2.2 Level AAA
-              - Not directly related to WCAG
-              - Unsure
-
-    - type: input
-      id: wcag-criteria
-      attributes:
-          label: Specific WCAG Success Criteria
-          description: If you know the specific WCAG success criteria, please list them
-          placeholder: 'e.g., 1.2.2 (Captions), 1.4.3 (Contrast), 2.4.6 (Headings and Labels)'
 
     - type: textarea
       id: use-cases
       attributes:
           label: Use Cases
           description: Provide specific examples of when and how this feature would be used
-          placeholder: |
-              Example scenarios:
-              1. A content editor adds a video block...
-              2. A developer creates a custom block...
-              3. A site administrator wants to...
+          placeholder: Example scenarios where this feature would be helpful...
+
+    - type: textarea
+      id: current-workflow
+      attributes:
+          label: Current Workflow (optional)
+          description: How do you currently accomplish this task, if at all?
+          placeholder: Describe your current process or workaround...
+
+    - type: textarea
+      id: proposed-solution
+      attributes:
+          label: Proposed Solution (optional)
+          description: How would you like this feature to work?
+          placeholder: Describe your ideal implementation...
 
     - type: textarea
       id: alternatives
       attributes:
-          label: Alternative Solutions
-          description: Have you considered any alternative approaches or workarounds?
+          label: Alternative Solutions (optional)
+          description: Have you considered any alternative approaches?
           placeholder: Describe any alternative solutions you've considered...
-
-    - type: textarea
-      id: developer-impact
-      attributes:
-          label: Developer Impact
-          description: How would this feature affect plugin developers or theme developers?
-          placeholder: |
-              Consider:
-              - Would this require changes to existing integrations?
-              - Would this provide new API capabilities?
-              - How would this affect backward compatibility?
 
     - type: checkboxes
       id: implementation-considerations
@@ -126,22 +102,27 @@ body:
           label: Implementation Considerations
           description: Check all that apply to your feature request
           options:
-              - label: This feature should be configurable in the settings
-              - label: This feature should have different severity levels (error/warning)
-              - label: This feature should work with the developer API
+              - label: This feature should be configurable
+              - label: This feature should work with existing safety features
               - label: This feature should be backward compatible
-              - label: This feature may require new block attributes
-              - label: This feature should work in real-time (as user types)
-              - label: This feature should prevent publishing when validation fails
+              - label: This feature should support both themes and plugins
+              - label: This feature should integrate with the build system
+              - label: This feature should include help/documentation
+              - label: This feature should preserve existing workflows
+
+    - type: dropdown
+      id: priority
+      attributes:
+          label: Priority (optional)
+          description: How important is this feature to your workflow?
+          options:
+              - High - Blocks my workflow
+              - Medium - Would significantly improve workflow
+              - Low - Nice to have enhancement
 
     - type: textarea
       id: additional-context
       attributes:
-          label: Additional Context
-          description: Add any other context, mockups, examples, or references
-          placeholder: |
-              Include any:
-              - Links to relevant WCAG documentation
-              - Examples from other tools or plugins
-              - Mockups or design ideas
-              - Related accessibility resources
+          label: Additional Context (optional)
+          description: Add any other context, examples, or references
+          placeholder: Links, examples, mockups, or additional thoughts...

@@ -1,5 +1,5 @@
 name: 🐛 Bug Report
-description: Report a bug or issue with Block Accessibility Checks
+description: Report a bug or issue with WordPress Dependency Manager
 title: '[Bug]: '
 labels: ['bug', 'needs-triage']
 assignees: ['troychaplin']
@@ -17,9 +17,9 @@ body:
           options:
               - label: I have searched existing issues to ensure this bug hasn't been reported already
                 required: true
-              - label: I have tested with the latest version of the plugin
+              - label: I have tested with the latest version of wp-dependency-manager
                 required: true
-              - label: I have disabled other plugins to rule out conflicts
+              - label: I have tested in a clean WordPress installation
                 required: false
 
     - type: textarea
@@ -32,25 +32,30 @@ body:
           required: true
 
     - type: dropdown
-      id: block-type
+      id: command-affected
       attributes:
-          label: Block Type Affected
-          description: Which block type is experiencing the issue?
+          label: Command/Feature Affected
+          description: Which command or feature is experiencing the issue?
           options:
-              - Core WordPress Block (Button, Image, Heading, etc.)
-              - Custom/Third-party Block
-              - Multiple Block Types
-              - All Blocks
-              - Not block-specific
+              - wp-dependency setup
+              - wp-dependency setup:theme
+              - wp-dependency setup:plugin
+              - npm run build
+              - npm run build:force
+              - Configuration files
+              - Safety features (--dry-run, --safe, backups)
+              - WordPress integration
+              - Multiple commands
+              - Other
       validations:
           required: true
 
     - type: input
-      id: specific-block
+      id: specific-command
       attributes:
-          label: Specific Block Name
-          description: If applicable, what's the exact block name? (e.g., core/image, create-block/my-custom-block)
-          placeholder: core/image
+          label: Specific Command
+          description: If applicable, what's the exact command that failed?
+          placeholder: wp-dependency setup:theme --dry-run
 
     - type: dropdown
       id: issue-type
@@ -58,14 +63,15 @@ body:
           label: Issue Category
           description: What type of issue is this?
           options:
-              - Validation Logic Error
-              - Visual Display Issue
-              - Publishing Prevention Problem
-              - Settings Page Issue
-              - Performance Issue
-              - JavaScript Console Error
-              - PHP Error/Warning
-              - Integration with Custom Blocks
+              - CLI Command Error
+              - Build System Failure
+              - Configuration File Issue
+              - WordPress Integration Problem
+              - Asset Generation Issue
+              - Cache/Turbo Problem
+              - Template/File Creation Error
+              - Safety Feature Malfunction
+              - Installation/Setup Problem
               - Other
       validations:
           required: true
@@ -75,26 +81,29 @@ body:
       attributes:
           label: Steps to Reproduce
           description: How can we reproduce the bug?
-          placeholder: 1. ...
+          placeholder: 1. Navigate to WordPress directory 2. Run wp-dependency setup 3. ...
       validations:
           required: true
 
     - type: textarea
-      id: supporting-info
+      id: cli-output
       attributes:
-          label: Supporting Info (optional)
-          description: Add any error messages, screenshots, or videos that help illustrate the issue
-          placeholder: You can paste error messages, images, or links here...
+          label: CLI Output (optional)
+          description: Copy and paste the command output including any error messages
+          placeholder: Error messages, stack traces, or command output...
 
     - type: textarea
       id: environment
       attributes:
-          label: Environment (optional)
-          description: WordPress, PHP, browser, plugin version, etc.
-          placeholder: Any relevant environment info...
+          label: Environment
+          description: Please provide your environment details
+          placeholder: Node.js version, npm version, WordPress version, OS, wp-dependency-manager version...
+      validations:
+          required: true
 
     - type: textarea
       id: additional-context
       attributes:
           label: Additional Context (optional)
-          description: Anything else that might help
+          description: Anything else that might help us understand the issue
+          placeholder: Any other relevant details...

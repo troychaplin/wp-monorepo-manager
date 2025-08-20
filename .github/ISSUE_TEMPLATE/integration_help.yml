@@ -1,5 +1,5 @@
 name: 🤝 Integration Help
-description: Get help integrating Block Accessibility Checks with your custom blocks or plugin
+description: Get help using WordPress Dependency Manager in your development workflow
 title: '[Help]: '
 labels: ['question', 'integration-help']
 assignees: []
@@ -7,9 +7,9 @@ body:
     - type: markdown
       attributes:
           value: |
-              Need help integrating Block Accessibility Checks with your project? Please provide as much detail as possible so I can give you the best assistance.
+              Need help using WordPress Dependency Manager in your project? Please provide as much detail as possible so we can give you the best assistance.
 
-              **Note:** I will do my best to reply to your request, but response times may vary and I may not always be able to respond promptly.
+              **Note:** We will do our best to reply to your request, but response times may vary and we may not always be able to respond promptly.
 
     - type: checkboxes
       id: prerequisites
@@ -17,9 +17,9 @@ body:
           label: Prerequisites
           description: Before requesting help, please confirm
           options:
-              - label: I have read the developer documentation
+              - label: I have read the documentation (README.md, DOCS.md)
                 required: true
-              - label: I have looked at the provided examples
+              - label: I have looked at the provided examples and templates
                 required: true
               - label: I have searched existing issues for similar questions
                 required: true
@@ -30,15 +30,17 @@ body:
           label: Type of Help Needed
           description: What kind of assistance are you looking for?
           options:
-              - Getting Started - Basic integration setup
-              - Custom Block Integration - Adding checks to existing blocks
-              - New Block Development - Creating blocks with accessibility checks
-              - Advanced Configuration - Complex validation rules
+              - Getting Started - Initial setup and configuration
+              - Theme Development - Setting up and building themes
+              - Plugin Development - Setting up and building plugins
+              - Build System - Webpack, Turbo, or npm scripts
+              - Configuration - ESLint, StyleLint, PHPCS setup
+              - WordPress Integration - Asset enqueuing, file structure
               - Troubleshooting - Something isn't working
-              - Best Practices - How to implement correctly
-              - Performance Optimization - Making integration efficient
-              - Custom Validation Logic - Advanced JavaScript validation
-              - Settings Integration - Admin panel configuration
+              - Best Practices - How to organize projects
+              - Performance - Build times or optimization
+              - Custom Configuration - Advanced setup needs
+              - Migration - Moving existing projects
               - Other
       validations:
           required: true
@@ -49,10 +51,10 @@ body:
           label: Experience Level
           description: How would you describe your WordPress development experience?
           options:
-              - Beginner - New to WordPress/block development
+              - Beginner - New to WordPress development
               - Intermediate - Some WordPress development experience
               - Advanced - Experienced WordPress developer
-              - Expert - Very experienced with WordPress/blocks
+              - Expert - Very experienced with WordPress/build tools
       validations:
           required: true
 
@@ -61,11 +63,7 @@ body:
       attributes:
           label: Project Description
           description: Describe your project and what you're trying to accomplish
-          placeholder: |
-              Tell us about:
-              - What type of blocks or plugin you're working on
-              - The accessibility checks you want to implement
-              - Your end goals for the integration
+          placeholder: What type of WordPress project are you working on and what you're trying to achieve...
       validations:
           required: true
 
@@ -73,13 +71,8 @@ body:
       id: current-setup
       attributes:
           label: Current Setup
-          description: Describe your current code setup and what you've already tried
-          placeholder: |
-              Include information about:
-              - Your existing block structure
-              - Any code you've already written
-              - Integration steps you've completed
-              - Your build process or development environment
+          description: Describe your current development setup and what you've already tried
+          placeholder: Your existing project structure, what commands you've run, and any progress made...
       validations:
           required: true
 
@@ -88,125 +81,88 @@ body:
       attributes:
           label: Specific Question or Issue
           description: What exactly are you stuck on or need help with?
-          placeholder: |
-              Be as specific as possible:
-              - What specific error or behavior are you experiencing?
-              - What functionality are you trying to implement?
-              - Where exactly are you getting stuck?
+          placeholder: Be specific about what's not working or what you're trying to figure out...
       validations:
           required: true
 
     - type: textarea
       id: code-samples
       attributes:
-          label: Relevant Code
-          description: Share any relevant code you're working with
-          placeholder: |
-              Include:
-              - Block registration code
-              - Validation attempts
-              - Error messages
-              - Configuration files
-          render: javascript
+          label: Relevant Code/Output
+          description: Share any relevant configuration files, commands, or error output
+          placeholder: Configuration files, command output, error messages, or file structures...
+          render: shell
 
     - type: dropdown
-      id: block-type
+      id: project-type
       attributes:
-          label: Block Type
-          description: What type of block are you working with?
+          label: Project Type
+          description: What type of project are you working with?
           options:
-              - Static Block (no dynamic content)
-              - Dynamic Block (server-side rendering)
-              - Block with Inner Blocks
-              - Block with Custom Attributes
-              - Block Pattern or Template
-              - Multiple Block Types
+              - WordPress Theme
+              - WordPress Plugin
+              - Multiple Themes
+              - Multiple Plugins
+              - Mixed Theme/Plugin Project
+              - Existing Project Migration
+              - New Project Setup
               - Not sure
 
     - type: input
-      id: block-name
+      id: project-name
       attributes:
-          label: Block Name/Namespace
-          description: What's your block's name or namespace?
-          placeholder: 'e.g., my-plugin/custom-block, create-block/testimonial'
-
-    - type: textarea
-      id: desired-checks
-      attributes:
-          label: Desired Accessibility Checks
-          description: What accessibility checks do you want to implement?
-          placeholder: |
-              Describe the validation rules you want to add:
-              - Required fields or content
-              - Format validations
-              - WCAG compliance checks
-              - User experience improvements
-      validations:
-          required: true
+          label: Project Name/Identifier
+          description: What's your theme or plugin name?
+          placeholder: 'e.g., my-custom-theme, company-plugin'
 
     - type: dropdown
-      id: validation-timing
+      id: setup-stage
       attributes:
-          label: Validation Timing
-          description: When should your checks run?
+          label: Setup Stage
+          description: Where are you in the setup process?
           options:
-              - Real-time (as user types)
-              - On attribute change
-              - Before publishing
-              - On block selection
-              - Not sure
+              - Haven't started yet
+              - Initial setup (wp-dependency setup)
+              - Creating themes/plugins
+              - Configuring build system
+              - First build attempt
+              - Ongoing development
+              - Ready for production
 
     - type: dropdown
-      id: error-handling
+      id: build-stage
       attributes:
-          label: Error Handling Preference
-          description: How should validation errors be handled?
+          label: Build Process
+          description: What's your experience with the build process?
           options:
-              - Block publishing (prevent save/publish)
-              - Show warnings (allow save/publish)
-              - Configurable in settings
-              - Not sure
+              - Haven't attempted building yet
+              - Build fails with errors
+              - Build succeeds but assets don't work
+              - Build works but need optimization
+              - Everything works fine
 
     - type: textarea
       id: attempted-solutions
       attributes:
           label: What Have You Tried?
           description: Describe any solutions or approaches you've already attempted
-          placeholder: |
-              Let us know:
-              - Code approaches you've tried
-              - Documentation sections you've followed
-              - Examples you've attempted to modify
-              - Any error messages you've encountered
+          placeholder: Commands you've run, documentation you've followed, changes you've made...
 
     - type: textarea
       id: environment
       attributes:
           label: Development Environment
           description: Your development setup details
-          value: |
-              - **WordPress Version**: 
-              - **PHP Version**: 
-              - **Node.js Version**: 
-              - **Build Tools**: (webpack, @wordpress/scripts, etc.)
-              - **Local Environment**: (Local, XAMPP, Docker, etc.)
-              - **Block Accessibility Checks Version**:
+          placeholder: Node.js version, npm version, WordPress version, OS, wp-dependency-manager version...
       validations:
           required: true
-
-    # Urgency Level dropdown removed to avoid setting expectations
 
     - type: textarea
       id: additional-context
       attributes:
           label: Additional Context
           description: Any other information that might be helpful
-          placeholder: |
-              Include:
-              - Links to similar functionality you're trying to achieve
-              - Screenshots of desired behavior
-              - Any constraints or requirements
-              - Related plugins or tools you're using
+          placeholder: Links, screenshots, constraints, related tools you're using...
 
     - type: checkboxes
       id: follow-up
@@ -214,5 +170,6 @@ body:
           label: Follow-up Preferences
           description: How would you like to receive help?
           options:
-              - label: I'm willing to share more code or details if needed
-              - label: I can provide a test site or repository access if helpful
+              - label: I'm willing to share more code or configuration details if needed
+              - label: I can provide repository access or test site if helpful
+              - label: I'm available for screen sharing or live debugging if needed

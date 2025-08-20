@@ -1,5 +1,5 @@
 name: 💬 Developer Feedback
-description: Provide feedback on the developer API, integration experience, or documentation
+description: Provide feedback on the CLI tool, setup process, or documentation
 title: '[Feedback]: '
 labels: ['feedback', 'dev-ex']
 assignees: ['troychaplin']
@@ -7,7 +7,7 @@ body:
     - type: markdown
       attributes:
           value: |
-              Thanks for testing Block Accessibility Checks! Your feedback helps us improve the plugin and developer experience.
+              Thanks for using WordPress Dependency Manager! Your feedback helps us improve the tool and developer experience.
 
     - type: dropdown
       id: feedback-category
@@ -15,14 +15,14 @@ body:
           label: Feedback Category
           description: What aspect would you like to provide feedback on?
           options:
-              - Developer API Experience
-              - Integration Process
+              - CLI Tool Experience
+              - Setup Process
               - Documentation Quality
-              - Code Examples
-              - JavaScript Validation System
-              - PHP Hook System
-              - Settings Integration
-              - Performance
+              - Configuration Templates
+              - Build System Performance
+              - WordPress Integration
+              - Safety Features
+              - Theme/Plugin Generation
               - Overall Developer Experience
               - Other
       validations:
@@ -33,10 +33,7 @@ body:
       attributes:
           label: Your Experience
           description: What worked well? What was challenging?
-          placeholder: |
-              Share what you liked and what could be improved.
-              - What was intuitive or helpful?
-              - What was confusing or difficult?
+          placeholder: Share what you liked and what could be improved - intuitive features vs confusing parts...
       validations:
           required: true
 
@@ -60,10 +57,10 @@ body:
               - Very Poor
 
     - type: dropdown
-      id: api-ease-of-use
+      id: setup-ease-of-use
       attributes:
-          label: API Ease of Use (optional)
-          description: How easy was the developer API to use?
+          label: Setup Ease of Use (optional)
+          description: How easy was the setup process?
           options:
               - Very Easy
               - Easy
@@ -76,4 +73,4 @@ body:
       attributes:
           label: Development Environment (optional)
           description: Details about your development setup
-          placeholder: WordPress version, PHP version, build tools, etc.
+          placeholder: WordPress version, Node.js version, OS, project type...

@@ -1,78 +1,92 @@
 # Pull Request
 
 ## Description
-
 <!-- Briefly describe what this PR does -->
 
 ## Type of Change
-
-- [ ] 🐛 Bug fix
-- [ ] ✨ New accessibility check
-- [ ] 🔌 New developer API feature
+- [ ] 🐛 Bug fix (non-breaking change that fixes an issue)
+- [ ] ✨ New feature (non-breaking change that adds functionality)
+- [ ] 🔧 Refactoring (code change that neither fixes a bug nor adds a feature)
 - [ ] 📚 Documentation update
-- [ ] 🔧 Code refactoring
-- [ ] ♿ Accessibility improvement
-- [ ] 💥 Breaking change
+- [ ] ⚙️ Configuration updates
+- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
 ## Related Issues
-
-Related issue(s): #{add issue}
+<!-- Link any related issues -->
+Fixes #(issue number)
+Related to #(issue number)
 
 ## Changes Made
-
-<!-- List the main changes -->
-
+<!-- List the main changes made -->
+- 
 - 
 - 
 
 ## Testing
 
-**Environment:**
-- WordPress Version:
-- Browser(s) tested:
+### Environment Tested
+- [ ] Node.js version: 
+- [ ] WordPress version: 
+- [ ] Operating System: 
 
-**Test Cases:** _(check what applies to your change)_
+### Core Functionality
+- [ ] `wp-dependency setup` works correctly
+- [ ] `wp-dependency setup:theme` creates proper theme structure
+- [ ] `wp-dependency setup:plugin` creates proper plugin structure
+- [ ] `npm run build` works for themes and plugins
+- [ ] `npm run build:force` bypasses cache correctly
 
-**For new accessibility checks:**
-- [ ] Tested error state (red border/message)
-- [ ] Tested warning state (yellow border/message)
-- [ ] Tested valid state (no indicators)
-- [ ] Publishing prevention works (for errors)
+### Safety Features
+- [ ] `--dry-run` flag works and shows preview
+- [ ] `--safe` flag respects existing files
+- [ ] Automatic backups are created when files exist
+- [ ] File conflict detection works properly
 
-**For updated accessibility checks:**
-- [ ] Existing functionality still works
-- [ ] New behavior works as expected
-- [ ] No regressions in other blocks
+### WordPress Integration
+- [ ] Generated themes load properly in WordPress
+- [ ] Generated plugins activate properly in WordPress
+- [ ] Asset enqueuing works (CSS/JS files load in browser)
+- [ ] No PHP errors in WordPress debug log
 
-**For new developer API features:**
-- [ ] API functions work as documented
-- [ ] Hooks/filters fire correctly
-- [ ] External plugin integration tested
+### Configuration Management
+- [ ] Configuration files copied from templates correctly
+- [ ] Root-level dependencies managed properly
+- [ ] Webpack configurations work for both themes and plugins
 
-**For developer API updates:**
-- [ ] Backward compatibility maintained
-- [ ] Existing integrations still work
-- [ ] New functionality accessible
+## Manual Testing Steps
+<!-- Describe the specific steps you took to test this change -->
+1. 
+2. 
+3. 
 
-**General testing:**
-- [ ] No console errors
-- [ ] Tested in wp-env environment
-- [ ] Works across different WordPress blocks
+## Screenshots/Output
+<!-- Add screenshots of CLI output, generated files, or WordPress integration if relevant -->
 
-## Screenshots
+## Impact Assessment
 
-<!-- Add screenshots showing before/after or new functionality -->
+### Configuration Changes
+- [ ] No configuration changes
+- [ ] New configuration templates added
+- [ ] Existing configuration templates modified
 
-## Developer API Impact _(if applicable)_
+### Backward Compatibility
+- [ ] No breaking changes
+- [ ] Breaking changes documented with migration path
 
-- [ ] No API changes
-- [ ] New hooks/filters added
-- [ ] Breaking changes to existing API
-- [ ] Documentation updated
+### Documentation
+- [ ] README.md updated (if needed)
+- [ ] DOCS.md updated (if needed)
+- [ ] REVIEW.md updated (if needed)
 
-## Checklist
+## Code Quality Checklist
+- [ ] Code follows project conventions (see CONTRIBUTING.md)
+- [ ] Uses templates instead of hardcoded configuration
+- [ ] Error handling is consistent and user-friendly
+- [ ] No console.log statements left in code
+- [ ] Dependencies managed appropriately (no unnecessary additions)
 
-- [ ] Code follows WordPress standards
-- [ ] No PHP/JavaScript errors
-- [ ] Tested in wp-env environment
-- [ ] Documentation updated (if needed)
+## Additional Notes
+<!-- Any additional information that reviewers should know -->
+
+---
+*For comprehensive testing procedures, see [TEST.md](../TEST.md)*
