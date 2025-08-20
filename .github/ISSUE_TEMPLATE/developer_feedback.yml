@@ -1,0 +1,76 @@
+name: 💬 Developer Feedback
+description: Provide feedback on the CLI tool, setup process, or documentation
+title: '[Feedback]: '
+labels: ['feedback', 'dev-ex']
+assignees: ['troychaplin']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for using WordPress Dependency Manager! Your feedback helps us improve the tool and developer experience.
+
+    - type: dropdown
+      id: feedback-category
+      attributes:
+          label: Feedback Category
+          description: What aspect would you like to provide feedback on?
+          options:
+              - CLI Tool Experience
+              - Setup Process
+              - Documentation Quality
+              - Configuration Templates
+              - Build System Performance
+              - WordPress Integration
+              - Safety Features
+              - Theme/Plugin Generation
+              - Overall Developer Experience
+              - Other
+      validations:
+          required: true
+
+    - type: textarea
+      id: your-experience
+      attributes:
+          label: Your Experience
+          description: What worked well? What was challenging?
+          placeholder: Share what you liked and what could be improved - intuitive features vs confusing parts...
+      validations:
+          required: true
+
+    - type: textarea
+      id: additional-comments
+      attributes:
+          label: Additional Comments (optional)
+          description: Anything else you'd like to share?
+          placeholder: Suggestions, feature requests, or other thoughts...
+
+    - type: dropdown
+      id: documentation-rating
+      attributes:
+          label: Documentation Rating (optional)
+          description: How would you rate the documentation?
+          options:
+              - Excellent
+              - Good
+              - Average
+              - Poor
+              - Very Poor
+
+    - type: dropdown
+      id: setup-ease-of-use
+      attributes:
+          label: Setup Ease of Use (optional)
+          description: How easy was the setup process?
+          options:
+              - Very Easy
+              - Easy
+              - Moderate
+              - Difficult
+              - Very Difficult
+
+    - type: textarea
+      id: environment-details
+      attributes:
+          label: Development Environment (optional)
+          description: Details about your development setup
+          placeholder: WordPress version, Node.js version, OS, project type...

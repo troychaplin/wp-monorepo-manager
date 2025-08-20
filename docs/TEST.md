@@ -11,7 +11,7 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
 
 ## Development Testing Workflow
 
-This section covers testing the package during development, before publishing.
+This section covers testing the package during development, before publishing a release to NPM.
 
 ### Step 1: Local Package Development
 
@@ -19,8 +19,8 @@ This section covers testing the package during development, before publishing.
 
     ```bash
     # Clone the repository
-    git clone https://github.com/troychaplin/wp-monorepo-manager.git
-    cd wp-monorepo-manager
+    git clone https://github.com/troychaplin/wp-dependency-manager.git
+    cd wp-dependency-manager
 
     # Install dependencies
     npm install
@@ -33,24 +33,24 @@ This section covers testing the package during development, before publishing.
 
     ```bash
     # Check that the CLI command is available
-    wp-monorepo --help
+    wp-dependency --help
 
     # Verify the package is linked correctly
-    npm list -g wp-monorepo-manager
+    npm list -g wp-dependency-manager
 
     # Test setup commands and new safety features
-    wp-monorepo setup --help
-    wp-monorepo setup --dry-run
-    wp-monorepo setup --safe
-    wp-monorepo setup:theme --help
-    wp-monorepo setup:plugin --help
+    wp-dependency setup --help
+    wp-dependency setup --dry-run
+    wp-dependency setup --safe
+    wp-dependency setup:theme --help
+    wp-dependency setup:plugin --help
     ```
 
 3. **Cleanup when done testing:**
 
     ```bash
     # Remove the global link
-    npm unlink -g wp-monorepo-manager
+    npm unlink -g wp-dependency-manager
     ```
 
 ### Understanding npm link
@@ -66,12 +66,12 @@ This section covers testing the package during development, before publishing.
 **Usage:**
 
 ```bash
-# From wp-monorepo-manager directory
+# From wp-dependency-manager directory
 npm link
-# Creates: /usr/local/lib/node_modules/wp-monorepo-manager -> /path/to/your/local/package
+# Creates: /usr/local/lib/node_modules/wp-dependency-manager -> /path/to/your/local/package
 
 # Cleanup when done
-npm unlink -g wp-monorepo-manager
+npm unlink -g wp-dependency-manager
 ```
 
 ### Step 2: Test CLI Commands in Different Contexts
@@ -91,19 +91,19 @@ The CLI tool supports two different setup scenarios:
 
     ```bash
     # Test preview mode first (safe to run)
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
 
     # This should detect WordPress and initialize monorepo structure
-    wp-monorepo setup
+    wp-dependency setup
 
     # Test help command (should work without errors)
-    wp-monorepo --help
+    wp-dependency --help
 
     # Test theme setup
-    wp-monorepo setup:theme
+    wp-dependency setup:theme
 
     # Test plugin setup
-    wp-monorepo setup:plugin
+    wp-dependency setup:plugin
     ```
 
 **Expected behavior:**
@@ -111,7 +111,7 @@ The CLI tool supports two different setup scenarios:
 - Detects WordPress installation (wp-config.php, wp-content, etc.)
 - Creates `package.json` at WordPress root
 - Creates `turbo.json` for monorepo configuration
-- Installs dependencies including wp-monorepo-manager
+- Installs dependencies including wp-dependency-manager
 - Sets up workspace configuration for themes and plugins
 
 #### Scenario B: Create New Project Structure
@@ -127,13 +127,13 @@ The CLI tool supports two different setup scenarios:
 
     ```bash
     # Test preview mode first (safe to run)
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
 
     # This should create a new project structure
-    wp-monorepo setup
+    wp-dependency setup
 
     # Test help command (should work without errors)
-    wp-monorepo --help
+    wp-dependency --help
     ```
 
 **Expected behavior:**
@@ -152,7 +152,7 @@ The setup process now includes multiple safety features to protect existing conf
 
     ```bash
     cd /tmp && mkdir test-clean && cd test-clean
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
     ```
 
     **Expected behavior:**
@@ -166,7 +166,7 @@ The setup process now includes multiple safety features to protect existing conf
     ```bash
     # Go to a directory with existing configuration files
     cd /path/to/existing-wordpress-with-monorepo
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
     ```
 
     **Expected behavior:**
@@ -181,7 +181,7 @@ The setup process now includes multiple safety features to protect existing conf
     ```bash
     # Go to a directory with existing configuration files
     cd /path/to/existing-wordpress-with-monorepo
-    wp-monorepo setup --safe
+    wp-dependency setup --safe
     ```
 
     **Expected behavior:**
@@ -195,7 +195,7 @@ The setup process now includes multiple safety features to protect existing conf
 
     ```bash
     cd /tmp && mkdir test-safe && cd test-safe
-    wp-monorepo setup --safe
+    wp-dependency setup --safe
     ```
 
     **Expected behavior:**
@@ -218,13 +218,13 @@ The setup process now includes multiple safety features to protect existing conf
 2. **Run normal setup to trigger backup:**
 
     ```bash
-    wp-monorepo setup
+    wp-dependency setup
     # When prompted, answer 'y' to proceed with backup
     ```
 
     **Expected behavior:**
     - Shows updated modification timestamp for changed file
-    - Creates backup in `.wp-monorepo-backups/[timestamp]/`
+    - Creates backup in `.wp-dependency-backups/[timestamp]/`
     - All existing config files backed up before overwriting
     - Displays backup location confirmation
 
@@ -232,13 +232,13 @@ The setup process now includes multiple safety features to protect existing conf
 
     ```bash
     # List backup directories
-    ls -la .wp-monorepo-backups/
+    ls -la .wp-dependency-backups/
 
     # Check backup contents (replace timestamp with actual)
-    ls -la .wp-monorepo-backups/2025-07-06T10-30-00/
+    ls -la .wp-dependency-backups/2025-07-06T10-30-00/
 
     # Verify modification is preserved in backup
-    cat .wp-monorepo-backups/*/​.eslintrc.json
+    cat .wp-dependency-backups/*/​.eslintrc.json
     ```
 
 #### Test User Cancellation
@@ -247,7 +247,7 @@ The setup process now includes multiple safety features to protect existing conf
 
     ```bash
     # In directory with existing files
-    echo "n" | wp-monorepo setup
+    echo "n" | wp-dependency setup
     ```
 
     **Expected behavior:**
@@ -261,8 +261,8 @@ The setup process now includes multiple safety features to protect existing conf
 1. **Test help system includes new flags:**
 
     ```bash
-    wp-monorepo --help
-    wp-monorepo setup unknown-flag
+    wp-dependency --help
+    wp-dependency setup unknown-flag
     ```
 
     **Expected behavior:**
@@ -274,11 +274,11 @@ The setup process now includes multiple safety features to protect existing conf
 
     ```bash
     # These should work (flags are independent)
-    wp-monorepo setup --dry-run
-    wp-monorepo setup --safe
+    wp-dependency setup --dry-run
+    wp-dependency setup --safe
 
     # Multiple flags (if both provided, dry-run should take precedence)
-    wp-monorepo setup --dry-run --safe
+    wp-dependency setup --dry-run --safe
     ```
 
 ### Recovery Testing
@@ -287,10 +287,10 @@ Test the backup recovery process:
 
 ```bash
 # List available backups
-ls -la .wp-monorepo-backups/
+ls -la .wp-dependency-backups/
 
 # Simulate recovery (replace timestamp with actual backup)
-cp -r .wp-monorepo-backups/2025-07-06T10-30-00/* .
+cp -r .wp-dependency-backups/2025-07-06T10-30-00/* .
 
 # Verify files are restored
 cat .eslintrc.json
@@ -301,8 +301,8 @@ cat .eslintrc.json
 1. **Test theme creation:**
 
     ```bash
-    # From project root (after running wp-monorepo setup)
-    wp-monorepo setup:theme
+    # From project root (after running wp-dependency setup)
+    wp-dependency setup:theme
     ```
 
 **Expected behavior:**
@@ -315,8 +315,8 @@ cat .eslintrc.json
 2. **Test plugin creation:**
 
     ```bash
-    # From project root (after running wp-monorepo setup)
-    wp-monorepo setup:plugin
+    # From project root (after running wp-dependency setup)
+    wp-dependency setup:plugin
     ```
 
 **Expected behavior:**
@@ -332,7 +332,7 @@ cat .eslintrc.json
 
     ```bash
     # Verify the package is linked
-    npm list wp-monorepo-manager
+    npm list wp-dependency-manager
     ```
 
 2. **Test build process:**
@@ -350,28 +350,26 @@ cat .eslintrc.json
 
 ## Test Project Directory Structure
 
-### Scenario A: Existing WordPress Installation
-
 Your WordPress directory structure should look like this after setup:
 
 ```
 wordpress-installation/
 │
-├── wp-config.php              # Existing WordPress config
-├── wp-content/                # Existing WordPress content
-├── wp-admin/                  # Existing WordPress admin
-├── wp-includes/               # Existing WordPress includes
-├── package.json               # Created by wp-monorepo setup
-├── turbo.json                 # Created by wp-monorepo setup
-├── node_modules/              # Created by npm install
-├── .wp-monorepo-backups/      # Created when overwriting existing config files
-│   └── 2025-07-06T10-30-00/   # Timestamped backup directories
-│       ├── .eslintrc.json     # Backed up configuration files
-│       ├── package.json       # (before overwriting)
-│       └── ...                # Other backed up files
+├── wp-config.php               # Existing WordPress config
+├── wp-content/                 # Existing WordPress content
+├── wp-admin/                   # Existing WordPress admin
+├── wp-includes/                # Existing WordPress includes
+├── package.json                # Created by wp-dependency setup
+├── turbo.json                  # Created by wp-dependency setup
+├── node_modules/               # Created by npm install
+├── .wp-dependency-backups/     # Created when overwriting existing files
+│   └── 2025-07-06T10-30-00/    # Timestamped backup directories
+│       ├── .eslintrc.json      # Backed up configuration files
+│       ├── package.json        # (before overwriting)
+│       └── ...                 # Other backed up files
 └── wp-content/
     ├── plugins/
-    │   └── [your-plugin]/     # Created with setup:plugin
+    │   └── [your-plugin]/      # Created with setup:plugin
     │       ├── package.json
     │       ├── [plugin-name].php
     │       └── src/
@@ -379,7 +377,7 @@ wordpress-installation/
     │           │   └── index.js
     │           └── styles.scss
     └── themes/
-        └── [your-theme]/      # Created with setup:theme
+        └── [your-theme]/       # Created with setup:theme
             ├── package.json
             ├── index.php
             ├── style.css
@@ -389,61 +387,21 @@ wordpress-installation/
                 └── styles.scss
 ```
 
-### Scenario B: New Project Structure
-
-Your test directory structure should look like this:
-
-```
-parent-directory/
-│
-├── wp-monorepo-manager/     # The package repository (development)
-│   ├── package.json
-│   ├── config/
-│   ├── scripts/
-│   └── ...
-│
-└── your-project/            # Test directory (created by setup)
-    ├── package.json
-    ├── turbo.json
-    ├── .wp-monorepo-backups/      # Backup directory (if config files existed)
-    │   └── [timestamp]/           # Timestamped backup folders
-    ├── wp-content/
-    │   ├── plugins/
-    │   │   └── [your-plugin]/     # Created with setup:plugin
-    │   │       ├── package.json
-    │   │       ├── [plugin-name].php
-    │   │       └── src/
-    │   │           ├── scripts/
-    │   │           │   └── index.js
-    │   │           └── styles.scss
-    │   └── themes/
-    │       └── [your-theme]/      # Created with setup:theme
-    │           ├── package.json
-    │           ├── index.php
-    │           ├── style.css
-    │           └── src/
-    │               ├── scripts/
-    │               │   └── index.js
-    │               └── styles.scss
-    └── plugins/             # Alternative location for non-WordPress projects
-        └── [your-plugin]/
-```
-
 ## Comprehensive Test Cases
 
 ### 1. Package Development Setup
 
 ```bash
-# From wp-monorepo-manager directory
+# From wp-dependency-manager directory
 npm install
 npm link
 
 # Verify the package is properly set up and linked
 npm list
-which wp-monorepo
+which wp-dependency
 ```
 
-**Expected:** All dependencies should install without errors, the package should be linkable, and the `wp-monorepo` command should be available globally.
+**Expected:** All dependencies should install without errors, the package should be linkable, and the `wp-dependency` command should be available globally.
 
 ### 2. Setup Safety Features Testing
 
@@ -451,27 +409,27 @@ Comprehensive testing of the new safety features:
 
 ```bash
 # Test dry run mode
-wp-monorepo setup --dry-run
+wp-dependency setup --dry-run
 # Should preview changes without modification
 
 # Test safe mode
-wp-monorepo setup --safe
+wp-dependency setup --safe
 # Should skip existing files and create backup
 
 # Test normal setup with backup
-wp-monorepo setup
+wp-dependency setup
 # Should warn about existing files and create backup
 
 # Test user cancellation
-echo "n" | wp-monorepo setup
+echo "n" | wp-dependency setup
 # Should exit gracefully without changes
 
 # Verify backup system
-ls -la .wp-monorepo-backups/
+ls -la .wp-dependency-backups/
 # Should show timestamped backup directories
 
 # Test backup recovery
-cp -r .wp-monorepo-backups/[timestamp]/* .
+cp -r .wp-dependency-backups/[timestamp]/* .
 # Should restore backed up files
 ```
 
@@ -490,21 +448,21 @@ Test CLI commands from different contexts:
 
 ```bash
 # Test help command from anywhere (should work without errors)
-wp-monorepo --help
+wp-dependency --help
 
 # Test setup command with safety features
-wp-monorepo setup --dry-run          # Preview mode
-wp-monorepo setup --safe             # Safe mode (skip existing)
+wp-dependency setup --dry-run          # Preview mode
+wp-dependency setup --safe             # Safe mode (skip existing)
 
 # Test setup command from WordPress installation
 cd /path/to/wordpress
-wp-monorepo setup --dry-run          # Preview first
-wp-monorepo setup                    # Normal setup with backup
+wp-dependency setup --dry-run          # Preview first
+wp-dependency setup                    # Normal setup with backup
 
 # Test setup command from empty directory
 cd /path/to/empty-directory
-wp-monorepo setup --dry-run          # Should show "would create"
-wp-monorepo setup                    # Should create new files
+wp-dependency setup --dry-run          # Should show "would create"
+wp-dependency setup                    # Should create new files
 ```
 
 **Expected:**
@@ -520,12 +478,12 @@ wp-monorepo setup                    # Should create new files
 
 ```bash
 # Test theme creation
-wp-monorepo setup:theme
+wp-dependency setup:theme
 # Should prompt for theme name and folder name
 # Should create theme structure without installing dependencies
 
 # Test plugin creation
-wp-monorepo setup:plugin
+wp-dependency setup:plugin
 # Should prompt for plugin name and folder name
 # Should create plugin structure without installing dependencies
 ```
@@ -645,7 +603,7 @@ After running all tests, you should have:
 - **Verify npm link** is properly set up
 - **Check PATH environment** includes npm global binaries
 - **Ensure package.json** has correct `bin` configuration
-- **Test with `which wp-monorepo`** to confirm command location
+- **Test with `which wp-dependency`** to confirm command location
 
 ### Setup Command Issues
 
@@ -656,7 +614,7 @@ After running all tests, you should have:
 
 ### Safety Features Issues
 
-- **Backup creation fails**: Check write permissions for `.wp-monorepo-backups` directory
+- **Backup creation fails**: Check write permissions for `.wp-dependency-backups` directory
 - **Dry run shows incorrect status**: Verify file existence and permissions
 - **Safe mode still overwrites**: Check if files are being created by dependencies installation
 - **Backup recovery issues**: Ensure backup directory exists and contains expected files
@@ -688,12 +646,12 @@ After publishing, you would test the actual published package:
 
 ```bash
 # Install the published package
-npm install -g wp-monorepo-manager
+npm install -g wp-dependency-manager
 
 # Test in a real project
 mkdir real-project
 cd real-project
-wp-monorepo setup
+wp-dependency setup
 ```
 
 **Note:** Published package testing is not covered in this document as it's done after the package is published to npm.
@@ -720,7 +678,7 @@ Test the safety features against real-world scenarios:
 2. **Test dry run mode:**
 
     ```bash
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
     # Should show these files would be overwritten
     # Should not modify the custom configurations
     ```
@@ -728,7 +686,7 @@ Test the safety features against real-world scenarios:
 3. **Test safe mode:**
 
     ```bash
-    wp-monorepo setup --safe
+    wp-dependency setup --safe
     # Should skip existing files, preserving custom configurations
     # Should still install monorepo dependencies
     ```
@@ -736,13 +694,13 @@ Test the safety features against real-world scenarios:
 4. **Test backup and recovery:**
 
     ```bash
-    wp-monorepo setup
+    wp-dependency setup
     # Should backup custom configurations
     # Verify custom content is preserved in backup
-    cat .wp-monorepo-backups/*/​.eslintrc.json
+    cat .wp-dependency-backups/*/​.eslintrc.json
 
     # Test recovery
-    cp .wp-monorepo-backups/*/​.eslintrc.json .eslintrc.json.custom
+    cp .wp-dependency-backups/*/​.eslintrc.json .eslintrc.json.custom
     # Verify custom config is recoverable
     ```
 
@@ -756,10 +714,10 @@ Test the safety features against real-world scenarios:
     cd [project]
 
     # Project already has monorepo setup, member wants to update
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
     # Should show what would change
 
-    wp-monorepo setup --safe
+    wp-dependency setup --safe
     # Should preserve team's existing configurations
     ```
 
@@ -769,11 +727,11 @@ Test the safety features against real-world scenarios:
 
     ```bash
     # Simulate CI environment (non-interactive)
-    echo "y" | wp-monorepo setup
+    echo "y" | wp-dependency setup
     # Should handle automated confirmation
 
     # Test with existing files in CI
-    echo "n" | wp-monorepo setup
+    echo "n" | wp-dependency setup
     # Should exit gracefully for CI failure handling
     ```
 
@@ -787,10 +745,10 @@ Test the safety features against real-world scenarios:
     echo 'module.exports = {/*custom webpack config*/}' > webpack.config.js
 
     # Test migration path
-    wp-monorepo setup --dry-run
+    wp-dependency setup --dry-run
     # Should show what would be replaced
 
-    wp-monorepo setup
+    wp-dependency setup
     # Should backup existing build configuration
     # Should allow recovery of custom webpack config
     ```

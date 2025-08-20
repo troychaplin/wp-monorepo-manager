@@ -1,0 +1,128 @@
+name: 🚀 Feature Request
+description: Suggest a new feature or enhancement for WordPress Dependency Manager
+title: '[Feature]: '
+labels: ['enhancement', 'feature-request']
+assignees: ['troychaplin']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for suggesting a new feature! Your ideas help make WordPress Dependency Manager better for everyone.
+
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: Prerequisites
+          description: Please confirm the following before submitting your feature request
+          options:
+              - label: I have searched existing issues and discussions to ensure this feature hasn't been requested already
+                required: true
+
+    - type: dropdown
+      id: feature-category
+      attributes:
+          label: Feature Category
+          description: What type of feature are you requesting?
+          options:
+              - CLI Command Enhancement
+              - New CLI Command
+              - Build System Improvement
+              - Configuration Template
+              - WordPress Integration
+              - Safety Feature Enhancement
+              - Developer Experience Improvement
+              - Documentation Enhancement
+              - Performance Enhancement
+              - Workflow Automation
+              - Template Generation
+              - Other
+      validations:
+          required: true
+
+    - type: textarea
+      id: feature-summary
+      attributes:
+          label: Feature Summary
+          description: A clear and concise description of the feature you'd like to see
+          placeholder: Briefly describe the feature you're requesting...
+      validations:
+          required: true
+
+    - type: dropdown
+      id: target-scope
+      attributes:
+          label: Target Scope
+          description: What part of the tool should this feature apply to?
+          options:
+              - wp-dependency setup command
+              - wp-dependency setup:theme command
+              - wp-dependency setup:plugin command
+              - Build system (npm run build)
+              - Configuration templates
+              - Safety features (--dry-run, --safe, backups)
+              - WordPress integration
+              - CLI output/messaging
+              - Documentation
+              - All commands
+              - New functionality area
+      validations:
+          required: true
+
+    - type: textarea
+      id: use-cases
+      attributes:
+          label: Use Cases
+          description: Provide specific examples of when and how this feature would be used
+          placeholder: Example scenarios where this feature would be helpful...
+
+    - type: textarea
+      id: current-workflow
+      attributes:
+          label: Current Workflow (optional)
+          description: How do you currently accomplish this task, if at all?
+          placeholder: Describe your current process or workaround...
+
+    - type: textarea
+      id: proposed-solution
+      attributes:
+          label: Proposed Solution (optional)
+          description: How would you like this feature to work?
+          placeholder: Describe your ideal implementation...
+
+    - type: textarea
+      id: alternatives
+      attributes:
+          label: Alternative Solutions (optional)
+          description: Have you considered any alternative approaches?
+          placeholder: Describe any alternative solutions you've considered...
+
+    - type: checkboxes
+      id: implementation-considerations
+      attributes:
+          label: Implementation Considerations
+          description: Check all that apply to your feature request
+          options:
+              - label: This feature should be configurable
+              - label: This feature should work with existing safety features
+              - label: This feature should be backward compatible
+              - label: This feature should support both themes and plugins
+              - label: This feature should integrate with the build system
+              - label: This feature should include help/documentation
+              - label: This feature should preserve existing workflows
+
+    - type: dropdown
+      id: priority
+      attributes:
+          label: Priority (optional)
+          description: How important is this feature to your workflow?
+          options:
+              - High - Blocks my workflow
+              - Medium - Would significantly improve workflow
+              - Low - Nice to have enhancement
+
+    - type: textarea
+      id: additional-context
+      attributes:
+          label: Additional Context (optional)
+          description: Add any other context, examples, or references
+          placeholder: Links, examples, mockups, or additional thoughts...

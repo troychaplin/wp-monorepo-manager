@@ -1,0 +1,109 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with WordPress Dependency Manager
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
+assignees: ['troychaplin']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to report a bug! Please provide as much detail as possible to help us reproduce and fix the issue.
+
+    - type: checkboxes
+      id: terms
+      attributes:
+          label: Prerequisites
+          description: Please confirm the following before submitting your bug report
+          options:
+              - label: I have searched existing issues to ensure this bug hasn't been reported already
+                required: true
+              - label: I have tested with the latest version of wp-dependency-manager
+                required: true
+              - label: I have tested in a clean WordPress installation
+                required: false
+
+    - type: textarea
+      id: bug-details
+      attributes:
+          label: Bug Details
+          description: What did you expect to happen, and what actually happened?
+          placeholder: Describe the issue, expected and actual behavior...
+      validations:
+          required: true
+
+    - type: dropdown
+      id: command-affected
+      attributes:
+          label: Command/Feature Affected
+          description: Which command or feature is experiencing the issue?
+          options:
+              - wp-dependency setup
+              - wp-dependency setup:theme
+              - wp-dependency setup:plugin
+              - npm run build
+              - npm run build:force
+              - Configuration files
+              - Safety features (--dry-run, --safe, backups)
+              - WordPress integration
+              - Multiple commands
+              - Other
+      validations:
+          required: true
+
+    - type: input
+      id: specific-command
+      attributes:
+          label: Specific Command
+          description: If applicable, what's the exact command that failed?
+          placeholder: wp-dependency setup:theme --dry-run
+
+    - type: dropdown
+      id: issue-type
+      attributes:
+          label: Issue Category
+          description: What type of issue is this?
+          options:
+              - CLI Command Error
+              - Build System Failure
+              - Configuration File Issue
+              - WordPress Integration Problem
+              - Asset Generation Issue
+              - Cache/Turbo Problem
+              - Template/File Creation Error
+              - Safety Feature Malfunction
+              - Installation/Setup Problem
+              - Other
+      validations:
+          required: true
+
+    - type: textarea
+      id: steps-to-reproduce
+      attributes:
+          label: Steps to Reproduce
+          description: How can we reproduce the bug?
+          placeholder: 1. Navigate to WordPress directory 2. Run wp-dependency setup 3. ...
+      validations:
+          required: true
+
+    - type: textarea
+      id: cli-output
+      attributes:
+          label: CLI Output (optional)
+          description: Copy and paste the command output including any error messages
+          placeholder: Error messages, stack traces, or command output...
+
+    - type: textarea
+      id: environment
+      attributes:
+          label: Environment
+          description: Please provide your environment details
+          placeholder: Node.js version, npm version, WordPress version, OS, wp-dependency-manager version...
+      validations:
+          required: true
+
+    - type: textarea
+      id: additional-context
+      attributes:
+          label: Additional Context (optional)
+          description: Anything else that might help us understand the issue
+          placeholder: Any other relevant details...

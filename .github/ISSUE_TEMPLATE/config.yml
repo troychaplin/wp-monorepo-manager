@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+    - name: 📖 Complete Documentation
+      url: https://github.com/troychaplin/wp-dependency-manager/blob/main/DOCS.md
+      about: Detailed API documentation, configuration guides, and advanced usage
+    - name: 🧪 Testing Procedures
+      url: https://github.com/troychaplin/wp-dependency-manager/blob/main/TEST.md
+      about: Test scenarios and validation procedures for development
+    - name: ⚠️ Known Limitations
+      url: https://github.com/troychaplin/wp-dependency-manager/blob/main/REVIEW.md
+      about: Hard-coded dependencies, limitations, and areas for improvement
+    - name: 🤝 Contributing Guide
+      url: https://github.com/troychaplin/wp-dependency-manager/blob/main/CONTRIBUTING.md
+      about: How to contribute to the project and development guidelines

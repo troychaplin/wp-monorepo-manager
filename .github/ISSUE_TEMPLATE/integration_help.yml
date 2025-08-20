@@ -1,0 +1,175 @@
+name: 🤝 Integration Help
+description: Get help using WordPress Dependency Manager in your development workflow
+title: '[Help]: '
+labels: ['question', 'integration-help']
+assignees: []
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Need help using WordPress Dependency Manager in your project? Please provide as much detail as possible so we can give you the best assistance.
+
+              **Note:** We will do our best to reply to your request, but response times may vary and we may not always be able to respond promptly.
+
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: Prerequisites
+          description: Before requesting help, please confirm
+          options:
+              - label: I have read the documentation (README.md, DOCS.md)
+                required: true
+              - label: I have looked at the provided examples and templates
+                required: true
+              - label: I have searched existing issues for similar questions
+                required: true
+
+    - type: dropdown
+      id: help-type
+      attributes:
+          label: Type of Help Needed
+          description: What kind of assistance are you looking for?
+          options:
+              - Getting Started - Initial setup and configuration
+              - Theme Development - Setting up and building themes
+              - Plugin Development - Setting up and building plugins
+              - Build System - Webpack, Turbo, or npm scripts
+              - Configuration - ESLint, StyleLint, PHPCS setup
+              - WordPress Integration - Asset enqueuing, file structure
+              - Troubleshooting - Something isn't working
+              - Best Practices - How to organize projects
+              - Performance - Build times or optimization
+              - Custom Configuration - Advanced setup needs
+              - Migration - Moving existing projects
+              - Other
+      validations:
+          required: true
+
+    - type: dropdown
+      id: experience-level
+      attributes:
+          label: Experience Level
+          description: How would you describe your WordPress development experience?
+          options:
+              - Beginner - New to WordPress development
+              - Intermediate - Some WordPress development experience
+              - Advanced - Experienced WordPress developer
+              - Expert - Very experienced with WordPress/build tools
+      validations:
+          required: true
+
+    - type: textarea
+      id: project-description
+      attributes:
+          label: Project Description
+          description: Describe your project and what you're trying to accomplish
+          placeholder: What type of WordPress project are you working on and what you're trying to achieve...
+      validations:
+          required: true
+
+    - type: textarea
+      id: current-setup
+      attributes:
+          label: Current Setup
+          description: Describe your current development setup and what you've already tried
+          placeholder: Your existing project structure, what commands you've run, and any progress made...
+      validations:
+          required: true
+
+    - type: textarea
+      id: specific-question
+      attributes:
+          label: Specific Question or Issue
+          description: What exactly are you stuck on or need help with?
+          placeholder: Be specific about what's not working or what you're trying to figure out...
+      validations:
+          required: true
+
+    - type: textarea
+      id: code-samples
+      attributes:
+          label: Relevant Code/Output
+          description: Share any relevant configuration files, commands, or error output
+          placeholder: Configuration files, command output, error messages, or file structures...
+          render: shell
+
+    - type: dropdown
+      id: project-type
+      attributes:
+          label: Project Type
+          description: What type of project are you working with?
+          options:
+              - WordPress Theme
+              - WordPress Plugin
+              - Multiple Themes
+              - Multiple Plugins
+              - Mixed Theme/Plugin Project
+              - Existing Project Migration
+              - New Project Setup
+              - Not sure
+
+    - type: input
+      id: project-name
+      attributes:
+          label: Project Name/Identifier
+          description: What's your theme or plugin name?
+          placeholder: 'e.g., my-custom-theme, company-plugin'
+
+    - type: dropdown
+      id: setup-stage
+      attributes:
+          label: Setup Stage
+          description: Where are you in the setup process?
+          options:
+              - Haven't started yet
+              - Initial setup (wp-dependency setup)
+              - Creating themes/plugins
+              - Configuring build system
+              - First build attempt
+              - Ongoing development
+              - Ready for production
+
+    - type: dropdown
+      id: build-stage
+      attributes:
+          label: Build Process
+          description: What's your experience with the build process?
+          options:
+              - Haven't attempted building yet
+              - Build fails with errors
+              - Build succeeds but assets don't work
+              - Build works but need optimization
+              - Everything works fine
+
+    - type: textarea
+      id: attempted-solutions
+      attributes:
+          label: What Have You Tried?
+          description: Describe any solutions or approaches you've already attempted
+          placeholder: Commands you've run, documentation you've followed, changes you've made...
+
+    - type: textarea
+      id: environment
+      attributes:
+          label: Development Environment
+          description: Your development setup details
+          placeholder: Node.js version, npm version, WordPress version, OS, wp-dependency-manager version...
+      validations:
+          required: true
+
+    - type: textarea
+      id: additional-context
+      attributes:
+          label: Additional Context
+          description: Any other information that might be helpful
+          placeholder: Links, screenshots, constraints, related tools you're using...
+
+    - type: checkboxes
+      id: follow-up
+      attributes:
+          label: Follow-up Preferences
+          description: How would you like to receive help?
+          options:
+              - label: I'm willing to share more code or configuration details if needed
+              - label: I can provide repository access or test site if helpful
+              - label: I'm available for screen sharing or live debugging if needed
