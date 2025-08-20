@@ -11,7 +11,7 @@ This document outlines the testing process for the WordPress Monorepo Manager pa
 
 ## Development Testing Workflow
 
-This section covers testing the package during development, before publishing.
+This section covers testing the package during development, before publishing a release to NPM.
 
 ### Step 1: Local Package Development
 
@@ -350,28 +350,26 @@ cat .eslintrc.json
 
 ## Test Project Directory Structure
 
-### Scenario A: Existing WordPress Installation
-
 Your WordPress directory structure should look like this after setup:
 
 ```
 wordpress-installation/
 │
-├── wp-config.php              # Existing WordPress config
-├── wp-content/                # Existing WordPress content
-├── wp-admin/                  # Existing WordPress admin
-├── wp-includes/               # Existing WordPress includes
-├── package.json               # Created by wp-dependency setup
-├── turbo.json                 # Created by wp-dependency setup
-├── node_modules/              # Created by npm install
-├── .wp-dependency-backups/      # Created when overwriting existing config files
-│   └── 2025-07-06T10-30-00/   # Timestamped backup directories
-│       ├── .eslintrc.json     # Backed up configuration files
-│       ├── package.json       # (before overwriting)
-│       └── ...                # Other backed up files
+├── wp-config.php               # Existing WordPress config
+├── wp-content/                 # Existing WordPress content
+├── wp-admin/                   # Existing WordPress admin
+├── wp-includes/                # Existing WordPress includes
+├── package.json                # Created by wp-dependency setup
+├── turbo.json                  # Created by wp-dependency setup
+├── node_modules/               # Created by npm install
+├── .wp-dependency-backups/     # Created when overwriting existing files
+│   └── 2025-07-06T10-30-00/    # Timestamped backup directories
+│       ├── .eslintrc.json      # Backed up configuration files
+│       ├── package.json        # (before overwriting)
+│       └── ...                 # Other backed up files
 └── wp-content/
     ├── plugins/
-    │   └── [your-plugin]/     # Created with setup:plugin
+    │   └── [your-plugin]/      # Created with setup:plugin
     │       ├── package.json
     │       ├── [plugin-name].php
     │       └── src/
@@ -379,7 +377,7 @@ wordpress-installation/
     │           │   └── index.js
     │           └── styles.scss
     └── themes/
-        └── [your-theme]/      # Created with setup:theme
+        └── [your-theme]/       # Created with setup:theme
             ├── package.json
             ├── index.php
             ├── style.css
@@ -387,46 +385,6 @@ wordpress-installation/
                 ├── scripts/
                 │   └── index.js
                 └── styles.scss
-```
-
-### Scenario B: New Project Structure
-
-Your test directory structure should look like this:
-
-```
-parent-directory/
-│
-├── wp-dependency-manager/     # The package repository (development)
-│   ├── package.json
-│   ├── config/
-│   ├── scripts/
-│   └── ...
-│
-└── your-project/            # Test directory (created by setup)
-    ├── package.json
-    ├── turbo.json
-    ├── .wp-dependency-backups/      # Backup directory (if config files existed)
-    │   └── [timestamp]/           # Timestamped backup folders
-    ├── wp-content/
-    │   ├── plugins/
-    │   │   └── [your-plugin]/     # Created with setup:plugin
-    │   │       ├── package.json
-    │   │       ├── [plugin-name].php
-    │   │       └── src/
-    │   │           ├── scripts/
-    │   │           │   └── index.js
-    │   │           └── styles.scss
-    │   └── themes/
-    │       └── [your-theme]/      # Created with setup:theme
-    │           ├── package.json
-    │           ├── index.php
-    │           ├── style.css
-    │           └── src/
-    │               ├── scripts/
-    │               │   └── index.js
-    │               └── styles.scss
-    └── plugins/             # Alternative location for non-WordPress projects
-        └── [your-plugin]/
 ```
 
 ## Comprehensive Test Cases
